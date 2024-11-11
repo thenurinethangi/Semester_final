@@ -111,6 +111,18 @@ public class HomeController implements Initializable {
     @FXML
     void complainOnAction(ActionEvent event) {
 
+        try {
+            pageLabel.setText("Employee");
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Employee.fxml"));
+            AnchorPane anchorPane = fxmlLoader.load();
+            mainPnae.getChildren().clear();
+            mainPnae.getChildren().add(anchorPane);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -211,9 +223,9 @@ public class HomeController implements Initializable {
     void maintenanceOnAction(ActionEvent event) {
 
         try {
-            pageLabel.setText("Employee");
+            pageLabel.setText("Maintenance Request");
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Employee.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MaintainRequest.fxml"));
             AnchorPane anchorPane = fxmlLoader.load();
             mainPnae.getChildren().clear();
             mainPnae.getChildren().add(anchorPane);
