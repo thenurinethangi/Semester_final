@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class ReturnHouseController implements Initializable {
-/*hhh*/
     @FXML
     private Button editbtn;
 
