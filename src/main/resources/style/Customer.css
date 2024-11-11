@@ -1,0 +1,73 @@
+.list-view {
+    -fx-background-color: #ffffff; /* Background color of the list */
+    -fx-border-color: #ffffff; /* Border color of the list */
+    -fx-border-radius: 3px; /* Rounded corners for the border */
+    -fx-padding: 1px; /* Padding inside the list view */
+}
+
+/* Style for each cell/item in the ListView */
+.list-cell {
+    -fx-background-color: #d3d3d3; /* Background of each item */
+    -fx-text-fill: #333333; /* Text color of each item */
+    -fx-font-size: 12px; /* Font size of the text */
+    -fx-padding: 1px; /* Padding inside each cell */
+    -fx-border-width: 0 0 1px 0; /* Border between items */
+    -fx-border-color: #e0e0e0; /* Light border between items */
+}
+
+/* Hover effect for each cell/item */
+.list-cell:hover {
+    -fx-background-color: #e0f7fa; /* Light blue background on hover */
+}
+
+/* Style for the selected item */
+.list-cell:focused, .list-cell:selected {
+    -fx-background-color: #039be5; /* Blue background when selected */
+    -fx-text-fill: white; /* White text color when selected */
+}
+
+/* Style the scrollbar */
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #9e9e9e; /* Color of the scrollbar thumb */
+    -fx-background-radius: 5px;
+}
+
+/* Style for the vertical scrollbar */
+.scroll-bar:vertical {
+    -fx-pref-width: 6px;
+}
+
+/* Style for the horizontal scrollbar */
+.scroll-bar:horizontal {
+    -fx-pref-height: 6px;
+}
+
+
+
+
+.text-field{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #57606f;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0px 0px 0px 7px;
+    -fx-font-size: 12px;
+// -fx-border-radius: 12;
+    -fx-text-fill: #57606f;
+
+}
+
+
+.text-field:focused{
+
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+    -fx-border-width: 1.5 1.5 1.5 1.5;
+
+
+}

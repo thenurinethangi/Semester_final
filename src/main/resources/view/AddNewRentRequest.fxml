@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="686.0" prefWidth="700.0" style="-fx-background-color: #FAFAFA;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.AddNewRentRequestController">
+   <children>
+      <Pane layoutX="12.0" layoutY="14.0" prefHeight="629.0" prefWidth="676.0" style="-fx-background-color: #ffffff; -fx-border-radius: 5; -fx-border-color: #747d8c; -fx-border-width: 0 1 1 1;">
+         <children>
+            <Label layoutX="3.0" layoutY="-10.0" text="New Rent Request">
+               <font>
+                  <Font name="Candara Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="39.0" prefHeight="20.0" prefWidth="65.0" text="Request ID:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="requestIdLabel" layoutX="118.0" layoutY="40.0" text="R0001">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="80.0" prefHeight="20.0" prefWidth="125.0" text="Customer ID:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="118.0" prefHeight="20.0" prefWidth="125.0" text="House Type:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="162.0" prefHeight="20.0" prefWidth="142.0" text="No Of Family Members:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="203.0" prefHeight="20.0" prefWidth="110.0" text="Monthly Income:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="247.0" prefHeight="20.0" prefWidth="110.0" text="Annual Income:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="290.0" prefHeight="20.0" prefWidth="110.0" text="Bank Details:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="332.0" prefHeight="20.0" prefWidth="110.0" text="Reason For Move:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="374.0" prefHeight="20.0" prefWidth="216.0" text="Estimated Monthly Budget For Rent:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="noOfMembersTxt" layoutX="229.0" layoutY="160.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="houseTypeCmb" layoutX="229.0" layoutY="119.0" prefHeight="30.0" prefWidth="205.0" promptText="Select" styleClass="combo-box" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="leaseTurnCmb" layoutX="229.0" layoutY="419.0" prefHeight="30.0" prefWidth="205.0" promptText="Select" styleClass="combo-box" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="customerIdTxt" layoutX="229.0" layoutY="77.0" prefHeight="25.0" prefWidth="383.0" promptText="Enter Customer NIC Number or Phone Number" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="annualIncomeTxt" layoutX="229.0" layoutY="245.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="monthlyIncomeTxt" layoutX="229.0" layoutY="201.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="reasonToMoveTxt" layoutX="229.0" layoutY="330.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <Label layoutX="15.0" layoutY="419.0" prefHeight="20.0" prefWidth="167.0" text="Length Of LeaseTurn Desire:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="462.0" prefHeight="20.0" prefWidth="167.0" text="Previous Landlord Number:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="504.0" prefHeight="20.0" prefWidth="110.0" text="Is Smoking?" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="544.0" prefHeight="20.0" prefWidth="167.0" text="Have Criminal Background?" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="583.0" prefHeight="20.0" prefWidth="110.0" text="Have Pets?" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="estimatedBudgetTxt" layoutX="229.0" layoutY="372.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="bankDetailsTxt" layoutX="229.0" layoutY="288.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <TextField fx:id="previousLandlordNoTxt" layoutX="229.0" layoutY="460.0" prefHeight="25.0" prefWidth="383.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
+            <ImageView fx:id="seachIcon" fitHeight="29.0" fitWidth="23.0" layoutX="621.0" layoutY="76.0" onMouseClicked="#searchOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/search-interface-symbol.png" />
+               </image>
+            </ImageView>
+            <ComboBox fx:id="smokingCmb" layoutX="229.0" layoutY="501.0" prefHeight="30.0" prefWidth="205.0" promptText="Select" styleClass="combo-box" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="criminalBackgroundCmb" layoutX="229.0" layoutY="542.0" prefHeight="30.0" prefWidth="205.0" promptText="Select" styleClass="combo-box" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="petCmb" layoutX="229.0" layoutY="583.0" prefHeight="30.0" prefWidth="205.0" promptText="Select" styleClass="combo-box" stylesheets="@../style/AddNewUnit.css" />
+            <Label fx:id="noOfFamilyMembersLabel" layoutX="229.0" layoutY="185.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="customerIdLabel" layoutX="229.0" layoutY="100.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="monthlyIncomeLabel" layoutX="229.0" layoutY="226.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="annualIncomeLabel" layoutX="230.0" layoutY="270.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="bankDetailsLabel" layoutX="230.0" layoutY="313.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="reasonForMoveLabel" layoutX="230.0" layoutY="355.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="monthlybudgetLabel" layoutX="230.0" layoutY="397.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+            <Label fx:id="landlordNoLabel" layoutX="229.0" layoutY="485.0" prefHeight="17.0" prefWidth="383.0" textFill="RED">
+               <font>
+                  <Font size="9.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Button fx:id="addbtn" layoutX="630.0" layoutY="652.0" mnemonicParsing="false" onAction="#addOnAction" prefHeight="29.0" prefWidth="57.0" stylesheets="@../style/AddNewUnit.css" text="Add">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="clearbtn" layoutX="569.0" layoutY="653.0" mnemonicParsing="false" onAction="#clearOnAction" prefHeight="30.0" prefWidth="57.0" stylesheets="@../style/AddNewUnit.css" text="Clear">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="cancelbtn" layoutX="507.0" layoutY="653.0" mnemonicParsing="false" onAction="#cancelOnAction" prefHeight="30.0" prefWidth="58.0" style="-fx-border-color: #007AFF; -fx-background-color: ECEFF1; -fx-border-width: 1.5; -fx-border-radius: 4;" stylesheets="@../style/AddNewUnit.css" text="Cancel" textFill="#007aff">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Label fx:id="dateLabel" layoutX="594.0" layoutY="28.0" text="2024-10-13">
+         <font>
+            <Font name="Bodoni MT" size="17.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

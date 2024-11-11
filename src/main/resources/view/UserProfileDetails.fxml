@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane fx:id="bodyPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="257.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.UserProfileDetailsController">
+   <children>
+      <Label layoutX="21.0" layoutY="20.0" text="Full Name:" textFill="#2f3640" />
+      <Label fx:id="name" layoutX="231.0" layoutY="20.0" prefHeight="17.0" prefWidth="400.0" text="W. N. Thenuri Nethangi Wijerathna Nanayakkare" textFill="#747d8c" />
+      <Line endX="482.0" endY="-6.0" layoutX="150.0" layoutY="55.0" startX="-151.0" startY="-6.0" stroke="#0000002d" strokeWidth="0.5" />
+      <Label layoutX="21.0" layoutY="68.0" text="User Name:" textFill="#2f3640" />
+      <Label fx:id="userName" layoutX="231.0" layoutY="68.0" prefHeight="17.0" prefWidth="400.0" text="tnethangi" textFill="#747d8c" />
+      <Line endX="482.0" endY="-6.0" layoutX="150.0" layoutY="103.0" startX="-151.0" startY="-6.0" stroke="#0000002d" strokeWidth="0.5" />
+      <Label layoutX="22.0" layoutY="116.0" text="Email:" textFill="#2f3640" />
+      <Label fx:id="email" layoutX="232.0" layoutY="116.0" prefHeight="17.0" prefWidth="400.0" text="thenurinethangi@gmail.com" textFill="#747d8c" />
+      <Line endX="482.0" endY="-6.0" layoutX="151.0" layoutY="151.0" startX="-151.0" startY="-6.0" stroke="#0000002d" strokeWidth="0.5" />
+      <Label layoutX="22.0" layoutY="164.0" text="Password:" textFill="#2f3640" />
+      <Label fx:id="password" layoutX="232.0" layoutY="164.0" prefHeight="17.0" prefWidth="400.0" text="nethangi1234567" textFill="#747d8c" />
+      <Line endX="482.0" endY="-6.0" layoutX="151.0" layoutY="199.0" startX="-151.0" startY="-6.0" stroke="#0000002d" strokeWidth="0.5" />
+      <Button fx:id="exitbtn" layoutX="577.0" layoutY="222.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="27.0" prefWidth="39.0" style="-fx-background-color: #007AFF;" text="Exit" textFill="WHITE" />
+   </children>
+</AnchorPane>

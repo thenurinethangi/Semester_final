@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="507.0" prefWidth="665.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.UserProfileController">
+   <children>
+      <Circle fill="WHITE" layoutX="333.0" layoutY="85.0" radius="40.0" stroke="#00c0ff" strokeType="INSIDE" strokeWidth="2.0" />
+      <ImageView fitHeight="71.0" fitWidth="74.0" layoutX="297.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/user%20(1).png" />
+         </image>
+      </ImageView>
+      <Button layoutX="342.0" layoutY="101.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #ECEFF1; -fx-background-radius: 80;" />
+      <Label fx:id="nameLabel" alignment="CENTER" contentDisplay="CENTER" layoutY="133.0" prefHeight="21.0" prefWidth="665.0" text="Thenuri Nethangi">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="345.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/edit%20(2).png" />
+         </image>
+      </ImageView>
+      <Label fx:id="emailLabel" alignment="CENTER" layoutY="153.0" prefHeight="17.0" prefWidth="665.0" text="thenurinethangi@gmail.com" textFill="#00000099" />
+      <Button fx:id="editbtn" layoutX="296.0" layoutY="182.0" mnemonicParsing="false" onAction="#editOnAction" style="-fx-background-color: #353b48;" text="Edit Profile" textFill="WHITE" />
+      <AnchorPane fx:id="bodyPane" layoutX="17.0" layoutY="236.0" prefHeight="257.0" prefWidth="633.0" />
+   </children>
+</AnchorPane>

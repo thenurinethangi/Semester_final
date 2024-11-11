@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 8; -fx-border-color: #9E9E9E; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.LeaseAgreementController">
+   <children>
+      <TableView fx:id="table" layoutX="18.0" layoutY="238.0" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
+        <columns>
+          <TableColumn fx:id="leaseIdColumn" prefWidth="100.0" text="Lease ID" />
+          <TableColumn fx:id="tenantIdColumn" prefWidth="100.0" text="Tenant ID" />
+            <TableColumn fx:id="houseIdColumn" prefWidth="100.0" text="House ID" />
+            <TableColumn fx:id="leaseTurnColumn" prefWidth="110.0" text="Lease Turn" />
+            <TableColumn fx:id="startDateColumn" prefWidth="110.0" text="Start Date" />
+            <TableColumn fx:id="endDateColumn" prefWidth="110.0" text="End Date" />
+            <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
+            <TableColumn fx:id="actionColumn" prefWidth="135.3333740234375" resizable="false" text="..." />
+        </columns>
+      </TableView>
+      <ComboBox fx:id="tableRowsCmb" layoutX="18.0" layoutY="193.0" onAction="#tableRowsCmbOnAction" prefHeight="30.0" prefWidth="11.0" stylesheets="@../style/Unit.css" />
+      <ComboBox fx:id="sortCmb" layoutX="73.0" layoutY="193.0" onAction="#sortCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
+      <Pane layoutX="13.0" layoutY="19.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">
+         <children>
+            <Button fx:id="searchbtn" layoutX="769.0" layoutY="74.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="refreshbtn" layoutX="819.0" layoutY="74.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Label layoutX="10.0" layoutY="3.0" text="Lease ID">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="175.0" layoutY="3.0" text="Tenant ID">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="344.0" layoutY="3.0" text="House ID">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="516.0" layoutY="3.0" text="Lease Turn">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="leaseTurnCmb" layoutX="519.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="830.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/reload.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="782.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/search-interface-symbol.png" />
+               </image>
+            </ImageView>
+            <ComboBox fx:id="leaseIdCmb" layoutX="14.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <Label layoutX="686.0" layoutY="3.0" text="Status">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="statusCmb" layoutX="689.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="tenantIdCmb" layoutX="180.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="houseIdCmb" layoutX="350.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+         </children>
+      </Pane>
+      <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="665.0" layoutY="193.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/plus%20(1).png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="searchTxt" layoutX="229.0" layoutY="193.0" prefHeight="30.0" prefWidth="318.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
+      <Line endX="759.3333129882812" layoutX="119.0" layoutY="187.0" startX="-100.0" stroke="#f1f2f6" />
+      <ImageView fitHeight="16.0" fitWidth="18.0" layoutX="238.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/search-interface-symbol%20(1).png" />
+         </image>
+      </ImageView>
+      <Button fx:id="deletebtn" layoutX="838.0" layoutY="588.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="850.0" layoutY="595.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/delete.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

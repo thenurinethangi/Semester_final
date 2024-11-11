@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="484.0" prefWidth="963.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.SignInController">
+   <children>
+      <Pane fx:id="pane1" layoutX="-3.0" prefHeight="484.0" prefWidth="561.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/Loging.css">
+         <children>
+            <ImageView fitHeight="476.0" fitWidth="375.0" layoutX="96.0" layoutY="111.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/undraw_Best_place_re_lne9.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="76.0" layoutY="42.0" text="R">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="33.0" fitWidth="55.0" layoutX="22.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/undraw_House_searching_re_stk8.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="50.0" layoutY="27.0" prefHeight="53.0" prefWidth="34.0" text="G">
+               <font>
+                  <Font name="Berlin Sans FB Demi Bold" size="36.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Label layoutX="614.0" layoutY="195.0" text="User Name" textFill="#0000007f">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="613.0" layoutY="269.0" text="Password" textFill="#00000081" />
+      <TextField fx:id="userName" layoutX="613.0" layoutY="218.0" prefHeight="38.0" prefWidth="284.0" promptText="tnethangi" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+      <Label layoutX="614.0" layoutY="64.0" text="Sign In">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="613.0" layoutY="122.0" text="Welcome back to The Grandview Residences management" textFill="#0000007e">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+      <Label layoutX="614.0" layoutY="138.0" text="Platform sign in for start your work" textFill="#00000080">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+      <TextField fx:id="password" layoutX="612.0" layoutY="292.0" prefHeight="38.0" prefWidth="284.0" promptText="\@nethangi192" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+      <Label layoutX="614.0" layoutY="396.0" />
+      <Button fx:id="forgotbtn" layoutX="801.0" layoutY="336.0" mnemonicParsing="false" onAction="#forgotPasswordOnAction" stylesheets="@../style/Loging.css" text="forgot password?" textFill="#151ec9">
+         <font>
+            <Font size="11.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Label layoutX="691.0" layoutY="458.0" text="Don't have an account?" textFill="#00000081" />
+      <Button fx:id="signUpbtn" layoutX="816.0" layoutY="453.0" mnemonicParsing="false" onAction="#signUpOnAction" prefHeight="26.0" prefWidth="61.0" stylesheets="@../style/Loging.css" text="Sign Up" textFill="#151ec9">
+         <font>
+            <Font size="11.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Button fx:id="signInbtn" layoutX="614.0" layoutY="379.0" mnemonicParsing="false" onAction="#signInOnAction" prefHeight="38.0" prefWidth="284.0" style="-fx-background-radius: 9;" stylesheets="@../style/Loging.css" text="Sign In">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button fx:id="exitbtn" layoutX="924.0" layoutY="11.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="17.0" prefWidth="24.0" rotate="-45.0" style="-fx-background-radius: 50;" stylesheets="@../style/Loging.css" text="+">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+   </children>
+</AnchorPane>

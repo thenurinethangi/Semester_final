@@ -1,0 +1,275 @@
+#forgotbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-text-fill: #007AFF;
+}
+
+#signUpbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0;
+    -fx-text-fill: #007AFF;
+
+}
+
+
+#signInbtn {
+
+    -fx-background-color: #007AFF;
+    -fx-border-color: #007AFF;
+    -fx-border-width: 5;
+    -fx-border-radius: 15;
+    -fx-text-fill: #ffffff;
+}
+
+#signInbtn:hover{
+
+    -fx-background-color: #1B1464;
+    -fx-border-color: #1B1464;
+
+}
+
+
+#fullName{
+
+    -fx-background-color: ECEFF1;
+    -fx-border-color: ECEFF1;
+    -fx-border-width: 2,2,2,2;
+}
+
+
+#fullName:focused{
+
+    -fx-border-color: #E1F5FE;
+    -fx-border-width: 2,2,2,2;
+
+}
+
+#email{
+
+    -fx-background-color: ECEFF1;
+}
+
+
+#email:focused{
+
+    -fx-border-color: #E1F5FE;
+    -fx-border-width: 2,2,2,2;
+
+}
+
+
+#userName{
+
+    -fx-background-color: ECEFF1;
+}
+
+
+#userName:focused{
+
+    -fx-border-color: #E1F5FE;
+    -fx-border-width: 2,2,2,2;
+
+}
+
+#password{
+
+    -fx-background-color: ECEFF1;
+}
+
+
+#password:focused{
+
+    -fx-border-color: #E1F5FE;
+    -fx-border-width: 2,2,2,2;
+
+}
+
+
+#pane1{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 0 1 0 0;
+}
+
+
+#exitbtn{
+
+    -fx-background-color: #000000;
+    -fx-border-color: #000000;
+    -fx-border-width: 0 0 0 0;
+    -fx-text-fill: #ffffff ;
+}
+
+#signUpbtn1{
+
+    -fx-background-color: #007AFF;
+    -fx-border-color: #007AFF;
+    -fx-border-image-width: 5;
+    -fx-border-radius: 15;
+    -fx-text-fill: #ffffff;
+}
+
+
+#signUpbtn1:hover{
+
+    -fx-background-color: #1B1464;
+    -fx-border-color: #1B1464;
+
+}
+
+#signInbtn1{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-image-width: 0;
+    -fx-text-fill: #007AFF;
+
+}
+
+
+#pane2{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: ECEFF1;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 0 0 0 0;
+
+}
+
+#fquestion{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 1 0;
+
+}
+
+#fquestion:focused{
+
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 3 0;
+
+ }
+
+#squestion{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 1 0;
+
+}
+
+
+#squestion:focused{
+
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 3 0;
+
+}
+
+#tquestion{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 1 0;
+
+}
+
+
+#tquestion:focused{
+
+    -fx-border-color: #a5b1c2;
+    -fx-border-width: 0 0 3 0;
+
+}
+
+
+#back{
+
+    -fx-background-color: #ffffff;
+    -fx-text-fill:  #007AFF;
+    -fx-border-color: #007AFF;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 20;
+}
+
+
+#back:hover{
+
+    -fx-border-color: #1B1464;
+    -fx-border-width: 2 2 2 2;
+    -fx-text-fill: #1B1464;
+
+}
+
+
+#next{
+
+    -fx-background-color: #007AFF;
+    -fx-text-fill: #ffffff;
+    -fx-border-width: 0;
+    -fx-border-radius: 20;
+
+}
+
+
+#next:hover{
+
+    -fx-background-color: #1B1464;
+    -fx-border-color: #1B1464;
+}
+
+
+#submit{
+
+    -fx-background-color: #007AFF;
+    -fx-text-fill: #ffffff;
+    -fx-border-width: 0;
+    -fx-border-radius: 20;
+
+}
+
+#submit:hover {
+
+    -fx-background-color: #1B1464;
+    -fx-border-color: #1B1464;
+}
+
+
+.progress-bar {
+        -fx-accent: #007AFF; /*(to left,#007AFF,#B3E5FC);*/
+        -fx-background-color: #f3f3f3;
+        -fx-border-color: #ccc;
+        -fx-border-width: 1px;
+        -fx-border-radius: 5px;
+}
+
+.progress-bar:pressed {
+        -fx-accent: #45a049;
+}
+
+.progress-bar:focused {
+        -fx-accent: #007AFF;
+}
+
+
+#tapbtn {
+
+        -fx-background-color: #ffffff;
+        -fx-text-fill: #ffffff;
+        -fx-border-radius: 0;
+}
+
+
+#tapToContinuebtn {
+
+        -fx-background-color: #ffffff;
+        -fx-text-fill: #007AFF;
+        -fx-border-width: 0;
+        -fx-font-family: "Book Antiqua";
+
+}

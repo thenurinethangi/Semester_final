@@ -1,0 +1,378 @@
+/* General TableView Style */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0px;
+    -fx-border-radius: 5px;
+    -fx-padding: 0px;
+    -fx-table-cell-border-color: #ffffff;
+    -fx-table-header-border-color: #ffffff;
+}
+
+/* Header Style */
+.table-view .column-header {
+    -fx-background-color:  #ffffff;
+    -fx-text-fill: #636e72;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-font-size: 11px;
+    -fx-padding: 35px 0px;
+}
+
+
+/* Cell Styling */
+.table-view .table-cell {
+    -fx-padding: 3px 16px;
+    -fx-text-fill: #333;
+    -fx-font-size: 11px;
+    -fx-alignment: CENTER;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #fff;
+}
+
+.table-view:selected{
+
+    -fx-border-color: ECEFF1;
+}
+
+/* Row Background Colors */
+.table-row-cell:odd .table-cell {
+    -fx-background-color: #ffffff;
+}
+
+.table-row-cell:even .table-cell {
+    -fx-background-color: #f1f2f6;
+}
+
+/* Selected Row Styling */
+.table-row-cell:selected .table-cell {
+    -fx-background-color: #007AFF;
+    -fx-text-fill: #007AFF;
+}
+
+/* Hover Effect for Rows */
+.table-row-cell:hover .table-cell {
+    -fx-background-color: #BA68C8;
+}
+
+/* Font Size Adjustments for Row and Header Text */
+.table-view .table-row-cell {
+    -fx-font-size: 12px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+}
+
+.table-view .cell:selected {
+    -fx-background-color: #007AFF;
+}
+
+.table-view .cell:even {
+    -fx-background-color: #f1f2f6;
+}
+
+.table-view .cell:odd {
+    -fx-background-color: #fff;
+}
+
+.table-view .table-row-cell {
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell .label {
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell .text-field {
+    -fx-font-size: 12px;
+}
+
+
+/* TableView Scroll Bar - General */
+.table-view .scroll-bar {
+    -fx-background-color: transparent; /* Background behind the scroll bar */
+}
+
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0; /* Track background color */
+}
+
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #b0bec5; /* Default color for the thumb (scroll handle) */
+    -fx-background-radius: 6px; /* Rounded thumb */
+    -fx-padding: 2px;
+}
+
+/* Hover effect for the thumb */
+.table-view .scroll-bar:horizontal .thumb:hover,
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #CFD8DC; /* Darker color when hovering over the thumb */
+}
+
+/* Pressed effect for the thumb */
+.table-view .scroll-bar:horizontal .thumb:pressed,
+.table-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #B0BEC5; /* Even darker color when thumb is pressed */
+}
+
+/* Styling for scrollbar buttons (increment/decrement arrows) */
+.table-view .scroll-bar:horizontal .increment-button,
+.table-view .scroll-bar:horizontal .decrement-button,
+.table-view .scroll-bar:vertical .increment-button,
+.table-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent; /* No background color for arrow buttons */
+    -fx-padding: 4px; /* Padding around the arrows */
+}
+
+.table-view .scroll-bar:horizontal .increment-arrow,
+.table-view .scroll-bar:horizontal .decrement-arrow,
+.table-view .scroll-bar:vertical .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #CFD8DC; /* Color for arrows */
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Custom arrow shape */
+}
+
+/* Hover effect for scrollbar buttons */
+.table-view .scroll-bar:horizontal .increment-button:hover,
+.table-view .scroll-bar:horizontal .decrement-button:hover,
+.table-view .scroll-bar:vertical .increment-button:hover,
+.table-view .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: #e0e0e0; /* Light background on hover */
+}
+
+/* Hide scrollbar track background when not scrolling */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+.table-view .scroll-bar:vertical:hover,
+.table-view .scroll-bar:horizontal:hover {
+    -fx-opacity: 1; /* Show scroll bars when hovering over the table */
+}
+
+
+
+
+
+/* ListView Background */
+.list-view {
+    -fx-background-color: #f0f2f5;  /* Soft gray background */
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px;
+}
+
+/* ListCell (each item) */
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 15px 15px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #2d3436;  /* Dark gray text */
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 1px 0; /* Subtle divider line */
+    -fx-border-style: solid;
+    -fx-border-radius: 10px;
+}
+
+
+.list-cell.odd-row {
+    -fx-background-color: #ffffff; /* White for odd rows */
+}
+
+/* Even Row Background */
+.list-cell.even-row {
+    -fx-background-color: #ECEFF1; /* Light gray for even rows */
+}
+
+
+/* Hover Effect */
+.list-view .list-cell:hover {
+    -fx-background-color: #dfe6e9;  /* Light hover background */
+}
+
+/* Selected Item */
+.list-view .list-cell:selected {
+    -fx-background-color: #74b9ff;  /* Light blue for selected item */
+    -fx-text-fill: #ffffff;  /* White text for contrast */
+}
+
+/* Focus on Selected Item */
+.list-view:focused .list-cell:selected {
+    -fx-background-color: #0984e3;  /* Brighter blue when focused */
+    -fx-text-fill: #ffffff;
+}
+
+/* Scroll Bar Styling */
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #b2bec3;
+    -fx-background-radius: 5px;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #b2bec3;
+    -fx-background-radius: 5px;
+}
+
+
+
+
+/* Style for the DatePicker */
+.date-picker {
+    -fx-background-color: #f5f5f5; /* Background color of the DatePicker */
+    -fx-border-color: #d3d3d3; /* Border color */
+    -fx-border-radius: 5px; /* Rounded corners for the border */
+    -fx-padding: 0px; /* Padding inside the DatePicker */
+    -fx-font-size: 12px; /* Font size for the text */
+    -fx-text-fill: #333333; /* Text color */
+}
+
+/* Style for the DatePicker popup button (calendar button) */
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 5px;
+}
+
+.date-picker .arrow {
+    -fx-background-color: #039be5; /* Color of the calendar icon arrow */
+    -fx-padding: 5px;
+}
+
+/* Hover effect for the DatePicker */
+.date-picker:hover {
+    -fx-background-color: #e0f7fa; /* Light blue background on hover */
+    -fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); /* Border color when hovered */
+}
+
+/* Focused state for the DatePicker */
+.date-picker:focused {
+    -fx-background-color: #ffffff; /* White background when focused */
+    -fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); /* Blue border when focused */
+    -fx-border-width: 1.5px; /* Thicker border when focused */
+}
+
+/* Style for the Calendar popup */
+.date-picker-popup {
+    -fx-background-color: #ffffff; /* Background color of the popup */
+    -fx-border-color: #039be5; /* Border color for the popup */
+    -fx-border-radius: 5px; /* Rounded corners for the popup */
+    -fx-padding: 10px; /* Padding inside the popup */
+}
+
+/* Style for the calendar cells (days) */
+.date-picker-popup .day-cell {
+    -fx-background-color: #f5f5f5; /* Background for day cells */
+    -fx-text-fill: #333333; /* Text color for days */
+}
+
+/* Hover effect for the days in the calendar */
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #e0f7fa; /* Background color on hover */
+}
+
+/* Style for the selected day */
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #039be5; /* Blue background for the selected day */
+    -fx-text-fill: #ffffff; /* White text color for the selected day */
+}
+
+/* Style for the month/year label in the DatePicker popup */
+.date-picker-popup .label {
+    -fx-font-size: 16px; /* Font size for the month/year label */
+    -fx-text-fill: #039be5; /* Color for the month/year label */
+}
+
+/* Style for the navigation buttons in the popup (next/previous month) */
+.date-picker-popup .button {
+    -fx-background-color: transparent; /* Transparent background for buttons */
+    -fx-text-fill: #039be5; /* Text color for the buttons */
+}
+
+
+
+
+.text-area {
+    -fx-background-color:  #ffffff; /* White background */
+    -fx-text-fill: #2f3542;        /* Black text for readability */
+    -fx-border-color:  #ffffff;     /* Light gray border */
+    -fx-border-width: 0px;         /* Thin border for a modern look */
+    -fx-border-radius: 0px;        /* Slightly rounded corners */
+    -fx-background-radius: 0px;    /* Matches the border radius */
+    -fx-padding: 0px;              /* Space inside the TextArea */
+    -fx-font-size: 13;
+}
+
+.text-area .content {
+    -fx-background-color: #ffffff; /* Keeps the content area consistent */
+}
+
+
+
+
+.tab-pane {
+    -fx-background-color: #ffffff; /* White background */
+    -fx-border-color: #D1D1D1;     /* Light gray border */
+    -fx-border-width: 1px;         /* Thin border */
+    -fx-border-radius: 5px;        /* Rounded corners */
+}
+
+.tab {
+    -fx-background-color: #ffffff; /* Light gray background for tabs */
+    -fx-text-fill: #333333;        /* Dark gray text */
+    -fx-font-size: 13;
+    -fx-padding: 8px 16px;         /* Padding for tabs */
+    -fx-border-radius: 5px 5px 0 0; /* Rounded corners at the top */
+    -fx-background-radius: 5px 5px 0 0;
+}
+
+.tab:selected {
+    -fx-background-color: #007AFF; /* Accent color when selected */
+    -fx-text-fill: #ffffff;        /* White text when selected */
+    -fx-border-width: 0 0 2px 0;   /* Subtle bottom border */
+    -fx-border-color: #007AFF;     /* Matches background color for consistency */
+}
+
+.tab:hover {
+    -fx-background-color: #E0E0E0; /* Slightly darker on hover */
+}
+
+.tab-header-area {
+    -fx-background-color: #ffffff; /* Background for the tab header area */
+    -fx-padding: 4px;              /* Space around the tab headers */
+    -fx-border-color: transparent; /* No border to blend with the main area */
+}
+
+.tab-content-area {
+    -fx-background-color: #ffffff; /* White background for the content area */
+    -fx-padding: 16px;             /* Padding inside the tab content */
+}
+
+.tab-button {
+    -fx-background-color: #007AFF; /* Primary blue color */
+    -fx-text-fill: #FFFFFF;         /* White text */
+    -fx-background-radius: 5px;     /* Rounded corners */
+    -fx-border-color: transparent;  /* No border */
+    -fx-padding: 6px 12px;          /* Padding for the button */
+    -fx-font-size: 14px;            /* Font size */
+    -fx-cursor: hand;               /* Hand cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2); /* Subtle shadow */
+}
+
+.tab-button:hover {
+    -fx-background-color: #005BB5; /* Darker blue on hover */
+}
+
+.tab-button:pressed {
+    -fx-background-color: #004494; /* Even darker blue when pressed */
+    -fx-padding: 7px 11px;         /* Adjusted padding for pressed effect */
+}
+
+.tab-button:disabled {
+    -fx-background-color: #CCCCCC; /* Light gray background when disabled */
+    -fx-text-fill: #666666;        /* Gray text when disabled */
+    -fx-cursor: default;           /* Default cursor when disabled */
+}

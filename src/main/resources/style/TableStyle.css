@@ -1,0 +1,157 @@
+/* General TableView Style */
+.table-view {
+    -fx-background-color: ECEFF1;
+    -fx-border-color: ECEFF1;
+    -fx-border-width: 0px;
+    -fx-border-radius: 5px;
+    -fx-padding: 0px;
+    -fx-table-cell-border-color: #CFD8DC;
+    -fx-table-header-border-color: ECEFF1;
+}
+
+/* Header Style */
+.table-view .column-header {
+    -fx-background-color:  ECEFF1;
+    -fx-text-fill: #636e72;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-font-size: 11px;
+    -fx-padding: 25px 0px;
+}
+
+
+/* Cell Styling */
+.table-view .table-cell {
+    -fx-padding: 6px 17px;
+    -fx-text-fill: #333;
+    -fx-font-size: 11px;
+    -fx-alignment: CENTER;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #fff;
+}
+
+.table-view:selected{
+
+    -fx-border-color: ECEFF1;
+}
+
+/* Row Background Colors */
+.table-row-cell:odd .table-cell {
+    -fx-background-color: #ECEFF1;
+}
+
+.table-row-cell:even .table-cell {
+    -fx-background-color: #ffffff;
+}
+
+/* Selected Row Styling */
+.table-row-cell:selected .table-cell {
+    -fx-background-color: #007AFF;
+    -fx-text-fill: #007AFF;
+}
+
+/* Hover Effect for Rows */
+.table-row-cell:hover .table-cell {
+    -fx-background-color: #BA68C8;
+}
+
+/* Font Size Adjustments for Row and Header Text */
+.table-view .table-row-cell {
+    -fx-font-size: 12px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: ECEFF1;
+}
+
+.table-view .cell:selected {
+    -fx-background-color: #007AFF;
+}
+
+.table-view .cell:even {
+    -fx-background-color: #ECEFF1;
+}
+
+.table-view .cell:odd {
+    -fx-background-color: #fff;
+}
+
+.table-view .table-row-cell {
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell .label {
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell .text-field {
+    -fx-font-size: 12px;
+}
+
+
+/* TableView Scroll Bar - General */
+.table-view .scroll-bar {
+    -fx-background-color: transparent; /* Background behind the scroll bar */
+}
+
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0; /* Track background color */
+}
+
+.table-view .scroll-bar:horizontal .thumb,
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #b0bec5; /* Default color for the thumb (scroll handle) */
+    -fx-background-radius: 6px; /* Rounded thumb */
+    -fx-padding: 2px;
+}
+
+/* Hover effect for the thumb */
+.table-view .scroll-bar:horizontal .thumb:hover,
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #CFD8DC; /* Darker color when hovering over the thumb */
+}
+
+/* Pressed effect for the thumb */
+.table-view .scroll-bar:horizontal .thumb:pressed,
+.table-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: #B0BEC5; /* Even darker color when thumb is pressed */
+}
+
+/* Styling for scrollbar buttons (increment/decrement arrows) */
+.table-view .scroll-bar:horizontal .increment-button,
+.table-view .scroll-bar:horizontal .decrement-button,
+.table-view .scroll-bar:vertical .increment-button,
+.table-view .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent; /* No background color for arrow buttons */
+    -fx-padding: 4px; /* Padding around the arrows */
+}
+
+.table-view .scroll-bar:horizontal .increment-arrow,
+.table-view .scroll-bar:horizontal .decrement-arrow,
+.table-view .scroll-bar:vertical .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #CFD8DC; /* Color for arrows */
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Custom arrow shape */
+}
+
+/* Hover effect for scrollbar buttons */
+.table-view .scroll-bar:horizontal .increment-button:hover,
+.table-view .scroll-bar:horizontal .decrement-button:hover,
+.table-view .scroll-bar:vertical .increment-button:hover,
+.table-view .scroll-bar:vertical .decrement-button:hover {
+    -fx-background-color: #e0e0e0; /* Light background on hover */
+}
+
+/* Hide scrollbar track background when not scrolling */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+.table-view .scroll-bar:vertical:hover,
+.table-view .scroll-bar:horizontal:hover {
+    -fx-opacity: 1; /* Show scroll bars when hovering over the table */
+}
+

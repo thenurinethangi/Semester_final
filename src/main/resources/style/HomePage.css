@@ -1,0 +1,518 @@
+#pane2{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #9E9E9E;
+    -fx-border-width: 0.5,0,0,0;
+}
+
+#pane3{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #9E9E9E;
+    -fx-border-width: 0.5,0,0,0;
+
+}
+
+#p1{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 1,1,1,1;
+    -fx-border-radius: 10;
+
+}
+
+#searchtxt{
+
+    -fx-background-color: ECEFF1;
+    -fx-border-color: ECEFF1;
+    -fx-border-width: 1,1,1,1;
+    -fx-border-radius: 3;
+    -fx-text-fill: #000000;
+    -fx-padding: 0px 0px 0px 35px;
+
+}
+
+#searchtxt:focused{
+
+    -fx-background-color: ECEFF1;
+    -fx-border-color: #E1F5FE;
+
+}
+
+
+#adminbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-border-radius: 10;
+
+}
+
+
+#forwardbtn{
+
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-border-radius: 10;
+
+}
+
+#forwardbtn:hover {
+
+    -fx-background-color: #E1F5FE;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#backbtn{
+
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-border-radius: 10;
+
+}
+
+
+#backbtn:hover {
+
+    -fx-background-color: #E1F5FE;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#dashboardbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#dashboardbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#customerbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#customerbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#requestbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#requestbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#unitbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#unitbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#tenantbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#tenantbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#ownerbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#ownerbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#contractbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#contractbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#maintenancebtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#maintenancebtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#complainbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#complainbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#statusCheckbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#statusCheckbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#paymentbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#paymentbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#expencebtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#expencebtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#returnbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#returnbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#floorbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#floorbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#logOutbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#logOutbtn:hover {
+
+    -fx-background-color: #FAFAFA;
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+
+#analysisbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#analysisbtn:hover {
+
+    -fx-background-color: linear-gradient(to right, #E3F2FD, #007AFF);
+    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0.0, 0, 1);*/
+
+}
+
+#ownersbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#incomebtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#expencesbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#profitbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#salesbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#totalCustomerbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#availableUnitsbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#unitsbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+#tenantsbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#employeebtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#maintancebtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#noOfFloorbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#houseTypesbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#complainsbtn{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#moreInfobtn15{
+
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0,0,0,0;
+    -fx-text-fill: #353b48;
+
+}
+
+
+#notificationbtn{
+
+    -fx-background-color: #ffffff;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="484.0" prefWidth="963.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.SignUpController">
+   <children>
+      <Pane fx:id="pane1" layoutX="-3.0" prefHeight="484.0" prefWidth="561.0" style="-fx-background-color: #ffffff;" stylesheets="@../style/Loging.css">
+         <children>
+            <ImageView fitHeight="476.0" fitWidth="375.0" layoutX="96.0" layoutY="111.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/undraw_apartment_rent_o0ut.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="76.0" layoutY="42.0" text="R">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="33.0" fitWidth="55.0" layoutX="22.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/undraw_House_searching_re_stk8.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="50.0" layoutY="27.0" prefHeight="53.0" prefWidth="34.0" text="G">
+               <font>
+                  <Font name="Berlin Sans FB Demi Bold" size="36.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Label layoutX="615.0" layoutY="262.0" text="Email" textFill="#0000007f">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="615.0" layoutY="320.0" text="Password" textFill="#00000081" />
+      <TextField fx:id="email" layoutX="614.0" layoutY="280.0" prefHeight="38.0" prefWidth="284.0" promptText="tnathangi@gmail.com" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+      <Label layoutX="613.0" layoutY="37.0" text="Sign Up">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="614.0" layoutY="89.0" prefHeight="16.0" prefWidth="284.0" text="Welcome to The Grandview Residences management" textFill="#0000007e">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+      <Label layoutX="614.0" layoutY="103.0" text="Platform" textFill="#00000080">
+         <font>
+            <Font size="11.0" />
+         </font></Label>
+      <TextField fx:id="password" layoutX="614.0" layoutY="339.0" prefHeight="38.0" prefWidth="284.0" promptText="nethangi192" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+      <Label layoutX="614.0" layoutY="396.0" />
+      <Label layoutX="679.0" layoutY="461.0" text="Already have an account?" textFill="#00000081" />
+      <Button fx:id="signUpbtn1" layoutX="614.0" layoutY="403.0" mnemonicParsing="false" onAction="#signUpOnAction" prefHeight="38.0" prefWidth="284.0" style="-fx-background-radius: 9;" stylesheets="@../style/Loging.css" text="Sign Up">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button fx:id="signInbtn1" layoutX="814.0" layoutY="457.0" mnemonicParsing="false" onAction="#signInOnAction" prefHeight="26.0" prefWidth="55.0" stylesheets="@../style/Loging.css" text="Sign In" textFill="#151ec9">
+         <font>
+            <Font size="11.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Button fx:id="exitbtn" layoutX="924.0" layoutY="11.0" mnemonicParsing="false" onAction="#exitOnAction" prefHeight="17.0" prefWidth="24.0" rotate="-45.0" style="-fx-background-radius: 50;" stylesheets="@../style/Loging.css" text="+">
+         <font>
+            <Font name="System Bold" size="10.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Label layoutX="616.0" layoutY="202.0" text="Full Name" textFill="#0000007f">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="fullName" layoutX="614.0" layoutY="220.0" prefHeight="38.0" prefWidth="284.0" promptText="Thenuri Nethangi Nanayakkara" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+      <Label layoutX="615.0" layoutY="141.0" text="User Name" textFill="#0000007f">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="userName" layoutX="613.0" layoutY="159.0" prefHeight="38.0" prefWidth="284.0" promptText="tnethangi" style="-fx-background-radius: 10; -fx-border-radius: 10;" stylesheets="@../style/Loging.css" />
+   </children>
+</AnchorPane>

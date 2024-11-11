@@ -1,0 +1,13 @@
+.textField{
+
+    -fx-background-color:  #ffffff;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color:   #747d8c;
+}
+
+
+.textField:focused{
+
+    -fx-border-width: 0 0 2 0;
+
+}

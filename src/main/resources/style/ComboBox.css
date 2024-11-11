@@ -1,0 +1,40 @@
+.combo-box {
+    -fx-background-color: #ffffff; /* Light gray background */
+    -fx-border-color:  #a4b0be; /* Gray border */
+    -fx-text-fill: #747d8c;
+    -fx-border-radius: 3; /* Rounded corners */
+    -fx-padding: 2; /* Padding around content */
+    -fx-font-size: 12; /* Larger font size */
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent; /* No background for the arrow */
+    -fx-border-color: transparent; /* No border for the arrow */
+    -fx-padding: 0; /* No padding for the arrow */
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-background-color: #a4b0be; /* Gray color for the arrow */
+}
+
+.combo-box .list-view {
+    -fx-background-color: #ffffff; /* White background for the list */
+    -fx-border-color: #ccc; /* Gray border for the list */
+    -fx-border-radius: 5; /* Rounded corners for the list */
+    -fx-padding: 5; /* Padding around list items */
+}
+
+.combo-box .list-view .list-cell {
+    -fx-background-color: #fff; /* White background for list items */
+    -fx-text-fill: #333; /* Dark gray text color */
+    -fx-padding: 5; /* Padding around list item text */
+}
+
+.combo-box .list-view .list-cell:hover {
+    -fx-background-color: #ced6e0; /* Light gray background on hover */
+}
+
+.combo-box .list-view .list-cell:selected {
+    -fx-background-color: #a4b0be; /* Gray background when selected */
+    -fx-text-fill: #ffffff; /* White text color when selected */
+}

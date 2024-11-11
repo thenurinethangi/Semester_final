@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 8; -fx-border-color: #9E9E9E; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.HouseTypeController">
+   <children>
+      <Button fx:id="editbtn" layoutX="773.0" layoutY="583.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <TableView fx:id="table" layoutX="385.0" layoutY="215.0" prefHeight="358.0" prefWidth="484.0" style="-fx-background-radius: 12;" stylesheets="@../style/Test.css">
+        <columns>
+          <TableColumn fx:id="houseTypeColumn" prefWidth="208.66668701171875" text="House Type" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="275.33331298828125" text="Description" />
+        </columns>
+      </TableView>
+      <ComboBox fx:id="tableRowsCmb" layoutX="385.0" layoutY="170.0" onAction="#tableRowsCmbOnAction" prefHeight="31.0" prefWidth="31.0" stylesheets="@../style/Unit.css" />
+      <Button fx:id="deletebtn" layoutX="824.0" layoutY="583.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <ComboBox fx:id="sortCmb" layoutX="439.0" layoutY="170.0" onAction="#sortCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="836.0" layoutY="590.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/delete.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="786.0" layoutY="588.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/edit%20(1).png" />
+         </image>
+      </ImageView>
+      <Pane layoutX="23.0" layoutY="54.0" prefHeight="77.0" prefWidth="846.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
+         <children>
+            <Button fx:id="refreshbtn" layoutX="738.0" layoutY="21.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Label layoutX="10.0" layoutY="16.0" text="House Type">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Button fx:id="searchbtn" layoutX="788.0" layoutY="21.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="800.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/search-interface-symbol.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="751.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/reload.png" />
+               </image>
+            </ImageView>
+            <ComboBox fx:id="houseTypeCmb" layoutX="20.0" layoutY="35.0" onAction="#houseTypeCmbOnAction" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+         </children>
+      </Pane>
+      <Pane layoutX="23.0" layoutY="170.0" prefHeight="399.0" prefWidth="342.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8;">
+         <children>
+            <Label layoutX="25.0" layoutY="23.0" text="House Type:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="houseTypetxt" layoutX="29.0" layoutY="42.0" prefHeight="25.0" prefWidth="238.0" promptText="Single Person" stylesheets="@../style/Unit.css" />
+            <Label layoutX="25.0" layoutY="101.0" text="Description:" textFill="#747d8c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="descriptiontxt" layoutX="29.0" layoutY="121.0" prefHeight="25.0" prefWidth="238.0" promptText="enough for single person(student,worker)" stylesheets="@../style/Unit.css" />
+            <Button fx:id="clearbtn" layoutX="103.0" layoutY="355.0" mnemonicParsing="false" onAction="#clearOnAction" prefHeight="32.0" prefWidth="80.0" stylesheets="@../style/Unit.css" text="Clear" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="addbtn" layoutX="187.0" layoutY="355.0" mnemonicParsing="false" onAction="#addOnAction" prefHeight="32.0" prefWidth="80.0" stylesheets="@../style/Unit.css" text="Add" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <Label layoutX="29.0" layoutY="16.0" text="House Type">
+         <font>
+            <Font name="Candara Bold" size="20.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="205.0" fitWidth="210.0" layoutX="395.0" layoutY="379.0" opacity="0.48" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/type%20(1).png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane layoutY="-3.0" prefHeight="442.0" prefWidth="600.0" stylesheets="@../style/Test.css" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="                Monthly Rent Payment                   ">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="171.0" prefWidth="369.0">
+                     <children>
+                        <Label layoutX="4.0" layoutY="2.0" text="Tenant*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField layoutX="5.0" layoutY="20.0" prefHeight="30.0" prefWidth="269.0" promptText="enter tenant Id or Phone no" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </TextField>
+                        <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="289.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/search-interface-symbol%20(1).png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="4.0" layoutY="84.0" text="House Holder Name*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="5.0" layoutY="102.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+                        <Line endX="402.0" layoutX="164.0" layoutY="68.0" startX="-164.0" stroke="#a6b1bd4d" />
+                        <Label layoutX="295.0" layoutY="84.0" text="Payment Month*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="296.0" layoutY="102.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+                        <Label layoutX="5.0" layoutY="148.0" text="House ID*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="6.0" layoutY="166.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+                        <Line endX="402.0" layoutX="164.0" layoutY="217.0" startX="-164.0" stroke="#a6b1bd4c" />
+                        <Label layoutX="4.0" layoutY="228.0" text="Amount Payable*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="5.0" layoutY="246.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="100000.00" textFill="#57606f">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Button layoutX="492.0" layoutY="316.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="63.0" style="-fx-background-color: #1A73E8; -fx-background-radius: 3;" text="Pay" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="               Property Damage Charges                ">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="4.0" layoutY="2.0" text="House Status Check No*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField layoutX="5.0" layoutY="20.0" prefHeight="30.0" prefWidth="269.0" promptText="enter status check no" style="-fx-background-color: #ffffff; -fx-border-color: #a4b0be; -fx-border-radius: 3;" />
+                        <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="289.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/search-interface-symbol%20(1).png" />
+                           </image>
+                        </ImageView>
+                        <Line endX="461.0" layoutX="105.0" layoutY="69.0" startX="-105.0" stroke="#a6b1bd4d" />
+                        <Label layoutX="4.0" layoutY="84.0" text="Tenant ID*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="5.0" layoutY="102.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+                        <Label layoutX="295.0" layoutY="84.0" text="Date*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="296.0" layoutY="102.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+                        <Line endX="461.0" layoutX="105.0" layoutY="158.0" startX="-105.0" stroke="#a6b1bd4d" />
+                        <Label layoutX="5.0" layoutY="172.0" text="Amount Payable*" textFill="#747d8c">
+                           <font>
+                              <Font name="Candara Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="6.0" layoutY="190.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="100000.00" textFill="#57606f">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Label>
+                        <Button layoutX="492.0" layoutY="316.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="63.0" style="-fx-background-color: #1A73E8; -fx-background-radius: 3;" text="Pay" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.RecommendedHousesController">
+   <children>
+      <AnchorPane layoutX="15.0" layoutY="14.0" prefHeight="595.0" prefWidth="590.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 5; -fx-border-color: #9E9E9E;">
+         <children>
+            <ListView fx:id="availableHousesList" layoutX="22.0" layoutY="54.0" onMouseClicked="#availableHousesListOnMouseClicked" prefHeight="234.0" prefWidth="548.0" stylesheets="@../style/Test.css" />
+            <ListView fx:id="recommendedHousesList" layoutX="22.0" layoutY="342.0" onMouseClicked="#recommendedHousesListOnMouseClicked" prefHeight="234.0" prefWidth="548.0" stylesheets="@../style/Test.css" />
+            <Label layoutX="22.0" layoutY="10.0" text="Available Houses">
+               <font>
+                  <Font name="Candara Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="22.0" layoutY="295.0" text="Recommended Houses">
+               <font>
+                  <Font name="Candara Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="22.0" layoutY="27.0" text="Under &quot;Available Houses,&quot; you can find houses that meet the selected request requirements," textFill="#747d8c">
+               <font>
+                  <Font name="Candara" size="10.0" />
+               </font>
+            </Label>
+            <Label layoutX="22.0" layoutY="37.0" text="Click on the house you wish to assign to the request." textFill="#747d8c">
+               <font>
+                  <Font name="Candara" size="10.0" />
+               </font>
+            </Label>
+            <Label layoutX="22.0" layoutY="323.0" text="Click on the house you want to assign." textFill="#747d8c">
+               <font>
+                  <Font name="Candara" size="10.0" />
+               </font>
+            </Label>
+            <Label layoutX="22.0" layoutY="312.0" text="Under Recommended Houses, you'll find system-recommended options for your selected requests," textFill="#747d8c">
+               <font>
+                  <Font name="Candara" size="10.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

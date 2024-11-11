@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="499.0" prefWidth="667.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.PurchaseRequestDetailsController">
+   <children>
+      <AnchorPane layoutX="-1.0" prefHeight="525.0" prefWidth="777.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <Label layoutX="14.0" layoutY="17.0" text="Request ID:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="85.0" text="Current Address:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="50.0" text="Customer Name:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="85.0" text="NIC:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="120.0" text="Phone No:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="120.0" text="Job Title:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="154.0" text="Living Arrangement:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="50.0" text="Customer ID:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="17.0" text="Date:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="188.0" text="Rent/Buy:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="154.0" text="Require House Type:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="188.0" text="No Of Family Members:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="223.0" text="Monthly Income:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="223.0" text="Annual Income:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="258.0" text="Bank Account Details:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="297.0" text="Reason To Move:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="337.0" text="Is Smorking? " textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="258.0" text="Previous Landlord Number:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="337.0" text="Has Criminal Background?" textFill="#2f3640" />
+            <Label layoutX="15.0" layoutY="378.0" text="Has Pets?" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="378.0" text="All Documents Provided:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="495.0" text="Customer Request Status:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="417.0" text="Agrees With Terms/Conditions:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="417.0" text="Qualified Customer?" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="495.0" text="Suggested House ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="458.0" text="Is Payments Completed:" textFill="#2f3640" />
+            <Label layoutX="384.0" layoutY="458.0" text="Request Status:" textFill="#2f3640" />
+            <Label fx:id="smoking" layoutX="171.0" layoutY="337.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="pets" layoutX="171.0" layoutY="378.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="payment" layoutX="171.0" layoutY="458.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="customerRequestStatus" layoutX="171.0" layoutY="495.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="isQualified" layoutX="171.0" layoutY="417.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="reasonToMove" layoutX="171.0" layoutY="297.0" prefHeight="17.0" prefWidth="588.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="bankDetails" layoutX="171.0" layoutY="258.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="annualIncome" layoutX="171.0" layoutY="223.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="rentOrBuy" layoutX="171.0" layoutY="188.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="livingArrangemnt" layoutX="171.0" layoutY="154.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="phoneNo" layoutX="171.0" layoutY="120.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="nic" layoutX="171.0" layoutY="85.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="customerId" layoutX="171.0" layoutY="50.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="requestId" layoutX="171.0" layoutY="17.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="termsAndConditions" layoutX="567.0" layoutY="417.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="houseId" layoutX="567.0" layoutY="495.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="requestStatus" layoutX="567.0" layoutY="458.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="docProvided" layoutX="567.0" layoutY="378.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="criminalBackground" layoutX="567.0" layoutY="337.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="landlordNo" layoutX="567.0" layoutY="258.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="monthlyIncome" layoutX="567.0" layoutY="223.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="familyMembersCount" layoutX="567.0" layoutY="188.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="houseType" layoutX="567.0" layoutY="154.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="job" layoutX="567.0" layoutY="120.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="address" layoutX="567.0" layoutY="85.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="name" layoutX="567.0" layoutY="50.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="date" layoutX="567.0" layoutY="17.0" prefHeight="17.0" prefWidth="194.0" text="R0001" textFill="#747d8c" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,30 @@
+/* General TextField Style */
+.text-field {
+    -fx-background-color:  #ffffff;      /* Light background color */
+    -fx-border-color:  #E0E0E0;          /* Light gray border */
+    -fx-border-radius: 5px;            /* Rounded corners for border */
+    -fx-border-width: 1.5px;              /* Border width */
+    -fx-text-fill: #2d3436;             /* Dark text color */
+    -fx-font-size: 12px;                /* Font size */
+}
+
+
+/* Focused TextField Style */
+.text-field:focused {
+    -fx-background-color: #ffffff;      /* White background on focus */
+    -fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE);         /* Bright blue border on focus */
+    -fx-border-width: 1.5px;            /* Slightly thicker border */
+}
+
+/* Hover Effect */
+.text-field:hover {
+    -fx-background-color: #f7f9fa;      /* Slightly brighter on hover */
+    -fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE);      /* Darker gray border on hover */
+}
+
+/* Placeholder (Prompt Text) Style */
+.text-field .text {
+    -fx-fill: #b2bec3;                  /* Gray color for placeholder text */
+    -fx-font-size: 12px;
+}
+
