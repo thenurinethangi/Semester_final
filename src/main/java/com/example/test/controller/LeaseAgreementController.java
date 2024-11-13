@@ -402,7 +402,26 @@ public class LeaseAgreementController implements Initializable {
 
                         returnHouse.setOnMouseClicked((MouseEvent event) -> {
 
-                            System.out.println("bye");
+                            LeaseAgreementTm selectedLeaseAgreement = table.getSelectionModel().getSelectedItem();
+
+                            if(selectedLeaseAgreement.getStatus().equals("Expired")){
+
+                                try{
+                                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/HouseReturnConformation.fxml"));
+                                    Parent root = fxmlLoader.load();
+                                    HouseReturnConformationController houseReturnConformationController = fxmlLoader.getController();
+                                    houseReturnConformationController.setSelectedAgreementDetailsToReturn(selectedLeaseAgreement);
+                                    Scene scene = new Scene(root);
+                                    Stage stage = new Stage();
+                                    stage.setScene(scene);
+                                    stage.show();
+
+                                }
+                                catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
 
                         });
 

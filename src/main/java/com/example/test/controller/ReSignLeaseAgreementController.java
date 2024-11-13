@@ -126,7 +126,7 @@ public class ReSignLeaseAgreementController {
                houseInspectCheckLabel.setText("No Inspect For This Rented House");
            }
            else{
-               if(!houseStatusCheckDto.getIsPaymentDone().equals(" N/A")){
+               if(houseStatusCheckDto.getIsPaymentDone().equals("N/A")){
 
                    houseInspectCheckLabel.setText("Total House Status: "+houseStatusCheckDto.getTotalHouseStatus() + "  ,  No Payments For Damages");
                }

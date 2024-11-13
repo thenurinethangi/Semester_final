@@ -127,12 +127,14 @@ public class TenantModel {
 
     public TenantDto getMoreTenantDetails(String tenantId) throws SQLException, ClassNotFoundException {
 
-        String sql = "select email,securityPaymentRemain from tenant where tenantId = ?";
+        String sql = "select headOfHouseholdName,lastPayementMonth,email,securityPaymentRemain from tenant where tenantId = ?";
         ResultSet result = CrudUtility.execute(sql,tenantId);
 
         TenantDto tenantDto = new TenantDto();
 
         if(result.next()){
+           tenantDto.setName(result.getString("headOfHouseholdName"));
+           tenantDto.setLastPaidMonth(result.getString("lastPayementMonth"));
            tenantDto.setSecurityPaymentRemain(result.getDouble("securityPaymentRemain"));
            tenantDto.setEmail(result.getString("email"));
         }
@@ -197,6 +199,14 @@ public class TenantModel {
             return result.getString("email");
         }
         return "0";
+    }
+
+    public boolean makeTenantDeactivate(String tenantId) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE tenant SET isActiveTenant = ? WHERE tenantId = ?";
+        boolean result = CrudUtility.execute(sql,0,tenantId);
+
+        return result;
     }
 }
 

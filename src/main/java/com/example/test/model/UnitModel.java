@@ -3,6 +3,7 @@ package com.example.test.model;
 import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
 import com.example.test.dto.UnitDto;
+import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.RequestTm;
 import com.example.test.dto.tm.UnitTm;
 import javafx.collections.FXCollections;
@@ -245,4 +246,19 @@ public class UnitModel {
         return units;
     }
 
+    public boolean setHouseAvailable(LeaseAgreementTm selectedLeaseAgreementDetails) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE house SET status = ? WHERE houseId = ?";
+        boolean result = CrudUtility.execute(sql,"Available",selectedLeaseAgreementDetails.getHouseId());
+
+        return result;
+    }
 }
+
+
+
+
+
+
+
+

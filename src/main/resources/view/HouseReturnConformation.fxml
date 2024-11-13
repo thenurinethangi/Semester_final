@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="431.0" prefWidth="643.0" style="-fx-background-color: #ffffff; -fx-border-color: #D1D1D1;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.HouseReturnConformationController">
+   <children>
+      <Label layoutX="18.0" layoutY="10.0" prefHeight="29.0" prefWidth="592.0" style="-fx-padding: 2 0 2 0;" text="Return House Confirmation" textFill="#57606f">
+         <font>
+            <Font name="Candara Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="57.0" text="Tenant ID*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="118.0" text="Tenant Name*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="326.0" layoutY="118.0" text="House ID*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="184.0" text="Last Rent Paid Month*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button fx:id="rePayAndReturnBtn" alignment="CENTER" layoutX="15.0" layoutY="352.0" mnemonicParsing="false" onAction="#rePayAndReturnOnAction" prefHeight="28.0" prefWidth="608.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Refund Payment and Reclaim House" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="returnBtn" alignment="CENTER" layoutX="15.0" layoutY="391.0" mnemonicParsing="false" onAction="#onlyReturnOnAction" prefHeight="28.0" prefWidth="608.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="Payment Retained, Reclaim House" textAlignment="JUSTIFY" textFill="#57606f">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Label layoutX="19.0" layoutY="105.0" prefHeight="13.0" prefWidth="270.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label fx:id="tenantNameLabel" layoutX="19.0" layoutY="136.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="houseIdLabel" layoutX="326.0" layoutY="136.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="lastPaidDateLabel" layoutX="19.0" layoutY="203.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label layoutX="325.0" layoutY="184.0" text="Remaining Security Deposit*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="remainingDepositLabel" layoutX="326.0" layoutY="203.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label layoutX="18.0" layoutY="247.0" text="Last House Inspect Details*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="lastHouseStatusCheckLabel" layoutX="19.0" layoutY="266.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="tenantIdLabel" layoutX="19.0" layoutY="75.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextArea fx:id="messageLabel" layoutX="19.0" layoutY="298.0" prefHeight="44.0" prefWidth="592.0" stylesheets="@../style/Test.css" />
+   </children>
+</AnchorPane>

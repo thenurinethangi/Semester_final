@@ -96,7 +96,7 @@ public class LeaseAgreementModel {
 
             LocalDate endingDate = LocalDate.parse(endDate);
 
-            if (LocalDate.now().isAfter(endingDate)) {
+            if (LocalDate.now().isAfter(endingDate) && !status.equals("Canceled")) {
 
                 status = "Expired";
 
@@ -179,6 +179,14 @@ public class LeaseAgreementModel {
 
         return tenantModel.getTenantEmailById(selectedLeaseAgreement);
 
+    }
+
+    public boolean makeSelectedLeaseAgreementCancel(String leaseId) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE leaseagreement SET status = ? WHERE leaseId = ?";
+        boolean result = CrudUtility.execute(sql,"Canceled",leaseId);
+
+        return result;
     }
 }
 
