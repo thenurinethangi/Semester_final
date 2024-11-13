@@ -4,6 +4,7 @@ import com.example.test.CrudUtility;
 import com.example.test.dto.CustomerDto;
 import com.example.test.dto.TenantDto;
 import com.example.test.dto.UnitDto;
+import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.PaymentTm;
 import com.example.test.dto.tm.RequestTm;
 import com.example.test.dto.tm.TenantTm;
@@ -184,6 +185,18 @@ public class TenantModel {
         boolean resultTwo = CrudUtility.execute(sqlTwo,updatedMonth,selectedPayment.getTenantId());
 
         return resultTwo;
+    }
+
+    public String getTenantEmailById(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
+
+        String sql = "select email from tenant where tenantId = ?";
+        ResultSet result = CrudUtility.execute(sql,selectedLeaseAgreement.getTenantId());
+
+        if(result.next()){
+
+            return result.getString("email");
+        }
+        return "0";
     }
 }
 

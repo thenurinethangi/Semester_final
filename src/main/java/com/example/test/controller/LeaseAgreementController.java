@@ -337,9 +337,29 @@ public class LeaseAgreementController implements Initializable {
 
                         mail.setOnMouseClicked((MouseEvent event) -> {
 
+                            LeaseAgreementTm selectedLeaseAgreement = table.getSelectionModel().getSelectedItem();
+
+                            if(selectedLeaseAgreement.getStatus().equals("Canceled") || selectedLeaseAgreement.getStatus().equals("Deleted")) {
+
+                                return;
+                            }
+
+                            String subject = "";
+                            String message = "";
+                            if(selectedLeaseAgreement.getStatus().equals("Expired")){
+
+                                subject = "Regarding the expiration of the lease turn. \n";
+
+                                message = "We would like to formally inform you that your lease has expired.\nThe lease term commenced on "+ selectedLeaseAgreement.getStartDate()+ " , and concluded on " + selectedLeaseAgreement.getEndDate()+".\nWe kindly request that you either sign the lease again or vacate the premises.\nPlease take the necessary actions promptly.\nThank you for your attention to this matter!\n\n\n" +
+                                        "The GrandView Residences,  \n" +
+                                        "Colombo 08.";
+                            }
+
                             try{
-                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/SendMail.fxml"));
+                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MailSendFormInLeaseAgreement.fxml"));
                                 Parent root = fxmlLoader.load();
+                                MailSendFormInLeaseAgreementController mailSendFormInLeaseAgreementController = fxmlLoader.getController();
+                                mailSendFormInLeaseAgreementController.setSelectedTenantDetailsToSendMail(selectedLeaseAgreement,subject,message);
                                 Scene scene = new Scene(root);
                                 Stage stage = new Stage();
                                 stage.setScene(scene);
@@ -357,7 +377,26 @@ public class LeaseAgreementController implements Initializable {
 
                         reSign.setOnMouseClicked((MouseEvent event) -> {
 
-                            System.out.println("bye");
+                            LeaseAgreementTm selectedLeaseAgreement = table.getSelectionModel().getSelectedItem();
+
+                            if(selectedLeaseAgreement.getStatus().equals("Expired")){
+
+                                try{
+                                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ReSignLeaseAgreement.fxml"));
+                                    Parent root = fxmlLoader.load();
+                                    ReSignLeaseAgreementController reSignLeaseAgreementController = fxmlLoader.getController();
+                                    reSignLeaseAgreementController.setSelectedAgreementDetails(selectedLeaseAgreement);
+                                    Scene scene = new Scene(root);
+                                    Stage stage = new Stage();
+                                    stage.setScene(scene);
+                                    stage.show();
+
+                                }
+                                catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
 
                         });
 

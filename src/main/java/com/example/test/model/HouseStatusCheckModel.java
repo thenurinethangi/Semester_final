@@ -1,8 +1,9 @@
 package com.example.test.model;
 
 import com.example.test.CrudUtility;
+import com.example.test.dto.HouseStatusCheckDto;
 import com.example.test.dto.tm.HouseStatusCheckTm;
-import com.example.test.dto.tm.HouseTypeTm;
+import com.example.test.dto.tm.LeaseAgreementTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -34,6 +35,22 @@ public class HouseStatusCheckModel {
         }
 
         return allHouseInspectChecks;
+    }
+
+    public HouseStatusCheckDto getLastInspectCheckByTenant(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
+
+        String sql = "select totalHouseStatus,isPaymentDone from housestatuscheck where tenantId = ? order by checkNumber desc limit 1";
+        ResultSet result = CrudUtility.execute(sql,selectedLeaseAgreement.getTenantId());
+
+        HouseStatusCheckDto houseStatusCheckDto = new HouseStatusCheckDto();
+
+        if(result.next()){
+
+            houseStatusCheckDto.setTotalHouseStatus(result.getString("totalHouseStatus"));
+            houseStatusCheckDto.setIsPaymentDone(result.getString("isPaymentDone"));
+        }
+
+        return houseStatusCheckDto;
     }
 }
 

@@ -5,6 +5,7 @@ module com.example.test {
     requires mysql.connector.j;
     requires static lombok;
     requires org.controlsfx.controls;
+    requires java.mail;
 
     opens com.example.test.db to javafx.base;
     opens com.example.test to javafx.fxml, lombok;

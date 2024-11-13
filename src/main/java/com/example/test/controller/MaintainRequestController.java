@@ -2,8 +2,14 @@ package com.example.test.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class MaintainRequestController {
 
@@ -77,6 +83,17 @@ public class MaintainRequestController {
     @FXML
     void addNewMaintenanceRequestOnAction(ActionEvent event) {
 
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewMaintenanceRequest.fxml"));
+            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(root);
+            Stage s1 = new Stage();
+            s1.setScene(scene);
+            s1.show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML

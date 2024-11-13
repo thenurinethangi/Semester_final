@@ -1,7 +1,5 @@
 package com.example.test.controller;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -198,6 +196,18 @@ public class HomeController implements Initializable {
     @FXML
     void expenceOnAction(ActionEvent event) {
 
+        try {
+            pageLabel.setText("Expense");
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Expense.fxml"));
+            AnchorPane anchorPane = fxmlLoader.load();
+            mainPnae.getChildren().clear();
+            mainPnae.getChildren().add(anchorPane);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -225,7 +235,7 @@ public class HomeController implements Initializable {
         try {
             pageLabel.setText("Maintenance Request");
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MaintainRequest.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MaintenanceRequest.fxml"));
             AnchorPane anchorPane = fxmlLoader.load();
             mainPnae.getChildren().clear();
             mainPnae.getChildren().add(anchorPane);

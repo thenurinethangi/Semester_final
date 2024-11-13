@@ -99,22 +99,15 @@
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
             </ImageView>
-            <Label layoutX="502.0" layoutY="10.0" text="Job Title">
+            <Label layoutX="502.0" layoutY="10.0" text="Living Arrangement">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
-            <TextField fx:id="jobTitleTxt" layoutX="504.0" layoutY="26.0" onKeyReleased="#jobTitleTxtOnKeyReleased" prefHeight="30.0" prefWidth="150.0" promptText="Single" styleClass="textField" stylesheets="@../style/BlueTextField.css" />
             <ListView fx:id="nicList" layoutX="340.0" layoutY="58.0" onMouseClicked="#nicListOnMouseClicked" prefHeight="73.0" prefWidth="150.0" stylesheets="@../style/Customer.css" />
-            <ListView fx:id="jobTitleList" layoutX="504.0" layoutY="57.0" onMouseClicked="#jobTitleListOnMouseClicked" prefHeight="42.0" prefWidth="150.0" stylesheets="@../style/Customer.css" />
-            <ComboBox fx:id="livingArrangementCmb" layoutX="11.0" layoutY="97.0" onAction="#livingArrangementCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="livingArrangementCmb" layoutX="504.0" layoutY="26.0" onAction="#livingArrangementCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
             <ComboBox fx:id="customerIdCmb" layoutX="11.0" layoutY="26.0" onAction="#customerIdCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
             <ListView fx:id="nameList" layoutX="176.0" layoutY="58.0" onMouseClicked="#nameListOnMouseClicked" prefHeight="70.0" prefWidth="150.0" stylesheets="@../style/Customer.css" />
-            <Label layoutX="4.0" layoutY="79.0" text="Living Arrangement">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Label>
          </children>
       </Pane>
       <Pane layoutX="13.0" layoutY="13.0" prefHeight="127.0" prefWidth="204.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 5; -fx-background-radius: 6;">
