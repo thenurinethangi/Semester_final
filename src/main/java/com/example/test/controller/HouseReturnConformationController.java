@@ -1,5 +1,6 @@
 package com.example.test.controller;
 
+import com.example.test.dto.HouseReturnDto;
 import com.example.test.dto.HouseStatusCheckDto;
 import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.LeaseAgreementTm;
@@ -52,13 +53,14 @@ public class HouseReturnConformationController {
     private final TenantModel tenantModel = new TenantModel();
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
     private final ReturnHouseModel returnHouseModel = new ReturnHouseModel();
+    private  HouseReturnDto houseReturnDto;
     private TenantDto tenant;
 
     @FXML
     void onlyReturnOnAction(ActionEvent event) {
 
         try {
-            String response = returnHouseModel.reclaimHouse(selectedLeaseAgreementDetails);
+            String response = returnHouseModel.reclaimHouse(houseReturnDto);
 
             Notifications notifications = Notifications.create();
             notifications.title("Notification");
@@ -86,7 +88,7 @@ public class HouseReturnConformationController {
     void rePayAndReturnOnAction(ActionEvent event) {
 
         try {
-            String response = returnHouseModel.reclaimHouseWithRefundSecurityDeposit(selectedLeaseAgreementDetails,tenant);
+            String response = returnHouseModel.reclaimHouseWithRefundSecurityDeposit(houseReturnDto,tenant);
 
             Notifications notifications = Notifications.create();
             notifications.title("Notification");
@@ -115,6 +117,8 @@ public class HouseReturnConformationController {
 
         this.selectedLeaseAgreementDetails = selectedLeaseAgreement;
 
+        houseReturnDto = new HouseReturnDto(selectedLeaseAgreementDetails.getTenantId(),selectedLeaseAgreementDetails.getHouseId(),selectedLeaseAgreementDetails.getLeaseId(),"Expiration of the Lease Turn");
+
         tenantIdLabel.setText(selectedLeaseAgreement.getTenantId());
         houseIdLabel.setText(selectedLeaseAgreement.getHouseId());
 
@@ -125,7 +129,7 @@ public class HouseReturnConformationController {
             lastPaidDateLabel.setText(tenant.getLastPaidMonth());
             remainingDepositLabel.setText(String.valueOf(tenant.getSecurityPaymentRemain()));
 
-            HouseStatusCheckDto houseStatusCheckDto = houseStatusCheckModel.getLastInspectCheckByTenant(selectedLeaseAgreementDetails);
+            HouseStatusCheckDto houseStatusCheckDto = houseStatusCheckModel.getLastInspectCheckByTenant(selectedLeaseAgreementDetails.getTenantId());
             if(houseStatusCheckDto.getTotalHouseStatus()==null){
 
                 lastHouseStatusCheckLabel.setText("No Inspect For This Rented House");

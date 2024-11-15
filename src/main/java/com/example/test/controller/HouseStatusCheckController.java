@@ -1,9 +1,12 @@
 package com.example.test.controller;
 
+import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.*;
 import com.example.test.model.HouseStatusCheckModel;
 import com.example.test.model.PaymentModel;
+import com.example.test.model.TenantModel;
 import com.example.test.model.UnitModel;
+import com.example.test.validation.UserInputValidation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -113,6 +116,7 @@ public class HouseStatusCheckController implements Initializable {
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
     private final PaymentModel paymentModel = new PaymentModel();
     private final UnitModel unitModel = new UnitModel();
+    private final TenantModel tenantModel = new TenantModel();
 
 
     public HouseStatusCheckController() throws SQLException, ClassNotFoundException {
@@ -148,7 +152,7 @@ public class HouseStatusCheckController implements Initializable {
     }
 
     @FXML
-    void getSelectedRow(MouseEvent event) {
+    void getSelectedRow(MouseEvent event) {//no need
 
     }
 
@@ -340,20 +344,42 @@ public class HouseStatusCheckController implements Initializable {
 
                         mail.setOnMouseClicked((MouseEvent event) -> {
 
-                            try{
-                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/SendMail.fxml"));
-                                Parent root = fxmlLoader.load();
-                                Scene scene = new Scene(root);
-                                Stage stage = new Stage();
-                                stage.setScene(scene);
-                                stage.initStyle(StageStyle.UNDECORATED);
-                                stage.setX(50);
-                                stage.setY(50);
-                                stage.show();
+                            HouseStatusCheckTm selectedHouseCheck = table.getSelectionModel().getSelectedItem();
 
-                            }
-                            catch (IOException e) {
-                                throw new RuntimeException(e);
+                            String costOfRepair = selectedHouseCheck.getEstimatedCostForRepair();
+                            boolean costOfRepairValidation = UserInputValidation.checkDecimalValidation(costOfRepair);
+                            boolean isEnough = false;
+
+                            if(costOfRepairValidation){
+                                try {
+                                    isEnough = tenantModel.checkRemainingSecurityFundEnoughOrNot(selectedHouseCheck.getTenantId(),costOfRepair);
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                } catch (ClassNotFoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet") && !isEnough){
+
+                                    try{
+                                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/SendMail.fxml"));
+                                        Parent root = fxmlLoader.load();
+                                        SendMailController sendMailController = fxmlLoader.getController();
+                                        sendMailController.prepareMail(selectedHouseCheck);
+                                        Scene scene = new Scene(root);
+                                        Stage stage = new Stage();
+                                        stage.setScene(scene);
+                                        stage.initStyle(StageStyle.UNDECORATED);
+                                        stage.setX(50);
+                                        stage.setY(50);
+                                        stage.show();
+
+                                    }
+                                    catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+
                             }
 
 
@@ -361,6 +387,60 @@ public class HouseStatusCheckController implements Initializable {
 
                         reduceFromSecurityCharge.setOnMouseClicked((MouseEvent event) -> {
 
+                            HouseStatusCheckTm selectedHouseCheck = table.getSelectionModel().getSelectedItem();
+
+                            String costOfRepair = selectedHouseCheck.getEstimatedCostForRepair();
+                            boolean costOfRepairValidation = UserInputValidation.checkDecimalValidation(costOfRepair);
+                            boolean isEnough = false;
+
+                            if(costOfRepairValidation) {
+                                try {
+                                    isEnough = tenantModel.checkRemainingSecurityFundEnoughOrNot(selectedHouseCheck.getTenantId(), costOfRepair);
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
+                                } catch (ClassNotFoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet") && isEnough) {
+
+                                    try {
+                                        String response = tenantModel.reduceRepairCostFromSecurityCharge(selectedHouseCheck.getTenantId(), costOfRepair);
+
+                                        Notifications notifications = Notifications.create();
+                                        notifications.title("Notification");
+                                        notifications.text(response);
+                                        notifications.hideCloseButton();
+                                        notifications.hideAfter(Duration.seconds(5));
+                                        notifications.position(Pos.CENTER);
+                                        notifications.darkStyle();
+                                        notifications.showInformation();
+
+                                        if(response.equals("Repair costs were successfully deducted from the security deposit.")){
+                                            boolean isChangeTheStatus = houseStatusCheckModel.changeStatus(selectedHouseCheck.getCheckNumber(),"Reduced from Security Deposit");
+                                            loadTable();
+
+                                            TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedHouseCheck.getTenantId());
+
+                                            Notifications notification = Notifications.create();
+                                            notification.title("Notification");
+                                            notification.text("Tenant :"+tenantDto.getTenantId()+", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
+                                            notification.hideCloseButton();
+                                            notification.hideAfter(Duration.seconds(5));
+                                            notification.position(Pos.CENTER);
+                                            notification.darkStyle();
+                                            notification.showInformation();
+
+                                            //send mail here to tenant
+                                        }
+
+                                    } catch (SQLException e) {
+                                        throw new RuntimeException(e);
+                                    } catch (ClassNotFoundException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
 
                         });
 

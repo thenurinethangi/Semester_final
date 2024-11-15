@@ -3,6 +3,7 @@ package com.example.test.model;
 import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
 import com.example.test.dto.ExpenseDto;
+import com.example.test.dto.HouseReturnDto;
 import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.ReturnHouseTm;
@@ -33,7 +34,7 @@ public class ReturnHouseModel {
 
     public ObservableList<ReturnHouseTm> getAllReturns() throws SQLException, ClassNotFoundException {
 
-        String sql = "select * from returnhouse";
+        String sql = "select * from returnhouse where isActive!=0";
         ResultSet result = CrudUtility.execute(sql);
 
         ObservableList<ReturnHouseTm> returnHouses = FXCollections.observableArrayList();
@@ -46,7 +47,13 @@ public class ReturnHouseModel {
             String tenantId = result.getString(4);
             String houseId = result.getString(5);
             String refundedAmount = result.getString(6);
+            if(refundedAmount==null){
+                refundedAmount = "N/A";
+            }
             String expenseNo = result.getString(7);
+            if(expenseNo==null){
+                expenseNo = "N/A";
+            }
 
             ReturnHouseTm returnHouse = new ReturnHouseTm(returnNo,reason,date,tenantId,houseId,refundedAmount,expenseNo);
             returnHouses.add(returnHouse);
@@ -55,31 +62,31 @@ public class ReturnHouseModel {
         return  returnHouses;
     }
 
-    public String reclaimHouse(LeaseAgreementTm selectedLeaseAgreementDetails) throws SQLException, ClassNotFoundException {
+    public String reclaimHouse(HouseReturnDto houseReturnDto) throws SQLException, ClassNotFoundException {
 
         Connection connection = DBConnection.getInstance().getConnection();
         connection.setAutoCommit(false);
 
         try {
-           boolean isMakeAvailable = unitModel.setHouseAvailable(selectedLeaseAgreementDetails);
+           boolean isMakeAvailable = unitModel.setHouseAvailable(houseReturnDto);
            if(!isMakeAvailable){
               connection.rollback();
               return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
            }
 
-           boolean isMakeTenantDeactivate = tenantModel.makeTenantDeactivate(selectedLeaseAgreementDetails.getTenantId());
+           boolean isMakeTenantDeactivate = tenantModel.makeTenantDeactivate(houseReturnDto.getTenantId());
             if(!isMakeTenantDeactivate){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
             }
 
-            boolean isMakeCancelled = leaseAgreementModel.makeSelectedLeaseAgreementCancel(selectedLeaseAgreementDetails.getLeaseId());
+            boolean isMakeCancelled = leaseAgreementModel.makeSelectedLeaseAgreementCancel(houseReturnDto.getAgreementId());
             if(!isMakeCancelled){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
             }
 
-            boolean isAddNewReturnDetails = addNewHouseReturnWithoutRefund(selectedLeaseAgreementDetails);
+            boolean isAddNewReturnDetails = addNewHouseReturnWithoutRefund(houseReturnDto);
             if(!isAddNewReturnDetails){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
@@ -99,13 +106,14 @@ public class ReturnHouseModel {
         return "0";
     }
 
-    private boolean addNewHouseReturnWithoutRefund(LeaseAgreementTm selectedLeaseAgreementDetails) throws SQLException, ClassNotFoundException {
+    private boolean addNewHouseReturnWithoutRefund(HouseReturnDto houseReturnDto) throws SQLException, ClassNotFoundException {
 
         String newReturnId =  generateNewReturnId();
         String today = String.valueOf(LocalDate.now());
 
-        String sql = "insert into returnhouse values(?,?,?,?,?,?,?)";
-        boolean result = CrudUtility.execute(sql,newReturnId,"Expiration of the Lease Turn", today,selectedLeaseAgreementDetails.getTenantId(),selectedLeaseAgreementDetails.getHouseId(),"N/A","N/A");
+        String sql = "INSERT INTO returnhouse (returnNo, reason, date, tenantId, houseId, isActive)\n" +
+                "VALUES (?,?,?,?,?,?)";
+        boolean result = CrudUtility.execute(sql,newReturnId,houseReturnDto.getReasonToLeave(), today,houseReturnDto.getTenantId(),houseReturnDto.getHouseId(),1);
 
         return result;
     }
@@ -132,25 +140,25 @@ public class ReturnHouseModel {
 
     }
 
-    public String reclaimHouseWithRefundSecurityDeposit(LeaseAgreementTm selectedLeaseAgreementDetails, TenantDto tenant) throws SQLException, ClassNotFoundException {
+    public String reclaimHouseWithRefundSecurityDeposit(HouseReturnDto houseReturnDto, TenantDto tenant) throws SQLException, ClassNotFoundException {
 
         Connection connection = DBConnection.getInstance().getConnection();
         connection.setAutoCommit(false);
 
         try {
-            boolean isMakeAvailable = unitModel.setHouseAvailable(selectedLeaseAgreementDetails);
+            boolean isMakeAvailable = unitModel.setHouseAvailable(houseReturnDto);
             if(!isMakeAvailable){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
             }
 
-            boolean isMakeTenantDeactivate = tenantModel.makeTenantDeactivate(selectedLeaseAgreementDetails.getTenantId());
+            boolean isMakeTenantDeactivate = tenantModel.makeTenantDeactivate(houseReturnDto.getTenantId());
             if(!isMakeTenantDeactivate){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
             }
 
-            boolean isMakeCancelled = leaseAgreementModel.makeSelectedLeaseAgreementCancel(selectedLeaseAgreementDetails.getLeaseId());
+            boolean isMakeCancelled = leaseAgreementModel.makeSelectedLeaseAgreementCancel(houseReturnDto.getAgreementId());
             if(!isMakeCancelled){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
@@ -162,7 +170,7 @@ public class ReturnHouseModel {
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
             }
 
-            boolean isAddNewReturnDetails = addNewHouseReturnWithRefund(selectedLeaseAgreementDetails);
+            boolean isAddNewReturnDetails = addNewHouseReturnWithRefund(houseReturnDto);
             if(!isAddNewReturnDetails){
                 connection.rollback();
                 return "Something Went Wrong With Reclaiming The House. Please Try Again Later";
@@ -183,17 +191,60 @@ public class ReturnHouseModel {
     }
 
 
-    private boolean addNewHouseReturnWithRefund(LeaseAgreementTm selectedLeaseAgreementDetails) throws SQLException, ClassNotFoundException {
+    private boolean addNewHouseReturnWithRefund(HouseReturnDto houseReturnDto) throws SQLException, ClassNotFoundException {
 
         String newReturnId =  generateNewReturnId();
         String today = String.valueOf(LocalDate.now());
 
         ExpenseDto expenseDto = expenseModel.getLastExpenseDetails();
 
-        String sql = "insert into returnhouse values(?,?,?,?,?,?,?)";
-        boolean result = CrudUtility.execute(sql,newReturnId,"Expiration of the Lease Turn", today,selectedLeaseAgreementDetails.getTenantId(),selectedLeaseAgreementDetails.getHouseId(),expenseDto.getAmount(),expenseDto.getExpenseNo());
+        String sql = "INSERT INTO returnhouse (returnNo, reason, date, tenantId, houseId, refundedAmount, expenseNo, isActive)\n" +
+                "VALUES (?,?,?,?,?,?,?,?)";
+        boolean result = CrudUtility.execute(sql,newReturnId,houseReturnDto.getReasonToLeave(),today,houseReturnDto.getTenantId(),houseReturnDto.getHouseId(),expenseDto.getAmount(),expenseDto.getExpenseNo(),1);
 
         return result;
+    }
+
+
+    public ObservableList<String> getAllDistinctTenantIds() throws SQLException, ClassNotFoundException {
+
+        String sql = "SELECT DISTINCT tenantId FROM returnhouse order by tenantId asc";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<String> distinctTenantIds = FXCollections.observableArrayList();
+        distinctTenantIds.add("Select");
+
+        while (result.next()){
+
+            distinctTenantIds.add(result.getString("tenantId"));
+        }
+
+        return distinctTenantIds;
+    }
+
+
+    public ObservableList<String> getAllDistinctHouseIds() throws SQLException, ClassNotFoundException {
+
+        String sql = "SELECT DISTINCT houseId FROM returnhouse order by houseId asc";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<String> distinctHouseIds = FXCollections.observableArrayList();
+        distinctHouseIds.add("Select");
+
+        while (result.next()){
+
+            distinctHouseIds.add(result.getString("houseId"));
+        }
+
+        return distinctHouseIds;
+    }
+
+    public String setSelectedReturnDetailDeactivate(ReturnHouseTm selectedRow) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE returnhouse SET isActive = ? WHERE returnNo = ?";
+        boolean result = CrudUtility.execute(sql,0,selectedRow.getReturnNo());
+
+        return result ? "Successfully Deleted The House Return Details" : "Failed To Delete The House Return Details,Try Again Later";
     }
 }
 

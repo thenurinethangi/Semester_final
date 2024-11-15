@@ -9,16 +9,20 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ReturnHouseController implements Initializable {
@@ -108,20 +112,53 @@ public class ReturnHouseController implements Initializable {
     @FXML
     void deleteOnAction(ActionEvent event) {
 
+        ReturnHouseTm selectedRow = table.getSelectionModel().getSelectedItem();
+
+        if(selectedRow==null){
+            return;
+        }
+
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType cancelButton = new ButtonType("Cancel");
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText("Please Confirm First");
+        alert.setContentText("Are you sure you want to delete selected return house details?");
+
+        alert.getButtonTypes().setAll(yesButton, cancelButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton) {
+            String response = null;
+            try {
+                response = returnHouseModel.setSelectedReturnDetailDeactivate(selectedRow);
+
+                Notifications notifications = Notifications.create();
+                notifications.title("Notification");
+                notifications.text(response);
+                notifications.hideCloseButton();
+                notifications.hideAfter(Duration.seconds(5));
+                notifications.position(Pos.CENTER);
+                notifications.darkStyle();
+                notifications.showInformation();
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            return;
+        }
     }
 
-    @FXML
-    void editOnAction(ActionEvent event) {
-
-    }
-
-    @FXML
-    void getSelectedRow(MouseEvent event) {
-
-    }
 
     @FXML
     void refreshOnAction(ActionEvent event) {
+
+        clean();
 
     }
 
@@ -138,6 +175,20 @@ public class ReturnHouseController implements Initializable {
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
 
+        Integer value = tableRowsCmb.getSelectionModel().getSelectedItem();
+
+        if(value==null){
+            return;
+        }
+
+        ObservableList<ReturnHouseTm> returnHouseTms = FXCollections.observableArrayList();
+
+        for (int i=0; i<value; i++){
+            returnHouseTms.add(tableData.get(i));
+        }
+
+        table.setItems(returnHouseTms);
+
     }
 
     @Override
@@ -146,6 +197,11 @@ public class ReturnHouseController implements Initializable {
         setTableColumnsValues();
         loadTable();
         setRowCmbValues();
+        setReturnNoCmbValues();
+        setExpenseCmbValues();
+        setTenantIdCmbValues();
+        setHouseIdCmbValues();
+
     }
 
 
@@ -190,6 +246,79 @@ public class ReturnHouseController implements Initializable {
 
         tableRowsCmb.setItems(rows);
         tableRowsCmb.getSelectionModel().selectLast();
+
+    }
+
+
+    public void setReturnNoCmbValues(){
+
+        ObservableList<String> returnNos = FXCollections.observableArrayList();
+        returnNos.add("Select");
+
+        for(ReturnHouseTm x : tableData){
+            returnNos.add(x.getReturnNo());
+        }
+
+        returnNoCmb.setItems(returnNos);
+        returnNoCmb.getSelectionModel().selectFirst();
+
+    }
+
+
+    public void setExpenseCmbValues(){
+
+        ObservableList<String> expenseNos = FXCollections.observableArrayList();
+        expenseNos.add("Select");
+
+        for(ReturnHouseTm x : tableData){
+            if(!x.getExpenseNo().equals("N/A")) {
+                expenseNos.add(x.getExpenseNo());
+            }
+        }
+
+        expenseCmb.setItems(expenseNos);
+        expenseCmb.getSelectionModel().selectFirst();
+
+    }
+
+
+    public void setTenantIdCmbValues(){
+
+        try {
+            ObservableList<String> distinctTenantIds = returnHouseModel.getAllDistinctTenantIds();
+            tenantIdCmb.setItems(distinctTenantIds);
+            tenantIdCmb.getSelectionModel().selectFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void setHouseIdCmbValues(){
+
+        try {
+            ObservableList<String> distinctHouseIds = returnHouseModel.getAllDistinctHouseIds();
+            houseIdCmb.setItems(distinctHouseIds);
+            houseIdCmb.getSelectionModel().selectFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void clean(){
+
+        loadTable();
+        setRowCmbValues();
+        setReturnNoCmbValues();
+        setExpenseCmbValues();
+        setTenantIdCmbValues();
+        setHouseIdCmbValues();
+        table.getSelectionModel().clearSelection();
 
     }
 }

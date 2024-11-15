@@ -25,8 +25,8 @@ public class PaymentModel {
         String today = String.valueOf(LocalDate.now());
         System.out.println("Local date now: "+today);
 
-        String sql = "insert into payment values(?,?,?,?,?,?)";
-        boolean result = CrudUtility.execute(sql,invoiceNo,amount,today,paymentType,tenantId,1);
+        String sql = "insert into payment values(?,?,?,?,?,?,?)";
+        boolean result = CrudUtility.execute(sql,invoiceNo,amount,today,paymentType,tenantId,1,0);
 
         return result;
     }

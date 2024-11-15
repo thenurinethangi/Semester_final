@@ -2,6 +2,7 @@ package com.example.test.model;
 
 import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
+import com.example.test.dto.HouseReturnDto;
 import com.example.test.dto.UnitDto;
 import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.RequestTm;
@@ -246,12 +247,47 @@ public class UnitModel {
         return units;
     }
 
-    public boolean setHouseAvailable(LeaseAgreementTm selectedLeaseAgreementDetails) throws SQLException, ClassNotFoundException {
+    public boolean setHouseAvailable(HouseReturnDto houseReturnDto) throws SQLException, ClassNotFoundException {
 
         String sql = "UPDATE house SET status = ? WHERE houseId = ?";
-        boolean result = CrudUtility.execute(sql,"Available",selectedLeaseAgreementDetails.getHouseId());
+        boolean result = CrudUtility.execute(sql,"Available",houseReturnDto.getHouseId());
 
         return result;
+    }
+
+    public UnitDto getHouseDetailsByHouseId(String houseId) throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from house where houseId = ?";
+        ResultSet result = CrudUtility.execute(sql,houseId);
+
+        UnitDto unit = new UnitDto();
+
+        if(result.next()){
+
+            String id = result.getString(1);
+            unit.setHouseId(id);
+            int bedRooms = result.getInt(2);
+            unit.setBedroom(bedRooms);
+            int bathRoom = result.getInt(3);
+            unit.setBathroom(bathRoom);
+            String rentOrBuy = result.getString(4);
+            unit.setRentOrBuy(rentOrBuy);
+            String totalValue = result.getString(5);
+            unit.setTotalValue(totalValue);
+            String securityCharge = result.getString(6);
+            unit.setSecurityCharge(securityCharge);
+            String monthlyRent = result.getString(7);
+            unit.setMonthlyRent(monthlyRent);
+            String status = result.getString(8);
+            unit.setStatus(status);
+            String houseType = result.getString(9);
+            unit.setHouseType(houseType);
+            int floor = result.getInt(10);
+            unit.setFloorNo(floor);
+
+        }
+
+        return unit;
     }
 }
 

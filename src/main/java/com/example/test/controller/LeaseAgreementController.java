@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
+import java.util.Optional;
 
 public class LeaseAgreementController implements Initializable {
 
@@ -482,5 +483,46 @@ public class LeaseAgreementController implements Initializable {
     }
 
     public void deleteOnAction(ActionEvent event) {
+
+        LeaseAgreementTm selectedLeaseAgreement = table.getSelectionModel().getSelectedItem();
+
+        if(selectedLeaseAgreement.getStatus().equals("Canceled")){
+
+            ButtonType yesButton = new ButtonType("Yes");
+            ButtonType cancelButton = new ButtonType("Cancel");
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Please Confirm First");
+            alert.setContentText("Are you sure you want to delete selected lease agreement?");
+
+            alert.getButtonTypes().setAll(yesButton, cancelButton);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == yesButton) {
+
+                try {
+                    String response = leaseAgreementModel.makeLeaseAgreementDeleted(selectedLeaseAgreement);
+
+                    Notifications notifications = Notifications.create();
+                    notifications.title("Notification");
+                    notifications.text(response);
+                    notifications.hideCloseButton();
+                    notifications.hideAfter(Duration.seconds(5));
+                    notifications.position(Pos.CENTER);
+                    notifications.darkStyle();
+                    notifications.showInformation();
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } else {
+                return;
+            }
+
+        }
     }
 }

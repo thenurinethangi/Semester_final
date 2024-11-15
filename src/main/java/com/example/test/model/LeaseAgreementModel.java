@@ -79,7 +79,7 @@ public class LeaseAgreementModel {
 
     public ObservableList<LeaseAgreementTm> getAllAgreements() throws SQLException, ClassNotFoundException {
 
-        String sql = "select * from leaseagreement";
+        String sql = "SELECT * FROM leaseagreement WHERE status != 'Deleted'";
         ResultSet result = CrudUtility.execute(sql);
 
         ObservableList<LeaseAgreementTm> allAgreements = FXCollections.observableArrayList();
@@ -96,7 +96,7 @@ public class LeaseAgreementModel {
 
             LocalDate endingDate = LocalDate.parse(endDate);
 
-            if (LocalDate.now().isAfter(endingDate) && !status.equals("Canceled")) {
+            if (LocalDate.now().isAfter(endingDate) && !status.equals("Canceled") && !status.equals("Deleted")) {
 
                 status = "Expired";
 
@@ -132,7 +132,7 @@ public class LeaseAgreementModel {
 
     public HouseStatusCheckDto getLastHouseInspectCheckDetails(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
 
-        return houseStatusCheckModel.getLastInspectCheckByTenant(selectedLeaseAgreement);
+        return houseStatusCheckModel.getLastInspectCheckByTenant(selectedLeaseAgreement.getTenantId());
     }
 
 
@@ -187,6 +187,29 @@ public class LeaseAgreementModel {
         boolean result = CrudUtility.execute(sql,"Canceled",leaseId);
 
         return result;
+    }
+
+    public String makeLeaseAgreementDeleted(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE leaseagreement SET status = ? WHERE leaseId = ?";
+        boolean result = CrudUtility.execute(sql,"Deleted",selectedLeaseAgreement.getLeaseId());
+
+        return result ? "The Lease Agreement Has Been Successfully Deleted" : "Unable To Delete The Lease Agreement, Please Try Again Later.";
+    }
+
+    public String getLeaseAgreementByTenantId(String tenantId) throws SQLException, ClassNotFoundException {
+
+        String sql = "select leaseId from leaseagreement where tenantId = ?";
+        ResultSet result = CrudUtility.execute(sql,tenantId);
+
+        String leaseId = "";
+
+        if(result.next()){
+
+            leaseId = result.getString("leaseId");
+        }
+
+        return leaseId;
     }
 }
 

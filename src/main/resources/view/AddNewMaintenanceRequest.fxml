@@ -39,12 +39,12 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <Button alignment="CENTER" layoutX="324.0" layoutY="498.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="addBtn" alignment="CENTER" layoutX="324.0" layoutY="498.0" mnemonicParsing="false" onAction="#addOnAction" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Button alignment="CENTER" layoutX="19.0" layoutY="498.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="cancel" textAlignment="JUSTIFY" textFill="#57606f">
+      <Button fx:id="cancelBtn" alignment="CENTER" layoutX="19.0" layoutY="498.0" mnemonicParsing="false" onAction="#cancelOnAction" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="cancel" textAlignment="JUSTIFY" textFill="#57606f">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -54,10 +54,10 @@
             <Font size="9.0" />
          </font>
       </Label>
-      <Label layoutX="19.0" layoutY="227.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="326.0" layoutY="227.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <TextField layoutX="19.0" layoutY="305.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="NMR-0001" textFill="#57606f">
+      <Label fx:id="houseIdLabel" layoutX="19.0" layoutY="227.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="houseTypeLabel" layoutX="326.0" layoutY="227.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextField fx:id="descriptionTxt" layoutX="19.0" layoutY="305.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="requestIdLabel" layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="NMR-0001" textFill="#57606f">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -68,23 +68,28 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="309.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="309.0" layoutY="150.0" onMouseClicked="#searchIcon" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/search-interface-symbol%20(1).png" />
          </image>
       </ImageView>
-      <TextField layoutX="19.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" promptText="enter tenant id here" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextField fx:id="tenantIdTxt" layoutX="19.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" promptText="enter tenant id here" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
       <Label layoutX="18.0" layoutY="348.0" text="Estimated Cost*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField layoutX="19.0" layoutY="366.0" prefHeight="30.0" prefWidth="270.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextField fx:id="estimatedCostTxt" layoutX="19.0" layoutY="366.0" prefHeight="30.0" prefWidth="270.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
       <Label layoutX="18.0" layoutY="412.0" text="Choose Technician*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="19.0" layoutY="430.0" prefHeight="30.0" prefWidth="270.0" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="technicianCmb" layoutX="19.0" layoutY="430.0" prefHeight="30.0" prefWidth="270.0" stylesheets="@../style/ComboBox.css" />
+      <Label fx:id="estimatedCostErrorMsgLabel" layoutX="19.0" layoutY="395.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

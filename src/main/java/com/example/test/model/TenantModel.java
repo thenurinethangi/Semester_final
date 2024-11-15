@@ -41,7 +41,7 @@ public class TenantModel {
 
     public boolean addTenantToSystem(String tenantId, CustomerDto customerDetails, int membersCount, UnitDto rentingUnit, RequestTm request) throws SQLException, ClassNotFoundException {
 
-        String sql = "insert into tenant values(?,?,?,?,?,?,?,?,?,?)";
+        String sql = "insert into tenant values(?,?,?,?,?,?,?,?,?,?,?)";
 
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").toFormatter();
@@ -56,14 +56,14 @@ public class TenantModel {
         double monthlyPayment = Double.parseDouble(rentingUnit.getMonthlyRent());
         double securityPayment = Double.parseDouble(rentingUnit.getSecurityCharge());
 
-        boolean result = CrudUtility.execute(sql,tenantId,customerDetails.getName(),customerDetails.getPhoneNo(),membersCount,today,monthlyPayment,currentMonth,request.getHouseId(),customerDetails.getEmail(),securityPayment);
+        boolean result = CrudUtility.execute(sql,tenantId,customerDetails.getName(),customerDetails.getPhoneNo(),membersCount,today,monthlyPayment,currentMonth,request.getHouseId(),customerDetails.getEmail(),securityPayment,1);
 
         return result;
     }
 
     public ObservableList<TenantTm> getAllTenants() throws SQLException, ClassNotFoundException {
 
-        String sql = "select * from tenant";
+        String sql = "select * from tenant where isActiveTenant!=0";
         ResultSet result = CrudUtility.execute(sql);
 
         ObservableList<TenantTm> allTenants = FXCollections.observableArrayList();
@@ -127,16 +127,18 @@ public class TenantModel {
 
     public TenantDto getMoreTenantDetails(String tenantId) throws SQLException, ClassNotFoundException {
 
-        String sql = "select headOfHouseholdName,lastPayementMonth,email,securityPaymentRemain from tenant where tenantId = ?";
-        ResultSet result = CrudUtility.execute(sql,tenantId);
+        String sql = "select tenantId,headOfHouseholdName,lastPayementMonth,email,securityPaymentRemain,houseId from tenant where tenantId = ? and isActiveTenant = ?";
+        ResultSet result = CrudUtility.execute(sql,tenantId,1);
 
         TenantDto tenantDto = new TenantDto();
 
         if(result.next()){
-           tenantDto.setName(result.getString("headOfHouseholdName"));
-           tenantDto.setLastPaidMonth(result.getString("lastPayementMonth"));
-           tenantDto.setSecurityPaymentRemain(result.getDouble("securityPaymentRemain"));
-           tenantDto.setEmail(result.getString("email"));
+            tenantDto.setTenantId(result.getString("tenantId"));
+            tenantDto.setName(result.getString("headOfHouseholdName"));
+            tenantDto.setLastPaidMonth(result.getString("lastPayementMonth"));
+            tenantDto.setSecurityPaymentRemain(result.getDouble("securityPaymentRemain"));
+            tenantDto.setEmail(result.getString("email"));
+            tenantDto.setHouseId(result.getString("houseId"));
         }
 
         return tenantDto;
@@ -207,6 +209,31 @@ public class TenantModel {
         boolean result = CrudUtility.execute(sql,0,tenantId);
 
         return result;
+    }
+
+    public boolean checkRemainingSecurityFundEnoughOrNot(String tenantId, String costOfRepair) throws SQLException, ClassNotFoundException {
+
+        String sql = "select securityPaymentRemain from tenant where tenantId = ?";
+        ResultSet result = CrudUtility.execute(sql,tenantId);
+
+        double remainingSecurityDeposit = 0.0;
+        if(result.next()){
+
+            remainingSecurityDeposit = result.getDouble("securityPaymentRemain");
+        }
+
+        if(remainingSecurityDeposit>Double.valueOf(costOfRepair)){
+            return true;
+        }
+        return false;
+    }
+
+    public String reduceRepairCostFromSecurityCharge(String tenantId, String costOfRepair) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE tenant SET securityPaymentRemain = securityPaymentRemain - ? WHERE tenantId = ?";
+        boolean result = CrudUtility.execute(sql,Double.parseDouble(costOfRepair),tenantId);
+
+        return result ? "Repair costs were successfully deducted from the security deposit." : "Failed to deduct repair cost from security deposit, try again later";
     }
 }
 

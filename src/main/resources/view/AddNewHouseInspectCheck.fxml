@@ -10,7 +10,6 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="613.0" prefWidth="643.0" style="-fx-background-color: #ffffff; -fx-border-color: #D1D1D1;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.AddNewHouseInspectCheckController">
    <children>
       <Label layoutX="18.0" layoutY="10.0" prefHeight="29.0" prefWidth="592.0" style="-fx-padding: 2 0 2 0;" text="New House Inspect Check" textFill="#57606f">
@@ -23,8 +22,8 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="270.0" promptText="enter tenant id or phone number" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="306.0" layoutY="76.0" pickOnBounds="true" preserveRatio="true">
+      <TextField fx:id="tenantIdTxt" layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="270.0" promptText="enter tenant id or phone number" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <ImageView fitHeight="25.0" fitWidth="27.0" layoutX="306.0" layoutY="76.0" onMouseClicked="#searchIconClicked" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/search-interface-symbol%20(1).png" />
          </image>
@@ -51,44 +50,44 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="19.0" layoutY="295.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="livingRoomStatusCmb" layoutX="19.0" layoutY="295.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
       <Label layoutX="325.0" layoutY="276.0" text="Kitchen Status*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="326.0" layoutY="294.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="kitchenStatusCmb" layoutX="326.0" layoutY="294.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
       <Label layoutX="18.0" layoutY="344.0" text="Bed Room Status*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="19.0" layoutY="362.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="bedRoomStatusCmb" layoutX="19.0" layoutY="362.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
       <Label layoutX="325.0" layoutY="344.0" text="Bath Room Status*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="326.0" layoutY="362.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="bathRoomStatusCmb" layoutX="326.0" layoutY="362.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
       <Label layoutX="18.0" layoutY="410.0" text="Total House Status*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <ComboBox layoutX="19.0" layoutY="428.0" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
+      <ComboBox fx:id="totalHouseStatusCmb" layoutX="19.0" layoutY="428.0" onAction="#totalHouseStatusCmbOnAction" prefHeight="31.0" prefWidth="270.0" promptText="Select" stylesheets="@../style/ComboBox.css" />
       <Line endX="517.0" layoutX="108.0" layoutY="478.0" startX="-90.33334350585938" stroke="#a6b1bd4d" />
-      <Label layoutX="18.0" layoutY="492.0" text="estimatedCostForRepair*" textFill="#747d8c">
+      <Label layoutX="18.0" layoutY="492.0" text="Estimated Cost For Repair*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField layoutX="18.0" layoutY="510.0" prefHeight="30.0" prefWidth="270.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Button alignment="CENTER" layoutX="320.0" layoutY="572.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="300.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
+      <TextField fx:id="costForRepairTxt" layoutX="18.0" layoutY="510.0" prefHeight="30.0" prefWidth="270.0" promptText="N/A" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Button alignment="CENTER" layoutX="320.0" layoutY="572.0" mnemonicParsing="false" onAction="#addBtnOnAction" prefHeight="27.0" prefWidth="300.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Button alignment="CENTER" layoutX="14.0" layoutY="572.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="Cancel" textAlignment="JUSTIFY" textFill="#57606f">
+      <Button alignment="CENTER" layoutX="14.0" layoutY="572.0" mnemonicParsing="false" onAction="#cancelBtnOnAction" prefHeight="27.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="Cancel" textAlignment="JUSTIFY" textFill="#57606f">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -98,8 +97,13 @@
             <Font size="9.0" />
          </font>
       </Label>
-      <Label layoutX="19.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="326.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="19.0" layoutY="218.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="tenantNameLabel" layoutX="19.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="houseIdLabel" layoutX="326.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="houseTypeLabel" layoutX="19.0" layoutY="218.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="costForRepairErrorLabel" layoutX="17.0" layoutY="540.0" prefHeight="17.0" prefWidth="270.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

@@ -26,7 +26,7 @@ public class ExpenseModel {
         if(result.next()){
 
             String lastId = result.getString("expenceNo");
-            String subStr = lastId.substring(3);
+            String subStr = lastId.substring(4);
             System.out.println("sub string: "+subStr);
             int id = Integer.parseInt(subStr);
             id+=1;

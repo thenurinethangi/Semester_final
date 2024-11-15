@@ -70,6 +70,10 @@ public class MailSendFormInLeaseAgreementController {
         String subject = subjectTxt.getText();
         String msg = messageArea.getText();
 
+        if(recipientEmail.isEmpty() || subject.isEmpty() || msg.isEmpty()){
+            return;
+        }
+
         sendMail(recipientEmail,subject,msg);
     }
 

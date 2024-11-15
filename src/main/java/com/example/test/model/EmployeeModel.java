@@ -223,6 +223,20 @@ public class EmployeeModel {
 
         return employeeTms;
     }
+
+    public ObservableList<String> getTechnicians() throws SQLException, ClassNotFoundException {
+
+        String sql = "select name from employee where position like'Maintenance%' or 'Technician%'";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<String> technicians = FXCollections.observableArrayList();
+        technicians.add("Select");
+
+        while(result.next()){
+            technicians.add(result.getString("name"));
+        }
+        return technicians;
+    }
 }
 
 
