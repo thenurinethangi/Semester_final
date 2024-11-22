@@ -1,5 +1,6 @@
 package com.example.test.controller;
 
+import com.example.test.db.DBConnection;
 import com.example.test.dto.tm.CustomerTm;
 import com.example.test.dto.tm.RequestTm;
 import com.example.test.dto.tm.TenantTm;
@@ -26,12 +27,19 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.controlsfx.control.Notifications;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class TenantController implements Initializable {
@@ -577,7 +585,43 @@ public class TenantController implements Initializable {
 
                         paymentHistory.setOnMouseClicked((MouseEvent event) -> {
 
-                            System.out.println("hi thenuri");
+                            TenantTm tenant = table.getSelectionModel().getSelectedItem();
+
+                            if (tenant == null) {
+                                return;
+                            }
+
+                            try {
+                                JasperReport jasperReport = (JasperReport) JRLoader.loadObject(
+                                        getClass().getResourceAsStream("/Report/Tenant_Payment_Report(1).jasper")
+                                );
+
+                                Connection connection = DBConnection.getInstance().getConnection();
+
+                                Map<String, Object> parameters = new HashMap<>();
+
+                                parameters.put("P_Tenant_Id", tenant.getTenantId());
+
+
+                                JasperPrint jasperPrint = JasperFillManager.fillReport(
+                                        jasperReport,
+                                        parameters,
+                                        connection
+                                );
+
+                                JasperViewer.viewReport(jasperPrint, false);
+
+                            } catch (JRException e) {
+                                e.printStackTrace();
+                                notification("Fail to generate report...!");
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                                notification("DB connection error...!");
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                                notification("Class Not Found Error...!");
+                            }
+
 
                         });
 

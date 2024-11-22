@@ -1,5 +1,6 @@
 package com.example.test.controller;
 
+import com.example.test.SendMail;
 import com.example.test.dto.HouseStatusCheckDto;
 import com.example.test.dto.TenantDto;
 import com.example.test.model.HouseStatusCheckModel;
@@ -112,11 +113,14 @@ public class AddNewPaymentController {
         if(houseStatusCheck==null){
             return;
         }
+        String email = "0";
+        String response = "0";
 
         try {
-            String response = paymentModel.addNewPropertyDamagePayment(houseStatusCheck);
+            response = paymentModel.addNewPropertyDamagePayment(houseStatusCheck);
+            email = tenantModel.getTenantEmailById(houseStatusCheck.getTenantId());
 
-            notification(response);
+            //notification(response);
             clean();
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -124,6 +128,11 @@ public class AddNewPaymentController {
             System.err.println("Error while paying property damage payment: " + e.getMessage());
             notification("An error occurred while paying property damage payment. Please try again or contact support.");
         }
+
+        SendMail sendMail = new SendMail();
+        sendMail.sendMail(email,"Regarding receiving property damage repair costs","We would like to inform you that your payment for property damage has been successfully received.\nThank you for your prompt action.\n\n\nThe Grand View Residences\nColombo 08");
+        notification(response);
+        notification("Sent Email To Tenant ID: "+houseStatusCheck.getTenantId()+" , regarding property damage payment complete");
     }
 
 
@@ -153,10 +162,11 @@ public class AddNewPaymentController {
             return;
         }
 
+        String response = "0";
         try {
-           String response =  paymentModel.addNewMonthlyPayment(tenant);
+           response =  paymentModel.addNewMonthlyPayment(tenant);
 
-            notification(response);
+            //notification(response);
             clean();
 
         }  catch (SQLException | ClassNotFoundException e) {
@@ -164,6 +174,11 @@ public class AddNewPaymentController {
             System.err.println("Error while paying monthly rent: " + e.getMessage());
             notification("An error occurred while paying monthly rent. Please try again or contact support.");
         }
+
+        SendMail sendMail = new SendMail();
+        sendMail.sendMail(tenant.getEmail(),"Regarding receiving Monthly Rent","We would like to inform you that your payment for month : "+tenant.getLastPaidMonth()+" house rent has been successfully received.\nThank you for your loyalty!.\n\n\nThe Grand View Residences\nColombo 08");
+        notification(response);
+        notification("Sent Email To Tenant ID: "+tenant.getTenantId()+" , regarding payment monthly payment done");
     }
 
 

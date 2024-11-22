@@ -7,6 +7,7 @@ module com.example.test {
     requires org.controlsfx.controls;
     requires java.mail;
     requires org.slf4j;
+    requires jasperreports;
 
     opens com.example.test.db to javafx.base;
     opens com.example.test to javafx.fxml, lombok;

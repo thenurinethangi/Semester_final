@@ -58,7 +58,7 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField fx:id="requestIdTxt" layoutX="325.0" layoutY="208.0" onKeyPressed="#requestIdOnKeyPressed" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextField fx:id="requestIdTxt" layoutX="325.0" layoutY="208.0" onKeyPressed="#requestIdOnKeyPressed" prefHeight="30.0" prefWidth="287.0" promptText="REQ-00001" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
       <ListView fx:id="requestIdList" layoutX="326.0" layoutY="240.0" onMouseClicked="#requestIdListOnMouseClicked" prefHeight="57.0" prefWidth="286.0" stylesheets="@../style/Customer.css" />
       <Label fx:id="descriptionErrorLabel" layoutX="19.0" layoutY="179.0" prefHeight="13.0" prefWidth="592.0" textFill="RED">
          <font>

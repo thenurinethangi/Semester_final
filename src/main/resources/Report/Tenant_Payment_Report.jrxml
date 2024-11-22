@@ -1,0 +1,177 @@
+<!-- Created with Jaspersoft Studio version 7.0.0.final using JasperReports Library version 7.0.0-b478feaa9aab4375eba71de77b4ca138ad2f62aa  -->
+<jasperReport name="Tenant_Payment_Report" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="54348215-0925-4903-b11d-f54de5c927ce">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="grandviewResidencesDBConnection"/>
+	<parameter name="P_Tenant_Id" class="java.lang.String"/>
+	<query language="SQL"><![CDATA[SELECT 
+    t.tenantId,
+    t.headOfHouseholdName,
+    t.phoneNo,
+    t.membersCount,
+    t.rentStarDate,
+    t.rentForMonth,
+    t.lastPayementMonth,
+    t.houseId,
+    t.email,
+    p.invoiceNo,
+    p.amount,
+    p.date AS paymentDate,
+    p.paymentType
+FROM 
+    tenant t
+INNER JOIN 
+    payment p
+ON 
+    t.tenantId = p.tenantId
+WHERE 
+    t.tenantId = $P{P_Tenant_Id} AND t.isActiveTenant = 1
+ORDER BY 
+    p.date DESC;
+]]></query>
+	<field name="tenantId" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tenantId"/>
+		<property name="com.jaspersoft.studio.field.label" value="tenantId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="headOfHouseholdName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="headOfHouseholdName"/>
+		<property name="com.jaspersoft.studio.field.label" value="headOfHouseholdName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="phoneNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phoneNo"/>
+		<property name="com.jaspersoft.studio.field.label" value="phoneNo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="membersCount" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="membersCount"/>
+		<property name="com.jaspersoft.studio.field.label" value="membersCount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="rentStarDate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="rentStarDate"/>
+		<property name="com.jaspersoft.studio.field.label" value="rentStarDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="rentForMonth" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rentForMonth"/>
+		<property name="com.jaspersoft.studio.field.label" value="rentForMonth"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="lastPayementMonth" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lastPayementMonth"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastPayementMonth"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="houseId" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="houseId"/>
+		<property name="com.jaspersoft.studio.field.label" value="houseId"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email"/>
+		<property name="com.jaspersoft.studio.field.label" value="email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tenant"/>
+	</field>
+	<field name="invoiceNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="invoiceNo"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoiceNo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="amount"/>
+		<property name="com.jaspersoft.studio.field.label" value="amount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="paymentDate" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="date"/>
+		<property name="com.jaspersoft.studio.field.label" value="paymentDate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<field name="paymentType" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="paymentType"/>
+		<property name="com.jaspersoft.studio.field.label" value="paymentType"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payment"/>
+	</field>
+	<variable name="invoiceNo1" resetType="Column" calculation="Count" class="java.lang.Integer">
+		<expression><![CDATA[$F{invoiceNo}]]></expression>
+	</variable>
+	<variable name="amount1" resetType="Column" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{amount}]]></expression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="62" splitType="Stretch">
+		<element kind="staticText" uuid="e3646b31-8c0c-4bb7-8370-ca9e1190bfdc" x="100" y="0" width="360" height="58" fontName="Candara" fontSize="24.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Payment History]]></text>
+		</element>
+	</title>
+	<pageHeader height="132" splitType="Stretch">
+		<element kind="textField" uuid="c95f12e5-227f-4ed1-80d2-3adedd0b4ed2" x="440" y="2" width="114" height="30" fontSize="12.0" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="90" splitType="Stretch">
+		<element kind="staticText" uuid="39b4cc9e-da58-420c-af31-8220f7a1bbda" x="0" y="-97" width="100" height="30" fontSize="12.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Tenant ID:]]></text>
+		</element>
+		<element kind="staticText" uuid="b3cedeff-c4d9-4185-8780-5992adf3b62c" x="0" y="-66" width="100" height="30" fontSize="12.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Tenant Name:]]></text>
+		</element>
+		<element kind="staticText" uuid="81143a62-5167-47c5-b3d6-82ae0f851c3b" x="0" y="-37" width="100" height="30" fontSize="12.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[House ID:]]></text>
+		</element>
+		<element kind="textField" uuid="3ced6ec9-e45b-413c-89fb-e026589b9641" x="101" y="-96" width="378" height="30" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[$F{tenantId}]]></expression>
+		</element>
+		<element kind="textField" uuid="0efaef7d-7889-4e48-b71b-74ab1282c44e" x="100" y="-37" width="378" height="30" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[$F{houseId}]]></expression>
+		</element>
+		<element kind="textField" uuid="448c95f3-d1c1-48b8-abd2-d184c4ff4fd1" x="100" y="-67" width="380" height="30" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[$F{headOfHouseholdName}]]></expression>
+		</element>
+		<element kind="textField" uuid="3b582529-8c03-462b-9c53-846025f78c7c" x="0" y="60" width="180" height="30" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{invoiceNo}]]></expression>
+		</element>
+		<element kind="textField" uuid="25bf67cd-332a-4cb8-b7a2-f4f9b4930962" x="180" y="60" width="200" height="30" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{amount}]]></expression>
+		</element>
+		<element kind="textField" uuid="163b4078-d454-4851-a864-718c62bcaeca" x="380" y="60" width="175" height="30" fontSize="12.0" hTextAlign="Center" vTextAlign="Middle">
+			<expression><![CDATA[$F{paymentDate}]]></expression>
+		</element>
+		<element kind="staticText" uuid="8cab2553-7a5d-4575-b11a-106b59d0ef5d" x="0" y="27" width="180" height="30" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Invoice Number]]></text>
+			<box>
+				<pen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="5a7a98ba-1c49-482d-bf83-e39ae6f831b9" x="180" y="27" width="200" height="30" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Amount]]></text>
+			<box>
+				<pen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="9bf56124-1ff9-4860-8533-a78b02bffaa3" x="380" y="27" width="174" height="30" fontSize="12.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Date]]></text>
+			<box>
+				<pen lineWidth="1.0" lineStyle="Solid"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="3" splitType="Stretch"/>
+	</detail>
+	<columnFooter height="117" splitType="Stretch">
+		<element kind="staticText" uuid="100dcdd5-119b-4c2a-8405-0ef20eeab51d" x="0" y="79" width="140" height="30" fontSize="12.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Total Payment Count:]]></text>
+		</element>
+		<element kind="textField" uuid="7040ca8e-5fd0-45b7-be66-479df13056fe" x="140" y="79" width="90" height="30" fontSize="12.0" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA[$V{invoiceNo1}]]></expression>
+		</element>
+		<element kind="staticText" uuid="8322337a-c4cb-4892-940c-33b785773d6c" x="359" y="8" width="100" height="30" fontSize="12.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Total Amount:]]></text>
+		</element>
+		<element kind="textField" uuid="b33c5a5a-ef56-4a53-abb7-106a2c68ab61" x="462" y="8" width="92" height="30" fontSize="12.0" vTextAlign="Middle">
+			<expression><![CDATA[$V{amount1}]]></expression>
+		</element>
+	</columnFooter>
+</jasperReport>

@@ -19,12 +19,13 @@ import org.controlsfx.control.Notifications;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import java.net.URL;
-import java.util.Properties;
-import java.util.ResourceBundle;
-
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class MailSendFormInLeaseAgreementController {
 
@@ -54,41 +55,44 @@ public class MailSendFormInLeaseAgreementController {
     private PaymentTm payment;
 
 
+
     @FXML
     void clear(MouseEvent event) {
-
         messageArea.clear();
     }
 
+
     @FXML
     void exitOnMouseClicked(MouseEvent event) {
-
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+
     @FXML
     void sendBtnOnAction(ActionEvent event) {
-
         String recipientEmail = email;
         String subject = subjectTxt.getText();
         String msg = messageArea.getText();
 
-        if(recipientEmail.isEmpty() || subject.isEmpty() || msg.isEmpty()){
+        if (recipientEmail.isEmpty() || subject.isEmpty() || msg.isEmpty()) {
+            notification("Please fill in all the fields before sending.");
             return;
         }
 
-        sendMail(recipientEmail,subject,msg);
+
+        new Thread(() -> sendMail(recipientEmail, subject, msg)).start();
+        notification("Email Sent To The Tenant.");
     }
 
 
-    public void sendMail(String recipientEmail,String subject,String msg){
 
+    public void sendMail(String recipientEmail, String subject, String msg) {
         Properties properties = new Properties();
-        properties.put("mail.smtp.auth","true");
-        properties.put("mail.smtp.starttls.enable","true");
-        properties.put("mail.smtp.host","smtp.gmail.com");
-        properties.put("mail.smtp.port","587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
 
         String myEmail = "thenurinathangi@gmail.com";
         String password = "hkzu guyn ahxq hlmh";
@@ -96,14 +100,14 @@ public class MailSendFormInLeaseAgreementController {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(myEmail,password);
+                return new PasswordAuthentication(myEmail, password);
             }
         });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(myEmail));
-            message.setRecipients(Message.RecipientType.TO,new Address[]{
+            message.setRecipients(Message.RecipientType.TO, new Address[]{
                     new InternetAddress(recipientEmail)
             });
             message.setSubject(subject);
@@ -111,30 +115,89 @@ public class MailSendFormInLeaseAgreementController {
 
             Transport.send(message);
 
-            notification("Successfully Send Email To Tenant");
-
         }
         catch (MessagingException e) {
+            e.printStackTrace();
+            System.err.println("Error while sending email to tenant: "+ e.getMessage());
 
-            notification("Something Went Wrong With Sending A Email, Try Again Later");
         }
-
     }
-
 
     @FXML
     void sendWithAttachmentOnAction(ActionEvent event) {
+        if (payment != null) {
+            String recipientEmail = email;
+            String subject = subjectTxt.getText();
+            String msg = messageArea.getText();
+            File invoiceFile = new File("path/to/invoice.pdf");
 
-        if(payment!=null){
-            //send invoice        and make send invoice column true
-        }
-        else{
-            //send agreement
-        }
+            if (recipientEmail.isEmpty() || subject.isEmpty() || msg.isEmpty() || !invoiceFile.exists()) {
+                notification("Please ensure all fields are filled and the attachment exists.");
+                return;
+            }
 
+
+            new Thread(() -> sendMailWithAttachment(recipientEmail, subject, msg, invoiceFile)).start();
+            notification("Email Sent To The Tenant.");
+
+        } else {
+            notification("No payment details available for sending an email with an attachment.");
+        }
     }
 
-    public void setSelectedTenantDetailsToSendMail(LeaseAgreementTm selectedLeaseAgreement,String sub,String message) {
+
+    public void sendMailWithAttachment(String recipientEmail, String subject, String msg, File attachment) {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        String myEmail = "thenurinathangi@gmail.com";
+        String password = "hkzu guyn ahxq hlmh";
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(myEmail, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(myEmail));
+            message.setRecipients(Message.RecipientType.TO, new Address[]{
+                    new InternetAddress(recipientEmail)
+            });
+            message.setSubject(subject);
+
+
+            MimeBodyPart textBodyPart = new MimeBodyPart();
+            textBodyPart.setText(msg);
+
+
+            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+            attachmentBodyPart.attachFile(attachment);
+
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(textBodyPart);
+            multipart.addBodyPart(attachmentBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+            System.err.println("Error while sending email to the tenant "+ e.getMessage());
+        }
+    }
+
+
+    public void setSelectedTenantDetailsToSendMail(LeaseAgreementTm selectedLeaseAgreement, String sub, String message) {
+
         subjectTxt.setText(sub);
         messageArea.setText(message);
 
@@ -143,18 +206,19 @@ public class MailSendFormInLeaseAgreementController {
             receiverEmailAddress.setText(email);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            System.err.println("Error while setting the tenant details to send mail: " + e.getMessage());
+            System.err.println("Error while setting tenant details to send mail: " + e.getMessage());
             notification("An error occurred while setting the tenant details to send mail. Please try again or contact support.");
         }
-
     }
+
+
 
     public void setPaymentDetailsToSendMail(PaymentTm selectedPayment) {
 
         payment = selectedPayment;
 
         subjectTxt.setText("Invoice for Recent Payment Attached");
-        messageArea.setText("I am writing to confirm that your recent "+ selectedPayment.getPaymentType()+" has been received. \nFor your records, the corresponding invoice is attached.\n\n\nThe Grand View Residences,\nColombo 08");
+        messageArea.setText("I am writing to confirm that your recent " + selectedPayment.getPaymentType() + " has been received. \nFor your records, the corresponding invoice is attached.\n\n\nThe Grand View Residences,\nColombo 08");
 
         try {
             email = leaseAgreementModel.getTenantEmail(selectedPayment.getTenantId());
@@ -168,8 +232,7 @@ public class MailSendFormInLeaseAgreementController {
     }
 
 
-    public void notification(String message){
-
+    public void notification(String message) {
         Notifications notifications = Notifications.create();
         notifications.title("Notification");
         notifications.text(message);
@@ -180,5 +243,3 @@ public class MailSendFormInLeaseAgreementController {
         notifications.showInformation();
     }
 }
-
-

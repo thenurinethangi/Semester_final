@@ -1,5 +1,6 @@
 package com.example.test.controller;
 
+import com.example.test.SendMail;
 import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.*;
 import com.example.test.model.HouseStatusCheckModel;
@@ -652,7 +653,8 @@ public class HouseStatusCheckController implements Initializable {
                             if(costOfRepairValidation) {
                                 try {
                                     isEnough = tenantModel.checkRemainingSecurityFundEnoughOrNot(selectedHouseCheck.getTenantId(), costOfRepair);
-                                } catch (SQLException | ClassNotFoundException e) {
+                                }
+                                catch (SQLException | ClassNotFoundException e) {
                                     e.printStackTrace();
                                     System.err.println("Error while checking remaining security charge balance is enough or not: " + e.getMessage());
                                     notification("An error occurred while checking remaining security charge balance is enough or not. Please try again or contact support.");
@@ -675,7 +677,6 @@ public class HouseStatusCheckController implements Initializable {
 
                                         try {
                                             String response = tenantModel.reduceRepairCostFromSecurityCharge(selectedHouseCheck.getTenantId(), costOfRepair);
-                                            notification(response);
 
                                             if(response.equals("Repair costs were successfully deducted from the security deposit.")){
                                                 boolean isChangeTheStatus = houseStatusCheckModel.changeStatus(selectedHouseCheck.getCheckNumber(),"Reduced from Security Deposit");
@@ -683,9 +684,12 @@ public class HouseStatusCheckController implements Initializable {
 
                                                 TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedHouseCheck.getTenantId());
 
-                                                notification("Tenant : "+tenantDto.getTenantId()+ ", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
+                                                SendMail sendMail = new SendMail();
 
-                                                //send mail here to tenant
+                                                sendMail.sendMail(tenantDto.getEmail(),"Reduced House Damage Repair Cost From Security payment","We would like to inform you we have deduced Rs. "+ costOfRepair+" from your security payment,\nupon the property damage of last house inspection,\nCurrent security payment balance is: "+ tenantDto.getSecurityPaymentRemain()+"\nThank You attending for this matter!\n\n\nThe Grand View Residences\nColombo 08");
+                                                notification(response);
+                                                notification("Tenant : "+tenantDto.getTenantId()+ ", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
+                                                notification("Sent Email To Tenant ID: "+tenantDto.getTenantId()+" , regarding deduction frm security payment");
                                             }
 
                                         } catch (SQLException | ClassNotFoundException e) {
