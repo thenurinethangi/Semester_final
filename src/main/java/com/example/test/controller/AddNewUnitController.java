@@ -13,12 +13,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class AddNewUnitController implements Initializable {
 
@@ -64,6 +71,21 @@ public class AddNewUnitController implements Initializable {
     @FXML
     private Button canclebtn;
 
+    @FXML
+    private Label bedRoomNoErrorMsg;
+
+    @FXML
+    private Label totalValueErrorMsg;
+
+    @FXML
+    private Label securityChargeErrorMsg;
+
+    @FXML
+    private Label monthlyRentErrorMsg;
+
+    @FXML
+    private Label bathRoomNoErrorMsg;
+
     private String newHouseId;
     private AddNewUnitModel addNewUnitModel;
     private HouseTypeModel houseTypeModel;
@@ -74,18 +96,20 @@ public class AddNewUnitController implements Initializable {
     private String rentOrSell;
     private UnitTm selectedUnit;
 
+    private static final Logger logger = LoggerFactory.getLogger(AddNewUnitController.class);
 
     public AddNewUnitController(){
 
         try{
-
             floorModel = new FloorModel();
             houseTypeModel = new HouseTypeModel();
             addNewUnitModel = new AddNewUnitModel();
+        } catch (SQLException | ClassNotFoundException e) {
+            logger.error("Error while loading the Add New Unit page: {}", e.getMessage(), e);
+            System.err.println("Error while loading the Add New Unit page: " + e.getMessage());
+            notification("An error occurred while loading the Add New Unit page. Please try again or contact support.");
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 
     @FXML
@@ -98,9 +122,12 @@ public class AddNewUnitController implements Initializable {
         String securityCharge = securityChargetxt.getText();
         String monthlyRent = monthlyRenttxt.getText();
 
+
         if(rentOrSell!=null && rentOrSell.equals("Rent")){
             if(!bedrooms.isEmpty() && !bathroom.isEmpty() && securityCharge!=null && monthlyRent!=null && floorNo!=null && houseType!=null && status!=null){
-                if(UserInputValidation.checkNumberLessThanTenValidation(bedrooms) && UserInputValidation.checkNumberLessThanTenValidation(bathroom) && UserInputValidation.checkDecimalValidation(securityCharge) && UserInputValidation.checkDecimalValidation(securityCharge)){
+                if(UserInputValidation.checkNumberLessThanTenValidation(bedrooms) && UserInputValidation.checkNumberLessThanTenValidation(bathroom) && UserInputValidation.checkDecimalValidation(securityCharge) && UserInputValidation.checkDecimalValidation(monthlyRent)){
+
+                    handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
 
                     UnitDto newUnit = new UnitDto();
                     newUnit.setHouseId(id);
@@ -116,32 +143,34 @@ public class AddNewUnitController implements Initializable {
 
                     try {
                         String response = addNewUnitModel.addNewUnit(newUnit);//
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                        alert.show();
+                        notification(response);
                         if(response.equals("successfully add new unit to the system")){
                             setNewHouseId();
                         }
                     }
-                    catch (Exception e){
+                    catch (SQLException e) {
                         e.printStackTrace();
+                        System.err.println("Error while adding the new unit: " + e.getMessage());
+                        notification("An error occurred while adding the new unit, Please try again or contact support.");
                     }
                     clean();
                 }
                 else{
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"new unit entered details not valid please double check before add to the system");
-                    alert.show();
-                    clean();
+                    handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
                 }
             }
             else{
-                Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-                alert.show();
+                handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
+                notification("Please provide all the details for the new unit to be added to the system");
             }
         }
+
         else if(rentOrSell!=null && rentOrSell.equals("Sell")){
 
             if(!bedrooms.isEmpty() && !bathroom.isEmpty() && totalValue!=null && floorNo!=null && houseType!=null && status!=null){
                 if(UserInputValidation.checkNumberLessThanTenValidation(String.valueOf(bedrooms)) && UserInputValidation.checkNumberLessThanTenValidation(String.valueOf(bathroom)) && UserInputValidation.checkDecimalValidation(totalValue)){
+
+                    handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
 
                     UnitDto newUnit = new UnitDto();
                     newUnit.setHouseId(id);
@@ -157,35 +186,43 @@ public class AddNewUnitController implements Initializable {
 
                     try {
                         String response = addNewUnitModel.addNewUnit(newUnit);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                        alert.show();
+                        notification(response);
                         if(response.equals("successfully add new unit to the system")){
                             setNewHouseId();
                         }
                     }
-                    catch (Exception e){
+                    catch (SQLException e) {
                         e.printStackTrace();
+                        System.err.println("Error while adding the new unit: " + e.getMessage());
+                        notification("An error occurred while adding the new unit, Please try again or contact support.");
                     }
                     clean();
                 }
                 else{
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"new unit entered details not valid please double check before add to the system");
-                    alert.show();
-                    clean();
+                    handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
                 }
             }
             else{
-                Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-                alert.show();
+                handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
+               notification("Please provide all the details for the new unit to be added to the system");
             }
-
         }
         else{
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-            alert.show();
+            notification("Please provide all the details for the new unit to be added to the system");
         }
+    }
 
 
+    private void notification(String message) {
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(5));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 
@@ -204,6 +241,12 @@ public class AddNewUnitController implements Initializable {
         statusCmb.getSelectionModel().clearSelection();
         houseTypeCmb.getSelectionModel().clearSelection();
         floorNoCmb.getSelectionModel().clearSelection();
+
+        bedRoomNoErrorMsg.setText("");
+        bathRoomNoErrorMsg.setText("");
+        monthlyRentErrorMsg.setText("");
+        securityChargeErrorMsg.setText("");
+        totalValueErrorMsg.setText("");
 
     }
 
@@ -265,8 +308,10 @@ public class AddNewUnitController implements Initializable {
             }
 
         }
-        catch (Exception e){
+        catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while setting the floor numbers: " + e.getMessage());
+            notification("An error occurred while setting the floor numbers, Please try again or contact support.");
         }
 
         floorNoCmb.setItems(floorNumbers);
@@ -284,9 +329,10 @@ public class AddNewUnitController implements Initializable {
                 houseType.add(x.getHouseType());
             }
 
-        }
-        catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while setting the house types: " + e.getMessage());
+            notification("An error occurred while setting the house types, Please try again or contact support.");
         }
 
         houseTypeCmb.setItems(houseType);
@@ -328,10 +374,12 @@ public class AddNewUnitController implements Initializable {
         try {
             newHouseId = addNewUnitModel.getNewHouseId();
             houseIdLable.setText(newHouseId);
-        }
-        catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while setting the house ids: " + e.getMessage());
+            notification("An error occurred while setting the house ids, Please try again or contact support.");
         }
+
 
     }
 
@@ -371,9 +419,12 @@ public class AddNewUnitController implements Initializable {
         String securityCharge = securityChargetxt.getText();
         String monthlyRent = monthlyRenttxt.getText();
 
+
         if(rentOrSell!=null && rentOrSell.equals("Rent")){
             if(!bedrooms.isEmpty() && !bathroom.isEmpty() && securityCharge!=null && monthlyRent!=null && floorNo!=null && houseType!=null && status!=null){
                 if(UserInputValidation.checkNumberLessThanTenValidation(bedrooms) && UserInputValidation.checkNumberLessThanTenValidation(bathroom) && UserInputValidation.checkDecimalValidation(securityCharge) && UserInputValidation.checkDecimalValidation(securityCharge)){
+
+                    handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
 
                     UnitDto newUnit = new UnitDto();
                     newUnit.setHouseId(id);
@@ -389,34 +440,36 @@ public class AddNewUnitController implements Initializable {
 
                     try {
                         String response = addNewUnitModel.editUnit(newUnit);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                        alert.show();
+                        notification(response);
 
                         if(response.equals("successfully update the unit")){
                             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                             stage.close();
                         }
                     }
-                    catch (Exception e){
+                    catch (SQLException e) {
                         e.printStackTrace();
+                        System.err.println("Error while updating the unit: " + e.getMessage());
+                        notification("An error occurred while updating the unit: "+newUnit.getHouseId()+", Please try again or contact support.");
                     }
                     clean();
                 }
                 else{
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"new unit entered details not valid please double check before add to the system");
-                    alert.show();
-                    //clean();
+                    handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
                 }
             }
             else{
-                Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-                alert.show();
+                handleInputValidationErrors(bedrooms,bathroom,securityCharge,monthlyRent,null);
+                notification("No Field can be empty");
             }
         }
+
         else if(rentOrSell!=null && rentOrSell.equals("Sell")){
 
             if(!bedrooms.isEmpty() && !bathroom.isEmpty() && totalValue!=null && floorNo!=null && houseType!=null && status!=null){
                 if(UserInputValidation.checkNumberLessThanTenValidation(String.valueOf(bedrooms)) && UserInputValidation.checkNumberLessThanTenValidation(String.valueOf(bathroom)) && UserInputValidation.checkDecimalValidation(totalValue)){
+
+                    handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
 
                     UnitDto newUnit = new UnitDto();
                     newUnit.setHouseId(id);
@@ -432,38 +485,68 @@ public class AddNewUnitController implements Initializable {
 
                     try {
                         String response = addNewUnitModel.editUnit(newUnit);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                        alert.show();
+                        notification(response);
 
                         if(response.equals("successfully update the unit")){
                             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                             stage.close();
                         }
-                    }
-                    catch (Exception e){
+                    } catch (SQLException e) {
                         e.printStackTrace();
+                        System.err.println("Error while updating the unit: " + e.getMessage());
+                        notification("An error occurred while updating the unit: "+newUnit.getHouseId()+", Please try again or contact support.");
                     }
+
                     clean();
                 }
                 else{
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"new unit entered details not valid please double check before add to the system");
-                    alert.show();
-                    //clean();
+                  handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
+
                 }
             }
             else{
-                Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-                alert.show();
+                handleInputValidationErrors(bedrooms,bathroom,null,null,totalValue);
+                notification("No Field can be empty");
             }
-
         }
         else{
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the detail of new unit to add to the system");
-            alert.show();
+            notification("No Field can be empty");
         }
 
     }
+
+
+    private void handleInputValidationErrors(String bedrooms, String bathroom, String securityCharge, String monthlyRent,String totalValue) {
+
+        if (!UserInputValidation.checkNumberLessThanTenValidation(bedrooms)) {
+            bedRoomNoErrorMsg.setText("The bedroom count you provided is invalid");
+        }
+        else{
+            bedRoomNoErrorMsg.setText("");
+        }
+        if (!UserInputValidation.checkNumberLessThanTenValidation(bathroom)) {
+            bathRoomNoErrorMsg.setText("The bathroom count you provided is invalid");
+        }
+        else{
+            bathRoomNoErrorMsg.setText("");
+        }
+        if (securityCharge != null && !UserInputValidation.checkDecimalValidation(securityCharge)) {
+            securityChargeErrorMsg.setText("The security charge you provided is invalid");
+        }
+        else{
+            securityChargeErrorMsg.setText("");
+        }
+        if (monthlyRent != null && !UserInputValidation.checkDecimalValidation(monthlyRent)) {
+            monthlyRentErrorMsg.setText("The monthly rent you provided is invalid");
+        }
+        else{
+            monthlyRentErrorMsg.setText("");
+        }
+        if (totalValue != null && !UserInputValidation.checkDecimalValidation(totalValue)) {
+            totalValueErrorMsg.setText("The total value of the you provided is invalid");
+        }
+        else{
+            totalValueErrorMsg.setText("");
+        }
+    }
 }
-
-
-

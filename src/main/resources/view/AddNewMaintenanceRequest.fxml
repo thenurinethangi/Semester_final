@@ -86,7 +86,7 @@
          </font>
       </Label>
       <ComboBox fx:id="technicianCmb" layoutX="19.0" layoutY="430.0" prefHeight="30.0" prefWidth="270.0" stylesheets="@../style/ComboBox.css" />
-      <Label fx:id="estimatedCostErrorMsgLabel" layoutX="19.0" layoutY="395.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+      <Label fx:id="estimatedCostErrorMsgLabel" layoutX="19.0" layoutY="394.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
          <font>
             <Font size="9.0" />
          </font>

@@ -85,7 +85,7 @@ public class CustomerModel {
 
     public ObservableList<String> getPhoneNoSuggestions(String input) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT phoneNo FROM customer WHERE phoneNo LIKE ?";
+        String sql = "SELECT distinct phoneNo FROM customer WHERE phoneNo LIKE ?";
         ResultSet result = CrudUtility.execute(sql, input + "%");
 
         ObservableList<String> phoneNumbers = FXCollections.observableArrayList();
@@ -113,7 +113,7 @@ public class CustomerModel {
 
     public ObservableList<String> getNameSuggestions(String input) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT name FROM customer WHERE name LIKE ?";
+        String sql = "SELECT distinct name FROM customer WHERE name LIKE ?";
         ResultSet result = CrudUtility.execute(sql, input + "%");
 
         ObservableList<String> names = FXCollections.observableArrayList();

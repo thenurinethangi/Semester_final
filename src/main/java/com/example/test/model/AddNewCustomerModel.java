@@ -44,7 +44,19 @@ public class AddNewCustomerModel {
         boolean result = CrudUtility.execute(sql,customerDto.getCustomerId(),customerDto.getName(),customerDto.getNic(),customerDto.getAddress(),customerDto.getPhoneNo(),
                 customerDto.getJobTitle(), customerDto.getLivingArrangement(),customerDto.getEmail());
 
-        return result ? "successfully add the new customer" : "failed to add the new customer, please try again later";
+        return result ? "Successfully add the new customer" : "Failed to add the new customer, please try again later";
+    }
+
+    public String getEmailByCustomerId(String customerId) throws SQLException, ClassNotFoundException {
+
+        String sql = "select email from customer where customerId = ?";
+        ResultSet result = CrudUtility.execute(sql,customerId);
+
+        if(result.next()){
+            return result.getString("email");
+        }
+
+        return "0";
     }
 }
 

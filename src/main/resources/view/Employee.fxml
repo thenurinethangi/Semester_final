@@ -38,6 +38,9 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
       <ComboBox fx:id="tableRowsCmb" layoutX="18.0" layoutY="187.0" onAction="#tableRowsCmbOnAction" prefHeight="30.0" prefWidth="11.0" stylesheets="@../style/Unit.css" />
       <Button fx:id="deletebtn" layoutX="837.0" layoutY="587.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
@@ -56,12 +59,15 @@
             <Image url="@../image/edit%20(1).png" />
          </image>
       </ImageView>
-      <Pane layoutX="13.0" layoutY="19.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">
+      <Pane layoutX="13.0" layoutY="25.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">
          <children>
             <Button fx:id="searchbtn" layoutX="762.0" layoutY="22.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Button fx:id="refreshbtn" layoutX="812.0" layoutY="22.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
                <font>
@@ -93,6 +99,9 @@
                <image>
                   <Image url="@../image/reload.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="775.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -111,7 +120,7 @@
             <Image url="@../image/plus%20(1).png" />
          </image>
       </ImageView>
-      <TextField layoutX="229.0" layoutY="187.0" prefHeight="30.0" prefWidth="318.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
+      <TextField fx:id="searchTxt" layoutX="229.0" layoutY="187.0" prefHeight="30.0" prefWidth="318.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
       <Line endX="759.3333129882812" layoutX="119.0" layoutY="181.0" startX="-100.0" stroke="#f1f2f6" />
       <ImageView fitHeight="16.0" fitWidth="18.0" layoutX="238.0" layoutY="194.0" pickOnBounds="true" preserveRatio="true">
          <image>

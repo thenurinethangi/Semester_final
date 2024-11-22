@@ -28,10 +28,10 @@ public class FloorEditModel {
         int result = pst.executeUpdate();
 
         if(result>0){
-            return "successfully update the floor";
+            return "Successfully updated the floor";
         }
         else{
-            return "something went wrong, failed to update the floor";
+            return "Something went wrong, failed to update the floor";
         }
     }
 }

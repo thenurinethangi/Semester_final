@@ -64,10 +64,10 @@ public class UnitModel {
         int result = pst.executeUpdate();
 
         if(result>0){
-           return "successfully deleted the unit";
+           return "Successfully deleted the unit";
         }
         else{
-            return "something went wrong, failed to delete, try again later";
+            return "Something went wrong, Failed to delete the unit id: "+selectedRow.getHouseId()+", Try again later";
         }
     }
 
@@ -288,6 +288,127 @@ public class UnitModel {
         }
 
         return unit;
+    }
+
+    public ObservableList<UnitTm> getOnlyAvailableUnits() throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from house where status = 'Available'";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<UnitTm> tableData = FXCollections.observableArrayList();
+
+        while (result.next()){
+
+            String houseId = result.getString("houseId");
+            int bedroom = result.getInt("bedroomAmount");
+            int bathroom = result.getInt("bathroomAmount");
+            String rentOrBuy = result.getString("RentOrBuy");
+            String totalValue = result.getString("totalValue");
+            String securityCharge = result.getString("security_charge");
+            String rent = result.getString("monthlyRent");
+            String status = result.getString("status");
+            String houseType = result.getString("houseType");
+            int floorNo = result.getInt("floorNo");
+
+            UnitTm unitTm = new UnitTm(houseId,bedroom,bathroom,rentOrBuy,totalValue,securityCharge,rent,status,houseType,floorNo);
+            tableData.add(unitTm);
+
+        }
+        return  tableData;
+    }
+
+    public ObservableList<String> getRecommendedSellHouses(RequestTm requestTm) throws SQLException, ClassNotFoundException {
+
+        String houseType = requestTm.getHouseType();
+
+        switch (houseType) {
+            case "Small Family House":
+            case "Couple House":
+                houseType = "Triplex";
+            case "Triplex":
+                houseType = "Small Family House";
+            case "Single Person House":
+                houseType = "Couple House";
+            case "Big Family House":
+                houseType = "Medium-Sized Family House";
+            case "Medium-Sized Family House":
+                houseType = "Big Family House";
+            default:
+                houseType = houseType;
+        }
+
+        String sql = "select houseId,bedroomAmount,bathroomAmount,totalValue,houseType,floorNo from house where RentOrBuy = ? and status = ? and houseType = ?";
+
+        ResultSet result = CrudUtility.execute(sql,"Sell","Available",houseType);
+
+        ObservableList<String> units = FXCollections.observableArrayList();
+
+        while(result.next()) {
+
+            String houseId = result.getString(1);
+            int bedRooms = result.getInt(2);
+            int bathRooms = result.getInt(3);
+            String totalValue = result.getString(4);
+            String type = result.getString(5);
+            int floorNo = result.getInt(6);
+
+            String unit = "House ID: " + houseId + "\nBedRooms: " + bedRooms + "\nBathRooms: " + bathRooms + "\nTotal Value Of The House: " + totalValue + "\nHouseType: " + houseType + "\nFloor No: " + floorNo;
+            System.out.println(unit);
+            units.add(unit);
+        }
+
+        return units;
+    }
+
+    public ObservableList<UnitDto> getRecommendedSellHousesAsUnitDto(RequestTm requestTm) throws SQLException, ClassNotFoundException {
+
+        String houseType = requestTm.getHouseType();
+
+        switch (houseType) {
+            case "Small Family House":
+            case "Couple House":
+                houseType = "Triplex";
+            case "Triplex":
+                houseType = "Small Family House";
+            case "Single Person House":
+                houseType = "Couple House";
+            case "Big Family House":
+                houseType = "Medium-Sized Family House";
+            case "Medium-Sized Family House":
+                houseType = "Big Family House";
+            default:
+                houseType = houseType;
+        }
+
+        String sql = "select houseId,bedroomAmount,bathroomAmount,totalValue,houseType,floorNo from house where RentOrBuy = ? and status = ? and houseType = ?";
+
+        ResultSet result = CrudUtility.execute(sql,"Sell","Available",houseType);
+
+        ObservableList<UnitDto> units = FXCollections.observableArrayList();
+
+        while(result.next()) {
+
+            String houseId = result.getString(1);
+            int bedRooms = result.getInt(2);
+            int bathRooms = result.getInt(3);
+            String totalValue = result.getString(4);
+            String type = result.getString(5);
+            int floorNo = result.getInt(6);
+
+            UnitDto unit = new UnitDto();
+            unit.setHouseId(houseId);
+            unit.setBedroom(bedRooms);
+            unit.setBathroom(bathRooms);
+            unit.setTotalValue(totalValue);
+            unit.setHouseType(type);
+            unit.setFloorNo(floorNo);
+
+            System.out.println(unit.toString());
+
+            units.add(unit);
+        }
+
+        return units;
     }
 }
 

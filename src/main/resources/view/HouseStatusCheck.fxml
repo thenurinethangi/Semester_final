@@ -16,12 +16,7 @@
 
 <AnchorPane prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 8; -fx-border-color: #9E9E9E; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.HouseStatusCheckController">
    <children>
-      <Button fx:id="editbtn" layoutX="788.0" layoutY="587.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
-      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" onMouseClicked="#getSelectedRow" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
+      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
         <columns>
           <TableColumn fx:id="checkNoColumn" prefWidth="100.0" resizable="false" text="Check No" />
           <TableColumn fx:id="livingRoomStatusColumn" prefWidth="125.0" text="Living Room Status" />
@@ -53,19 +48,14 @@
             <Image url="@../image/delete.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="802.0" layoutY="593.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../image/edit%20(1).png" />
-         </image>
-      </ImageView>
       <Pane layoutX="13.0" layoutY="19.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">
          <children>
-            <Button fx:id="searchbtn" layoutX="762.0" layoutY="75.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
+            <Button fx:id="searchbtn" layoutX="762.0" layoutY="76.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="refreshbtn" layoutX="812.0" layoutY="75.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
+            <Button fx:id="refreshbtn" layoutX="812.0" layoutY="76.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
@@ -75,37 +65,37 @@
                   <Font size="11.0" />
                </font>
             </Label>
-            <Label layoutX="175.0" layoutY="3.0" text="Tenant ID">
+            <Label layoutX="184.0" layoutY="3.0" text="Tenant ID">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
-            <Label layoutX="344.0" layoutY="3.0" text="House ID">
+            <Label layoutX="360.0" layoutY="3.0" text="House ID">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
-            <Label layoutX="509.0" layoutY="3.0" text="Total House Status">
+            <Label layoutX="531.0" layoutY="3.0" text="Total House Status">
                <font>
                   <Font size="11.0" />
                </font>
             </Label>
-            <ComboBox fx:id="houseStatusCmb" layoutX="513.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="823.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true">
+            <ComboBox fx:id="houseStatusCmb" layoutX="535.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="823.0" layoutY="82.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/reload.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="775.0" layoutY="82.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="775.0" layoutY="83.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
             </ImageView>
             <ComboBox fx:id="checkNoCmb" layoutX="14.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
-            <ComboBox fx:id="paymentDoneCmb" layoutX="683.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
-            <ComboBox fx:id="houseIdCmb" layoutX="347.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
-            <ComboBox fx:id="tenantIdCmb" layoutX="180.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
-            <Label layoutX="679.0" layoutY="6.0" text="Is Payment Done?">
+            <ComboBox fx:id="paymentDoneCmb" layoutX="708.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="houseIdCmb" layoutX="363.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <ComboBox fx:id="tenantIdCmb" layoutX="189.0" layoutY="22.0" prefWidth="150.0" promptText="Select" stylesheets="@../style/AddNewUnit.css" />
+            <Label layoutX="704.0" layoutY="6.0" text="Is Payment Done?">
                <font>
                   <Font size="11.0" />
                </font>

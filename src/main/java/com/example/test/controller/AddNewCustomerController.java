@@ -115,33 +115,22 @@ public class AddNewCustomerController implements Initializable {
             String id = customerIdLabel.getText();
 
             CustomerDto customerDto = new CustomerDto(id,name,nic,address,phoneNo,jobTitle,livingArrangement,email);
-            String response = null;
-            try {
-                response = addNewCustomerModel.addCustomer(customerDto);
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-                return;
 
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-                alert.showAndWait();
-                return;
+            try {
+               String  response = addNewCustomerModel.addCustomer(customerDto);
+               notification(response);
+
+               if(response.equals("Successfully add the new customer")){
+                   generateNextCustomerId();
+               }
+
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while generating new customer id: " + e.getMessage());
+                notification("An error occurred while generating new customer id. Please try again or contact support.");
             }
 
             clean();
-            generateNextCustomerId();
-            livingArrangementCmb.getSelectionModel().selectFirst();
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
         }
 
     }
@@ -192,35 +181,20 @@ public class AddNewCustomerController implements Initializable {
             jobTitleAlert.setText("");
 
             String id = customerIdLabel.getText();
-            System.out.println("cus is: "+id);
 
             CustomerDto customerDto = new CustomerDto(id,name,nic,address,phoneNo,jobTitle,livingArrangement,email);
             String response = null;
             try {
                 response = addNewCustomerModel.updateCustomer(customerDto);
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-                return;
+                notification(response);
 
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-                alert.showAndWait();
-                return;
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while editing a customer: " + e.getMessage());
+                notification("An error occurred while editing the customer id: "+id+", Please try again or contact support.");
             }
 
-            clean();
-            livingArrangementCmb.getSelectionModel().selectFirst();
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
+            //clean();
         }
 
     }
@@ -269,12 +243,10 @@ public class AddNewCustomerController implements Initializable {
             String id = addNewCustomerModel.generateNextCustomerId();
             customerIdLabel.setText(id);
 
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-            alert.showAndWait();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while generating new customer id: " + e.getMessage());
+            notification("An error occurred while generating new customer id. Please try again or contact support.");
         }
 
     }
@@ -290,6 +262,17 @@ public class AddNewCustomerController implements Initializable {
         phoneNotxt.setText(selectedCustomerToEdit.getPhoneNo());
         jobTitletxt.setText(selectedCustomerToEdit.getJobTitle());
         livingArrangementCmb.setValue(selectedCustomerToEdit.getLivingArrangement());
+
+        try {
+           String  email = addNewCustomerModel.getEmailByCustomerId(selectedCustomerToEdit.getCustomerId());
+            emailTxt.setText(email);
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while finding the email of a customer: " + e.getMessage());
+            notification("An error occurred while finding the email of a customer id: "+selectedCustomerToEdit.getCustomerId()+", Please try again or contact support.");
+        }
+
         addbtn.setDisable(true);
         editbtn.setDisable(false);
 
@@ -355,14 +338,7 @@ public class AddNewCustomerController implements Initializable {
 
         if(name.isEmpty() || address.isEmpty() || phoneNo.isEmpty() || nic.isEmpty() || jobTitle.isEmpty() || livingArrangement.isEmpty() || email.isEmpty()){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("No field can be empty");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("No field can be empty");
 
             nameAlert.setText("");
             nicAlert.setText("");
@@ -373,10 +349,21 @@ public class AddNewCustomerController implements Initializable {
 
             return false;
         }
-
         return true;
     }
 
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(5));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
+    }
 }
 
 

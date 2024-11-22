@@ -60,7 +60,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="800.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="800.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
@@ -99,7 +99,7 @@
             </Button>
          </children>
       </Pane>
-      <Label layoutX="29.0" layoutY="16.0" text="House Type">
+      <Label fx:id="HouseTypeLabel" layoutX="29.0" layoutY="16.0" text="House Type">
          <font>
             <Font name="Candara Bold" size="20.0" />
          </font>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="410.0" prefWidth="669.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.OwnerDetailsViewController">
+   <children>
+      <AnchorPane layoutX="-1.0" prefHeight="401.0" prefWidth="670.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <Label layoutX="14.0" layoutY="17.0" text="Owner ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="89.0" lineSpacing="10.0" text="Phone No:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="129.0" lineSpacing="10.0" text="Email:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="52.0" text="Head Of Household Name:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="166.0" lineSpacing="10.0" text="No Of Family Members:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="204.0" lineSpacing="10.0" text="Purchase Date:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="283.0" lineSpacing="10.0" text="House ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="321.0" lineSpacing="10.0" text="House Type:" textFill="#2f3640" />
+            <Label layoutX="15.0" layoutY="360.0" lineSpacing="10.0" text="Invoice No:" textFill="#2f3640" />
+            <Label fx:id="houseId" layoutX="271.0" layoutY="283.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="houseType" layoutX="271.0" layoutY="321.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="purchaseDate" layoutX="271.0" layoutY="204.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="membersCount" layoutX="271.0" layoutY="166.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="email" layoutX="271.0" layoutY="129.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="phoneNo" layoutX="271.0" layoutY="89.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="name" layoutX="271.0" layoutY="52.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="ownerId" layoutX="271.0" layoutY="17.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="invoiceNo" layoutX="271.0" layoutY="360.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label layoutX="14.0" layoutY="243.0" lineSpacing="10.0" text="Purchase Price:" textFill="#2f3640" />
+            <Label fx:id="purchasePrice" layoutX="271.0" layoutY="244.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

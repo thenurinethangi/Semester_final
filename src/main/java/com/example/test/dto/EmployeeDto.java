@@ -20,6 +20,4 @@ public class EmployeeDto {
     private String dob;
     private String position;
 
-//    public EmployeeDto() {
-//    }
 }

@@ -5,6 +5,7 @@ import com.example.test.dto.HouseStatusCheckDto;
 import com.example.test.dto.LeaseAgreementDto;
 import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.RequestTm;
+import com.example.test.dto.tm.TenantTm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,6 +17,7 @@ public class LeaseAgreementModel {
 
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
     private final TenantModel tenantModel = new TenantModel();
+
 
     public boolean addNewLeaseAgreement(String tenantId, RequestTm request, double securityPayment, double monthlyPayment) throws SQLException, ClassNotFoundException {
 
@@ -175,9 +177,9 @@ public class LeaseAgreementModel {
 
     }
 
-    public String getTenantEmail(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
+    public String getTenantEmail(String tenantId) throws SQLException, ClassNotFoundException {
 
-        return tenantModel.getTenantEmailById(selectedLeaseAgreement);
+        return tenantModel.getTenantEmailById(tenantId);
 
     }
 
@@ -211,6 +213,49 @@ public class LeaseAgreementModel {
 
         return leaseId;
     }
+
+    public ObservableList<LeaseAgreementTm> getOnlyActiveAgreements() throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from leaseagreement where status = 'Active' or 'Expired'";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<LeaseAgreementTm> allAgreements = FXCollections.observableArrayList();
+
+        while(result.next()){
+
+            String leaseId = result.getString(1);
+            String tenantId = result.getString(2);
+            String houseId = result.getString(3);
+            String leaseTurn = result.getString(4);
+            String startDate = result.getString(5);
+            String endDate = result.getString(6);
+            String status = result.getString(9);
+
+            LeaseAgreementTm leaseAgreement = new LeaseAgreementTm(leaseId,tenantId,houseId,leaseTurn,startDate,endDate,status);
+            allAgreements.add(leaseAgreement);
+        }
+
+        return allAgreements;
+    }
+
+
+    public ObservableList<String> getDistinctHouseIds() throws SQLException, ClassNotFoundException {
+
+
+        String sql = "select distinct houseId from leaseagreement where status !='Deleted'  order by houseId asc";
+        ResultSet result = CrudUtility.execute(sql);
+
+        ObservableList<String> houseIds = FXCollections.observableArrayList();
+        houseIds.add("Select");
+
+        while(result.next()){
+
+            houseIds.add(result.getString("houseId"));
+        }
+
+        return houseIds;
+    }
+
 }
 
 

@@ -64,11 +64,20 @@ public class AddNewHouseInspectCheckController implements Initializable {
 
     ObservableList<String> houseStatus = FXCollections.observableArrayList("Select","Excellent","Good","Moderate","Damaged");
     private final TenantModel tenantModel = new TenantModel();
-    private final UnitModel unitModel = new UnitModel();
+    private UnitModel unitModel;
     private TenantDto tenant;
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
 
-    public AddNewHouseInspectCheckController() throws SQLException, ClassNotFoundException {
+    public AddNewHouseInspectCheckController(){
+
+        try{
+            unitModel = new UnitModel();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the Add New Inspection form: " + e.getMessage());
+            notification("An error occurred while loading the Add New Inspection form. Please try again or contact support.");
+        }
     }
 
 
@@ -91,14 +100,7 @@ public class AddNewHouseInspectCheckController implements Initializable {
         if(livingRoomStatus.isEmpty() || livingRoomStatus.equals("Select") || kitchenStatus.isEmpty() || kitchenStatus.equals("Select") ||
                 bedRoomStatus.isEmpty() || bedRoomStatus.equals("Select") || bathRoomStatus.isEmpty() || bathRoomStatus.equals("Select") || totalHouseStatus.isEmpty() || totalHouseStatus.equals("Select")){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Select the status of all house parts in order to proceed with saving the new inspection");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Select the status of all house parts in order to proceed with saving the new inspection");
             return;
         }
 
@@ -110,14 +112,7 @@ public class AddNewHouseInspectCheckController implements Initializable {
 
         if(totalHouseStatus.equals("Damaged") && costForRepair.isEmpty()){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Please Enter Estimated Cost Of Repair For This Damaged House");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Please Enter Estimated Cost Of Repair For This Damaged House");
 
             costForRepairTxt.setStyle("-fx-border-color: #E53935");
             return;
@@ -147,27 +142,19 @@ public class AddNewHouseInspectCheckController implements Initializable {
             houseStatusCheckDto.setIsPaymentDone("Not Yet");
         }
 
-
         try {
             String response = houseStatusCheckModel.addNewHouseStatusCheck(houseStatusCheckDto);
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification(response);
 
             clean();
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while adding new house inspection: " + e.getMessage());
+            notification("An error occurred while adding new house inspection. Please try again or contact support.");
         }
     }
+
 
     @FXML
     void cancelBtnOnAction(ActionEvent event) {
@@ -175,6 +162,7 @@ public class AddNewHouseInspectCheckController implements Initializable {
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.close();
     }
+
 
     @FXML
     void totalHouseStatusCmbOnAction(ActionEvent event) {
@@ -198,17 +186,8 @@ public class AddNewHouseInspectCheckController implements Initializable {
                 tenant = tenantModel.getMoreTenantDetails(tenantId);
 
                 if (tenant.getName() == null) {
-
                     clean();
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("Please Enter Correct Tenant ID");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification("Please Enter Correct Tenant ID");
                     return;
                 }
 
@@ -217,8 +196,10 @@ public class AddNewHouseInspectCheckController implements Initializable {
                 UnitDto unit = unitModel.getHouseDetailsByHouseId(tenant.getHouseId());
                 houseTypeLabel.setText(unit.getHouseType());
             }
-            catch (Exception e){
+            catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
+                System.err.println("Error while searching tenant details: " + e.getMessage());
+                notification("An error occurred while searching tenant details. Please try again or contact support.");
             }
         }
     }
@@ -253,6 +234,19 @@ public class AddNewHouseInspectCheckController implements Initializable {
         kitchenStatusCmb.getSelectionModel().selectFirst();
         costForRepairTxt.setDisable(false);
         costForRepairTxt.clear();
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

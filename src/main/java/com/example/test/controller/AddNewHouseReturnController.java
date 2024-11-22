@@ -55,7 +55,7 @@ public class AddNewHouseReturnController {
 
     private final AddNewHouseReturnModel addNewHouseReturnModel = new AddNewHouseReturnModel();
     private final TenantModel tenantModel = new TenantModel();
-    private final UnitModel unitModel = new UnitModel();
+    private UnitModel unitModel;
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
     private final ReturnHouseModel returnHouseModel = new ReturnHouseModel();
     private final LeaseAgreementModel leaseAgreementModel = new LeaseAgreementModel();
@@ -63,8 +63,18 @@ public class AddNewHouseReturnController {
     private TenantDto tenantDetails;
 
 
-    public AddNewHouseReturnController() throws SQLException, ClassNotFoundException {
+    public AddNewHouseReturnController() {
+
+        try{
+            unitModel = new UnitModel();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the Add New House Return form: " + e.getMessage());
+            notification("An error occurred while loading the Add New House Return form. Please try again or contact support.");
+        }
     }
+
 
     @FXML
     void reclaimOnAction(ActionEvent event) {
@@ -77,27 +87,21 @@ public class AddNewHouseReturnController {
 
         try {
             String response = returnHouseModel.reclaimHouse(houseReturnDto);
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification(response);
 
             if(response.equals("Successfully Reclaiming The House!")){
                 clean();
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while returning the house: " + e.getMessage());
+            notification("An error occurred while returning the house. Please try again or contact support.");
         }
 
     }
+
 
     @FXML
     void refundAndReclaimOnAction(ActionEvent event) {
@@ -110,24 +114,16 @@ public class AddNewHouseReturnController {
 
         try {
             String response = returnHouseModel.reclaimHouseWithRefundSecurityDeposit(houseReturnDto,tenantDetails);
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification(response);
 
             if(response.equals("Successfully Refund The Security Payment And Reclaiming The House!")){
                 clean();
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while returning the house: " + e.getMessage());
+            notification("An error occurred while returning the house. Please try again or contact support.");
         }
 
     }
@@ -145,17 +141,10 @@ public class AddNewHouseReturnController {
                 if(tenant.getName()==null){
 
                     clean();
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("Please Enter Correct Tenant ID");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification("Please Enter Correct Tenant ID");
                     return;
                 }
+
                 tenantDetails = tenantModel.getMoreTenantDetails(tenant.getTenantId());
 
                 tenantNameLabel.setText(tenant.getName());
@@ -178,6 +167,7 @@ public class AddNewHouseReturnController {
 
                     houseInspectDetailsLabel.setText("No Inspect For This Rented House");
                 }
+
                 else{
                     if(houseStatusCheckDto.getIsPaymentDone().equals("N/A")){
 
@@ -193,10 +183,11 @@ public class AddNewHouseReturnController {
 
                     }
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            }
+            catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while searching the tenant details: " + e.getMessage());
+                notification("An error occurred while searching the tenant details. Please try again or contact support.");
             }
 
         }
@@ -218,6 +209,19 @@ public class AddNewHouseReturnController {
        refundAndReclaimBtn.setDisable(false);
        reclaimBtn.setDisable(false);
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

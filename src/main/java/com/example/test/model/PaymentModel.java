@@ -2,6 +2,8 @@ package com.example.test.model;
 
 import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
+import com.example.test.dto.HouseStatusCheckDto;
+import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.PaymentTm;
 import com.example.test.dto.tm.TenantTm;
 import javafx.collections.FXCollections;
@@ -16,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class PaymentModel {
 
     private  final TenantModel tenantModel = new TenantModel();
+    private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
 
     public boolean addNewFirstPayment(String tenantId, double amount, String paymentType) throws SQLException, ClassNotFoundException {
 
@@ -74,6 +77,9 @@ public class PaymentModel {
             String date  = result.getString(3);
             String paymentType = result.getString(4);
             String tenantId = result.getString(5);
+            if(tenantId==null){
+                tenantId = "N/A";
+            }
 
             PaymentTm payment = new PaymentTm(invoiceNo,amount,date,paymentType,tenantId);
             allPayments.add(payment);
@@ -150,6 +156,100 @@ public class PaymentModel {
         }
 
         return "0";
+    }
+
+    public String addNewMonthlyPayment(TenantDto tenant) throws SQLException, ClassNotFoundException {
+
+        Connection connection = DBConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
+
+        try {
+            String id = generateNewPaymentId();
+
+            String sql = "insert into payment values(?,?,?,?,?,?,?)";
+            boolean result = CrudUtility.execute(sql, id, tenant.getMonthlyRent(), String.valueOf(LocalDate.now()), "Monthly Rent Payment", tenant.getTenantId(), 0, 0);
+            if(!result){
+                connection.rollback();
+                return "Filed To Add New Monthly Payment Of Tenant Id: "+tenant.getTenantId()+", Try Again Later";
+            }
+
+            boolean isUpdateMonth = tenantModel.setNewLastPaidMonth(tenant);
+            if(!isUpdateMonth){
+                connection.rollback();
+                return "Filed To Add New Monthly Payment Of Tenant Id: "+tenant.getTenantId()+", Try Again Later";
+            }
+
+            connection.commit();
+            return "A new monthly payment has been successfully processed for Tenant ID: "+tenant.getTenantId()+" for the month of "+tenant.getLastPaidMonth();
+
+        }
+        catch (Exception e){
+            connection.rollback();
+            e.printStackTrace();
+        }
+        finally {
+            connection.setAutoCommit(true);
+        }
+        return "0";
+    }
+
+    public String addNewPropertyDamagePayment(HouseStatusCheckDto houseStatusCheck) throws SQLException, ClassNotFoundException {
+
+        Connection connection = DBConnection.getInstance().getConnection();
+        connection.setAutoCommit(false);
+
+        try {
+            String id = generateNewPaymentId();
+
+            String sql = "insert into payment values(?,?,?,?,?,?,?)";
+            boolean result = CrudUtility.execute(sql, id, Double.parseDouble(houseStatusCheck.getEstimatedCostForRepair()), String.valueOf(LocalDate.now()), "Property Damage Charges", houseStatusCheck.getTenantId(), 0, 0);
+            if(!result){
+                connection.rollback();
+                return "Filed To Add New Property Damage Charge Of Tenant Id: "+houseStatusCheck.getTenantId()+", Try Again Later";
+            }
+
+            boolean isUpdate = houseStatusCheckModel.makePaymentDoneForPropertyDamage(houseStatusCheck);
+            if(!isUpdate){
+                connection.rollback();
+                return "Filed To Add New Property Damage Charge Of Tenant Id: "+houseStatusCheck.getTenantId()+", Try Again Later";
+            }
+
+            connection.commit();
+            return "A new Property Damage Charge has been successfully processed for Tenant ID: "+houseStatusCheck.getTenantId()+" for the house inspection Id: "+houseStatusCheck.getCheckNumber()+ " for house Id: "+houseStatusCheck.getHouseId();
+
+        }
+        catch (Exception e){
+            connection.rollback();
+            e.printStackTrace();
+        }
+        finally {
+            connection.setAutoCommit(true);
+        }
+        return "0";
+
+    }
+
+    public String getLastPayment() throws SQLException, ClassNotFoundException {
+
+        String sql = "select invoiceNo from payment order by invoiceNo desc limit 1";
+        ResultSet result = CrudUtility.execute(sql);
+
+        if(result.next()){
+            return result.getString("invoiceNo");
+        }
+        return "0";
+    }
+
+    public double getTotalIncome() throws SQLException, ClassNotFoundException {
+
+        String sql = "select sum(amount) from payment";
+        ResultSet result = CrudUtility.execute(sql);
+
+        if(result.next()){
+
+            return result.getDouble("sum(amount)");
+        }
+        return 0;
     }
 }
 

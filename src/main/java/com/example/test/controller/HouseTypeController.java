@@ -11,13 +11,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -65,6 +70,9 @@ public class HouseTypeController implements Initializable {
     @FXML
     private TextField descriptiontxt;
 
+    @FXML
+    private Label HouseTypeLabel;
+
     private HouseTypeModel houseTypeModel;
     private ObservableList<HouseTypeTm> tableData;
     private ObservableList<Integer> rows;
@@ -75,12 +83,19 @@ public class HouseTypeController implements Initializable {
 
     public HouseTypeController(){
 
-        try{
-            houseTypeModel = new HouseTypeModel();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+            try {
+                houseTypeModel = new HouseTypeModel();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.err.println("Error while loading a house type page: " + e.getMessage());
+                notification("An error occurred while loading a house type page. Please try again or contact support.");
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while while loading a house type page: " + e.getMessage());
+                notification("An error occurred while loading a house type page. Please try again or contact support.");
+
+            }
     }
 
 
@@ -92,9 +107,8 @@ public class HouseTypeController implements Initializable {
 
         if(houseType.isEmpty() || desc.isEmpty()){
 
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all new house type details to" +
+            notification("You should enter all new house type details to" +
                     " add new house type to the system");
-            alert.showAndWait();
 
         }
         else{
@@ -104,28 +118,26 @@ public class HouseTypeController implements Initializable {
             if(bool1 && bool2){
 
                 HouseTypeDto houseTypeDto = new HouseTypeDto(houseType,desc);
-
                 try {
                     String response = houseTypeModel.addNewHouseType(houseTypeDto);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                    alert.showAndWait();
-                }
-                catch (Exception e){
+                    notification(response);
+                    clean();
+                } catch (SQLException e) {
                     e.printStackTrace();
+                    System.err.println("Error while saving new House Type: " + e.getMessage());
+                    notification("An error occurred while saving the new House Type. Please try again or contact support.");
                 }
+
             }
             else{
                 if(!bool1 && bool2){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"House type input is not valid format please enter valid house type");
-                    alert.showAndWait();
+                    notification("The house type you entered is in an invalid format. Please enter a valid house type.");
                 }
                 else if(!bool2 && bool1){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"House description input is not valid format please enter valid house description");
-                    alert.showAndWait();
+                    notification("The description you entered is in an invalid format. Please enter a valid description.");
                 }
                 else if(!bool1 && !bool2){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"House type input is not valid format please enter valid house type");
-                    alert.showAndWait();
+                    notification("The house type and description you entered is in an invalid format. Please enter a valid details.");
                 }
             }
 
@@ -146,27 +158,42 @@ public class HouseTypeController implements Initializable {
         HouseTypeTm selectHouseType = table.getSelectionModel().getSelectedItem();
 
         if(selectHouseType==null){
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should select house type to delete, tap on the table row you want to delete");
-            alert.showAndWait();
+            return;
         }
-        else{
 
-            Alert a1 = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete this house type?");
-            Optional<ButtonType> options = a1.showAndWait();
+        try {
+            boolean isUsing = houseTypeModel.isThisHouseTypeUsing(selectHouseType.getHouseType());
 
-            if(options.isPresent() && options.get()==ButtonType.OK) {
+            if(isUsing){
+                notification("House type: "+selectHouseType.getHouseType()+" is already in use and cannot be deleted.");
+                return;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        Alert a1 = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete this house type?");
+        a1.getButtonTypes().setAll(yesButton, cancelButton);
+        Optional<ButtonType> options = a1.showAndWait();
+
+            if(options.isPresent() && options.get()==yesButton) {
 
                 try {
                     String response = houseTypeModel.deleteHouseType(selectHouseType);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                    alert.showAndWait();
-                } catch (Exception e) {
-
+                    notification(response);
+                    clean();
+                }
+                catch (SQLException e) {
                     e.printStackTrace();
+                    System.err.println("Error while deleting the house type: " + e.getMessage());
+                    notification("An error occurred while deleting the house type. Please try again or contact support.");
                 }
             }
-        }
-
     }
 
 
@@ -177,8 +204,7 @@ public class HouseTypeController implements Initializable {
         HouseTypeTm selectHouseType = table.getSelectionModel().getSelectedItem();
 
         if(selectHouseType==null){
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should select house type to edit, tap on the table row you want to edit");
-            alert.showAndWait();
+            return;
         }
         else {
             try {
@@ -189,17 +215,16 @@ public class HouseTypeController implements Initializable {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/HouseTypeEdit.fxml"));
                 Parent root = fxmlLoader.load();
                 Scene scene = new Scene(root);
-
-                //HouseTypeEditController houseTypeEditController = fxmlLoader.getController();
-                //houseTypeEditController.setData(houseTypeDto);
-
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 stage.show();
-            }
-            catch (Exception e){
+
+            } catch (IOException e) {
                 e.printStackTrace();
+                System.err.println("Error while loading house type edit page: " + e.getMessage());
+                notification("An error occurred while loading a house type edit page. Please try again or contact support.");
             }
+
 
         }
     }
@@ -208,7 +233,7 @@ public class HouseTypeController implements Initializable {
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        loadTableData();
+        clean();
     }
 
 
@@ -252,7 +277,7 @@ public class HouseTypeController implements Initializable {
             return;
         }
 
-        if(text.equals("get by house type asc")){
+        if(text.equals("Retrieve by house type (ascending)")){
 
             for(int j = 0; j < HouseTypeTmsAr.size(); j++) {
                 for (int i = 0; i < HouseTypeTmsAr.size()-1; i++) {
@@ -266,7 +291,7 @@ public class HouseTypeController implements Initializable {
             }
             table.setItems(HouseTypeTmsAr);
         }
-        else if(text.equals("get by house type desc")){
+        else if(text.equals("Retrieve by house type (descending)")){
 
             for(int j = 0; j < HouseTypeTmsAr.size(); j++) {
                 for (int i = 0; i < HouseTypeTmsAr.size()-1; i++) {
@@ -330,19 +355,14 @@ public class HouseTypeController implements Initializable {
 
         try {
             tableData = houseTypeModel.loadTableData();
-            if(tableData.isEmpty()){
-                System.out.println("empty");
-                return;
-            }
-            else {
+            table.setItems(tableData);
 
-                table.setItems(tableData);
-            }
-        }
-        catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
+            System.err.println("Error while loading table data: " + e.getMessage());
+            notification("An error occurred while loading table data. Please try again or contact support.");
 
+        }
 
     }
 
@@ -356,6 +376,7 @@ public class HouseTypeController implements Initializable {
             rows.add(count);
         }
         tableRowsCmb.setItems(rows);
+        tableRowsCmb.getSelectionModel().selectLast();
 
     }
 
@@ -363,8 +384,9 @@ public class HouseTypeController implements Initializable {
     public void setItemsToSortCmb() {
 
         sort = FXCollections.observableArrayList();
-        sort.addAll("get by house type asc","get by house type desc");
+        sort.addAll("Select","Retrieve by house type (ascending)","Retrieve by house type (descending)");
         sortCmb.setItems(sort);
+        sortCmb.getSelectionModel().selectFirst();
     }
 
 
@@ -372,14 +394,16 @@ public class HouseTypeController implements Initializable {
 
         getHouseTypes();
         houseTypeCmb.setItems(allHouseTypes);
+        houseTypeCmb.getSelectionModel().selectFirst();
 
       }
 
       public void getHouseTypes(){
 
         allHouseTypes = FXCollections.observableArrayList();
-        for(HouseTypeTm x : tableData){
+        allHouseTypes.add("Select");
 
+        for(HouseTypeTm x : tableData){
             allHouseTypes.add(x.getHouseType());
         }
 
@@ -388,6 +412,34 @@ public class HouseTypeController implements Initializable {
 
     public void clean(){
 
+        loadTableData();
+        setItemsToSortCmb();
+        setItemsToHouseTypeCmb();
+        setItemsToRowsCmb();
+        houseTypetxt.clear();
+        descriptiontxt.clear();
+        table.getSelectionModel().clearSelection();
 
     }
+
+
+    public void setHouseTypeTextInvisible() {
+
+        HouseTypeLabel.setStyle("-fx-text-fill: #ffffff");
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
+    }
 }
+
+

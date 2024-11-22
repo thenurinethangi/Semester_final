@@ -36,11 +36,17 @@
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Button fx:id="refreshbtn" layoutX="819.0" layoutY="74.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Label layoutX="10.0" layoutY="3.0" text="Lease ID">
                <font>
@@ -96,12 +102,12 @@
             <Image url="@../image/search-interface-symbol%20(1).png" />
          </image>
       </ImageView>
-      <Button fx:id="deletebtn" layoutX="838.0" layoutY="588.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+      <Button fx:id="deletebtn" layoutX="837.0" layoutY="589.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="850.0" layoutY="595.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="849.0" layoutY="596.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/delete.png" />
          </image>

@@ -220,7 +220,6 @@
 
 
 
-
 /* Style for the DatePicker */
 .date-picker {
     -fx-background-color: #f5f5f5; /* Background color of the DatePicker */
@@ -252,7 +251,7 @@
 .date-picker:focused {
     -fx-background-color: #ffffff; /* White background when focused */
     -fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); /* Blue border when focused */
-    -fx-border-width: 1.5px; /* Thicker border when focused */
+    -fx-border-width: 0.5px; /* Thicker border when focused */
 }
 
 /* Style for the Calendar popup */
@@ -376,3 +375,34 @@
     -fx-text-fill: #666666;        /* Gray text when disabled */
     -fx-cursor: default;           /* Default cursor when disabled */
 }
+
+
+
+.text-field {
+    -fx-background-color: #f9f9f9;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-padding: 5 2;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 5;
+    -fx-border-width: 1.5;
+    -fx-text-fill: #333;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 2, 0, 0, 1);
+    -fx-prompt-text-fill: #999;
+}
+
+.text-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #007AFF;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(98, 0, 238, 0.25), 4, 0, 0, 2);
+}
+
+.text-field:hover {
+    -fx-background-color: #f5f5f5;
+    -fx-cursor: text;
+}
+

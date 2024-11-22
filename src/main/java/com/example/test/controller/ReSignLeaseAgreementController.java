@@ -72,20 +72,12 @@ public class ReSignLeaseAgreementController {
        else{
            try {
                String response = leaseAgreementModel.reSignAgreement(selectedLeaseAgreement,leaseTurn);
+               notification(response);
 
-               Notifications notifications = Notifications.create();
-               notifications.title("Notification");
-               notifications.text(response);
-               notifications.hideCloseButton();
-               notifications.hideAfter(Duration.seconds(5));
-               notifications.position(Pos.CENTER);
-               notifications.darkStyle();
-               notifications.showInformation();
-
-           } catch (SQLException e) {
-               throw new RuntimeException(e);
-           } catch (ClassNotFoundException e) {
-               throw new RuntimeException(e);
+           } catch (SQLException | ClassNotFoundException e) {
+               e.printStackTrace();
+               System.err.println("Error while Re-Sign the Lease Agreement: " + e.getMessage());
+               notification("An error occurred while Re-Sign the Lease Agreement. Please try again or contact support.");
            }
 
        }
@@ -136,11 +128,24 @@ public class ReSignLeaseAgreementController {
                }
            }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading lease agreement details: " + e.getMessage());
+            notification("An error occurred while loading lease agreement details. Please try again or contact support.");
         }
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }

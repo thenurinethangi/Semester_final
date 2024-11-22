@@ -10,14 +10,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -45,10 +49,10 @@ public class FloorController implements Initializable {
     private Button refreshbtn;
 
     @FXML
-    private ComboBox<Integer> floorNoCmb;
+    private ComboBox<String> floorNoCmb;
 
     @FXML
-    private ComboBox<Integer> noOfHousesCmb;
+    private ComboBox<String> noOfHousesCmb;
 
     @FXML
     private ComboBox<Integer> tableRowsCmb;
@@ -73,12 +77,12 @@ public class FloorController implements Initializable {
 
     private FloorModel floorModel;
     private ObservableList<FloorTm> tableData;
-    private ObservableList<Integer> floorNumbers;
-    private ObservableList<Integer> houseAmountPerFloor;
+    private ObservableList<String> floorNumbers;
+    private ObservableList<String> houseAmountPerFloor;
     private ObservableList<String> sortType;
     private ObservableList<Integer> rows;
-    private Integer floor;
-    private Integer houseAmount;
+    private String floor;
+    private String houseAmount;
 
 
     public FloorController(){
@@ -99,29 +103,23 @@ public class FloorController implements Initializable {
 
         if(floor.isEmpty() || unitAmount.isEmpty()){
 
-            Alert alert = new Alert(Alert.AlertType.WARNING,"You should enter all the details of the new floor to add to the system");
-            alert.showAndWait();
+            notification("You should enter all the details of the new floor to add to the system");
         }
         else {
-
             boolean bool1 = UserInputValidation.checkFloorNoValidation(floor);
             boolean bool2 = UserInputValidation.checkOnOfHousesValidation(unitAmount);
 
-            if( bool1==false || bool2==false){
-                if(bool1==false && bool2==true){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"Floor NO is invalid, Grand View Residences Floor Numbers should be less than 100 as its size");
-                    alert.showAndWait();
+            if(!bool1 || !bool2){
+                if(!bool1 && bool2){
+                    notification("Floor No is invalid, Floor numbers at Grand View Residences must be less than 100");
                 }
-                else if(bool2==false && bool1==true){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"No Of Houses are invalid, Grand View Residences Floor can have less than 10 no of houses");
-                    alert.showAndWait();
+                else if(!bool2 && bool1){
+                    notification("The number of houses is invalid; Grand View Residences Floor may have fewer than 10 houses");
                 }
-                else if(bool1==false && bool2==false){
-                    Alert alert = new Alert(Alert.AlertType.WARNING,"Floor NO and On Of Houses are invalid, Please enter valued Floor No and House amount");
-                    alert.showAndWait();
+                else if(!bool1 && !bool2){
+                    notification("Invalid Floor Number and House Amount. Please enter valid values");
                 }
                 clean();
-
             }
             else{
 
@@ -129,15 +127,13 @@ public class FloorController implements Initializable {
 
                 try {
                     String result = floorModel.saveNewFloor(floorDto);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, result);
-                    alert.showAndWait();
-                }
-                catch (Exception e){
+                    notification(result);
+                } catch (SQLException e) {
                     e.printStackTrace();
+                    System.err.println("Error while saving new floor: " + e.getMessage());
+                    notification("An error occurred while saving the new floor. Please try again or contact support.");
                 }
-
                 clean();
-                tableLoad();
             }
 
         }
@@ -151,43 +147,60 @@ public class FloorController implements Initializable {
         noOfHousestxt.setText("");
     }
 
+
     @FXML
     void deleteOnAction(ActionEvent event) {
 
         FloorTm floorData = table.getSelectionModel().getSelectedItem();
 
         if(floorData==null){
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Please select floor to delete!");
-            alert.setContentText("You should first select floor to delete, tap on the table floor field to before tap on delete button");
-            alert.showAndWait();
+            return;
         }
-        else{
 
-            Alert a1 = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete the floor?");
-            Optional<ButtonType> options = a1.showAndWait();
+        try {
+            boolean isUsed = floorModel.checkThisFloorIsUsed(floorData);
 
-            if(options.isPresent() && options.get()==ButtonType.OK){
+            if(isUsed){
+                notification("Unable to delete the selected floor number "+floorData.getFloorNo()+", as it is currently in use");
+                return;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error while deleting the floor: " + e.getMessage());
+            notification("An error occurred while deleting the floor. Please try again or contact support.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while deleting the floor: " + e.getMessage());
+            notification("An error occurred while deleting the floor. Please try again or contact support.");
+        }
+
+            ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete the floor?");
+            alert.getButtonTypes().setAll(yesButton, cancelButton);
+            Optional<ButtonType> options = alert.showAndWait();
+
+            if(options.isPresent() && options.get()==yesButton){
 
                 try {
                     String response = floorModel.deleteFloor(floorData);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                    alert.showAndWait();
+                    notification(response);
                 }
                 catch (Exception e){
-
                     e.printStackTrace();
+                    System.err.println("Error while deleting the floor: " + e.getMessage());
+                    notification("An error occurred while deleting the floor. Please try again or contact support.");
                 }
-
+            }
+            else{
+                table.getSelectionModel().clearSelection();
             }
 
             clean();
             tableLoad();
-
-        }
     }
+
 
     @FXML
     void editOnAction(ActionEvent event) {
@@ -195,29 +208,26 @@ public class FloorController implements Initializable {
         FloorTm floorTm = table.getSelectionModel().getSelectedItem();
 
         if(floorTm==null){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Please select floor to update!");
-            alert.setContentText("You should first select floor to update, tap on the table floor field to before tap on edit button");
-            alert.showAndWait();
-
+            return;
         }
+
         else{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/FloorEdit.fxml"));
                 Parent root = fxmlLoader.load();
 
                 FloorEditController floorEditController = fxmlLoader.getController();
-                floorEditController.setFloorNo(floorTm.getFloorNo());
+                floorEditController.setFloorNo(floorTm);
 
                 Scene scene = new Scene(root);
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 stage.show();
 
-            }
-            catch (Exception e){
+            } catch (IOException e) {
                 e.printStackTrace();
+                System.err.println("Error while loading the floor update page: " + e.getMessage());
+                notification("An error while loading the floor update page. Please try again or contact support.");
             }
 
         }
@@ -235,78 +245,29 @@ public class FloorController implements Initializable {
     @FXML
     void searchOnAction(ActionEvent event) {
 
-        if(floor==null){
-            if(houseAmount==null){
-                return;
-            }
-            else{
-                ObservableList<FloorTm> ob = FXCollections.observableArrayList();
+        ObservableList<FloorTm> filteredList = FXCollections.observableArrayList();
 
-                for(FloorTm x : tableData){
-                    if(houseAmount==x.getNoOfHouses()){
-                        ob.add(x);
-                    }
-                }
-                if(ob.isEmpty()){
+        boolean isFloorSelected = (floor != null && !floor.equals("Select"));
+        boolean isHouseAmountSelected = (houseAmount != null && !houseAmount.equals("Select"));
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION," There is no floor with "+houseAmount+" houses");
-                    alert.showAndWait();
-                }
-                else{
-                    table.setItems(ob);
-                }
+        for (FloorTm floorTm : tableData) {
+            boolean matchesFloor = !isFloorSelected || floor.equals(String.valueOf(floorTm.getFloorNo()));
+            boolean matchesHouseAmount = !isHouseAmountSelected || houseAmount.equals(String.valueOf(floorTm.getNoOfHouses()));
 
-                setNull();
-
-            }
-
-        }
-        else{
-            if(houseAmount==null){
-
-                ObservableList<FloorTm> ob = FXCollections.observableArrayList();
-
-                for(FloorTm x : tableData){
-                    if(floor==x.getFloorNo()){
-                        ob.add(x);
-                        break;
-                    }
-                }
-                if(ob.isEmpty()){
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION," There is no floor with "+floor+" floor no");
-                    alert.showAndWait();
-                }
-                else{
-                    table.setItems(ob);
-                }
-
-                setNull();
-
-            }
-            else{
-
-                ObservableList<FloorTm> ob = FXCollections.observableArrayList();
-
-                for(FloorTm x : tableData){
-                    if(floor==x.getFloorNo() && houseAmount==x.getNoOfHouses()){
-                        ob.add(x);
-                    }
-                }
-                if(ob.isEmpty()){
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION," There is no floor with floor no "+floor+"  and house amount "+ houseAmount);
-                    alert.showAndWait();
-                }
-                else{
-                    table.setItems(ob);
-                }
-
-                setNull();
+            if (matchesFloor && matchesHouseAmount) {
+                filteredList.add(floorTm);
             }
         }
-//        floorNoCmb.getSelectionModel().selectFirst();
-//        noOfHousesCmb.getSelectionModel().selectFirst();
+
+        if (filteredList.isEmpty()) {
+            notification("No results found for the selected criteria.");
+            table.setItems(tableData);
+            clean();
+        } else {
+            table.setItems(filteredList);
+        }
+
+        setNull();
 
     }
 
@@ -361,7 +322,7 @@ public class FloorController implements Initializable {
             return;
         }
 
-        if(text.equals("get by floor no asc")){
+        if(text.equals("Retrieve by floor number (ascending)")){
 
             ObservableList<FloorTm> floorTmsAr = tableData;
 
@@ -377,7 +338,7 @@ public class FloorController implements Initializable {
             }
             table.setItems(floorTmsAr);
         }
-        else if(text.equals("get by floor no desc")){
+        else if(text.equals("Retrieve by floor number (descending)")){
 
             ObservableList<FloorTm> floorTmsAr = tableData;
 
@@ -393,7 +354,7 @@ public class FloorController implements Initializable {
             }
             table.setItems(floorTmsAr);
         }
-        else if(text.equals("get by house amount asc")){
+        else if(text.equals("Retrieve by house amount (ascending)")){
 
             ObservableList<FloorTm> floorTmsAr = tableData;
 
@@ -409,7 +370,7 @@ public class FloorController implements Initializable {
             }
             table.setItems(floorTmsAr);
         }
-        else if(text.equals("get by house amount desc")){
+        else if(text.equals("Retrieve by house amount (descending)")){
 
             ObservableList<FloorTm> floorTmsAr = tableData;
 
@@ -436,14 +397,10 @@ public class FloorController implements Initializable {
         noOfHouses.setCellValueFactory(new PropertyValueFactory<>("noOfHouses"));
 
         tableLoad();
-
         setItemsToNoOfHousesCmb();
-
-        setItemsToFloorNoCmb();
-
         setItemsToSortTypeCmb();
-
         setItemsToRowsCmb();
+        setFloorNoCmbValues();
 
     }
 
@@ -456,6 +413,7 @@ public class FloorController implements Initializable {
             rows.add(count);
         }
         tableRowsCmb.setItems(rows);
+        tableRowsCmb.getSelectionModel().selectLast();
 
     }
 
@@ -463,23 +421,18 @@ public class FloorController implements Initializable {
     public void setItemsToSortTypeCmb() {
 
         sortType = FXCollections.observableArrayList();
-        sortType.addAll("get by floor no asc","get by floor no desc","get by house amount asc","get by house amount desc");
+        sortType.addAll("Select","Retrieve by floor number (ascending)","Retrieve by floor number (descending)","Retrieve by house amount (ascending)","Retrieve by house amount (descending)");
         sortCmb.setItems(sortType);
+        sortCmb.getSelectionModel().selectFirst();
     }
 
-
-    public void setItemsToFloorNoCmb(){
-
-        getFloorNumbers();
-        floorNoCmb.setItems(floorNumbers);
-
-    }
 
     public void setItemsToNoOfHousesCmb(){
 
         houseAmountPerFloor = FXCollections.observableArrayList();
-        houseAmountPerFloor.addAll(1,2,3,4,5,6,7,8,9);
+        houseAmountPerFloor.addAll("Select","1","2","3","4","5","6","7","8","9");
         noOfHousesCmb.setItems(houseAmountPerFloor);
+        noOfHousesCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -488,46 +441,43 @@ public class FloorController implements Initializable {
 
         try {
             tableData = floorModel.loadTableData();
-            if(tableData.isEmpty()){
-                return;
-            }
-            else {
-
-                table.setItems(tableData);
-            }
-        }
-        catch (Exception e){
+            table.setItems(tableData);
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error while loading the table data, Please try again or contact support.");
         }
+
 
     }
 
 
-    public void getFloorNumbers(){
+    public void setFloorNoCmbValues(){
 
         try {
             floorNumbers = floorModel.getFloorNumbers();
-        }
-        catch (Exception e){
+            floorNoCmb.setItems(floorNumbers);
+            floorNoCmb.getSelectionModel().selectFirst();
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the floor numbers: " + e.getMessage());
+            notification("An error while loading the floor numbers. Please try again or contact support.");
         }
+
     }
 
 
     public void clean(){
 
+        tableLoad();
         floorNotxt.setText("");
         noOfHousestxt.setText("");
         table.getSelectionModel().clearSelection();
-        setNull();
-        floorNoCmb.getSelectionModel().clearSelection();
-        noOfHousesCmb.getSelectionModel().clearSelection();
-        tableRowsCmb.getSelectionModel().clearSelection();
-        sortCmb.getSelectionModel().clearSelection();
-        //tableRowsCmb.getSelectionModel().selectLast();
-//      floorNoCmb.getSelectionModel().selectFirst();
-//      noOfHousesCmb.getSelectionModel().selectFirst();
-        tableLoad();
+        //setNull();
+        setItemsToNoOfHousesCmb();
+        setItemsToSortTypeCmb();
+        setItemsToRowsCmb();
+        setFloorNoCmbValues();
 
     }
 
@@ -542,6 +492,19 @@ public class FloorController implements Initializable {
     public void setFloorTextInvisible() {
 
        floorLable.setStyle("-fx-text-fill: #ffffff");
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }
 

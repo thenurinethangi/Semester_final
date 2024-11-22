@@ -6,23 +6,17 @@ import com.example.test.model.AddNewEmployeeModel;
 import com.example.test.validation.UserInputValidation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class AddNewEmployeeController implements Initializable {
@@ -79,130 +73,17 @@ public class AddNewEmployeeController implements Initializable {
         String allowances = allowancestxt.getText();
         String position = positiontxt.getText();
         String date = String.valueOf(dobPicker.getValue());
-        System.out.println(date);
 
         if(name.isEmpty() || address.isEmpty() || phoneNo.isEmpty() || basicSalary.isEmpty() || allowances.isEmpty() || position.isEmpty() || date.isEmpty()){
 
-          getNotification("No field can be empty");
-          return;
+            getNotification("No field can be empty");
+            return;
 
         }
 
-        boolean b1 = UserInputValidation.checkNameValidation(name);
-        if(!b1){
-            nametxt.setStyle(nametxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336); -fx-border-width: 0 0 2 0;");
-        }
-        else{
-            nametxt.setStyle(nametxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
+        boolean result = validateUserInput(name,address,phoneNo,basicSalary,allowances,position,date);
 
-            nametxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    nametxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    nametxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-        }
-
-        boolean b2 = UserInputValidation.checkTextValidation(address);
-        if(!b2){
-            addresstxt.setStyle(addresstxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 0 0 2 0;");
-        }
-        else{
-
-            addresstxt.setStyle(addresstxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-
-            addresstxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    addresstxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    addresstxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-        }
-
-        boolean b3 = UserInputValidation.checkPhoneNoValidation(phoneNo);
-        if(!b3){
-            phoneNotxt.setStyle(phoneNotxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 0 0 2 0;");
-        }
-        else {
-            phoneNotxt.setStyle(phoneNotxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-
-            phoneNotxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    phoneNotxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    phoneNotxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-
-        }
-        boolean b4 = UserInputValidation.checkDecimalValidation(basicSalary);
-        if(!b4){
-            basicSalarytxt.setStyle(basicSalarytxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 0 0 2 0;");
-        }
-        else {
-            basicSalarytxt.setStyle(basicSalarytxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-
-            basicSalarytxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    basicSalarytxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    basicSalarytxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-
-        }
-
-        boolean b5 = UserInputValidation.checkDecimalValidation(allowances);
-        if(!b5){
-            allowancestxt.setStyle(allowancestxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 0 0 2 0;");
-        }
-        else {
-            allowancestxt.setStyle(allowancestxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-
-            allowancestxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    allowancestxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    allowancestxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-
-        }
-
-        boolean b6 = UserInputValidation.checkTextValidation(position);
-        if(!b6){
-            positiontxt.setStyle(positiontxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 0 0 2 0;");
-        }
-        else {
-            positiontxt.setStyle(positiontxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-
-            positiontxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-
-                    positiontxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 0 0 2 0;");
-                } else {
-
-                    positiontxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 0 0 1 0;");
-                }
-            });
-
-        }
-
-        boolean b7 = UserInputValidation.checkDateValidation(date);
-
-        if(b1 && b2 && b3 && b4 && b5 && b6 && b7){
+        if(result){
 
             EmployeeDto employeeDto = new EmployeeDto(employeeIdLabel.getText(),name,address,phoneNo,Double.parseDouble(basicSalary),
                     Double.parseDouble(allowances),date,position);
@@ -210,19 +91,18 @@ public class AddNewEmployeeController implements Initializable {
             try {
                 String response = addNewEmployeeModel.addNewEmployee(employeeDto);
                 getNotification(response);
+
                 if(response.equals("successfully add new employee")){
                     generateNextEmployeeId();
                 }
 
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at class not found");
-                alert.showAndWait();
-
             }
+            catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while adding a new employee: " + e.getMessage());
+                getNotification("An error occurred while adding a new employee, Please try again or contact support.");
+            }
+
             clean();
 
         }
@@ -280,44 +160,32 @@ public class AddNewEmployeeController implements Initializable {
 
         if(name.isEmpty() || address.isEmpty() || phoneNo.isEmpty() || basicSalary.isEmpty() || allowances.isEmpty() || position.isEmpty() || date.isEmpty()){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("No field can be empty");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            getNotification("No field can be empty");
         }
+
         else{
+            boolean result = validateUserInput(name,address,phoneNo,basicSalary,allowances,position,date);
+
+            if(!result){
+                getNotification("Your input field data not acceptable,please enter correct data!");
+                return;
+            }
 
             String id = employeeIdLabel.getText();
 
             EmployeeDto employeeDto = new EmployeeDto(id,name,address,phoneNo,Double.parseDouble(basicSalary),Double.parseDouble(allowances),date,position);
-            String response = null;
-            try {
-                response = addNewEmployeeModel.updateEmployee(employeeDto);
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-                return;
 
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-                alert.showAndWait();
-                return;
+            try {
+                String response = addNewEmployeeModel.updateEmployee(employeeDto);
+                getNotification(response);
+            }
+            catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while updating a employee: " + e.getMessage());
+                getNotification("An error occurred while updating employee id: "+id+" Please try again or contact support.");
             }
 
             clean();
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
 
         }
 
@@ -338,12 +206,10 @@ public class AddNewEmployeeController implements Initializable {
             String id = addNewEmployeeModel.generateNextEmployeeId();
             employeeIdLabel.setText(id);
 
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-            alert.showAndWait();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while generating a new employee id: " + e.getMessage());
+            getNotification("An error occurred while generating a new employee id. Please try again or contact support.");
         }
 
     }
@@ -376,6 +242,130 @@ public class AddNewEmployeeController implements Initializable {
         addbtn.setDisable(true);
         editbtn.setDisable(false);
 
+    }
+
+
+    public boolean validateUserInput(String name, String address, String phoneNo, String basicSalary, String allowances, String position, String date){
+
+        boolean b1 = UserInputValidation.checkNameValidation(name);
+        if(!b1){
+            nametxt.setStyle(nametxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336); -fx-border-width: 1 1 1 1;");
+        }
+        else{
+            nametxt.setStyle(nametxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            nametxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    nametxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    nametxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+        }
+
+        boolean b2 = UserInputValidation.checkTextValidation(address);
+        if(!b2){
+            addresstxt.setStyle(addresstxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 1 1 1 1;");
+        }
+        else{
+
+            addresstxt.setStyle(addresstxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            addresstxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    addresstxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    addresstxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+        }
+
+        boolean b3 = UserInputValidation.checkPhoneNoValidation(phoneNo);
+        if(!b3){
+            phoneNotxt.setStyle(phoneNotxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 1 1 1 1;");
+        }
+        else {
+            phoneNotxt.setStyle(phoneNotxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            phoneNotxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    phoneNotxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    phoneNotxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+
+        }
+
+        boolean b4 = UserInputValidation.checkDecimalValidation(basicSalary);
+        if(!b4){
+            basicSalarytxt.setStyle(basicSalarytxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 1 1 1 1;");
+        }
+        else {
+            basicSalarytxt.setStyle(basicSalarytxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            basicSalarytxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    basicSalarytxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    basicSalarytxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+
+        }
+
+        boolean b5 = UserInputValidation.checkDecimalValidation(allowances);
+        if(!b5){
+            allowancestxt.setStyle(allowancestxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 1 1 1 1;");
+        }
+        else {
+            allowancestxt.setStyle(allowancestxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            allowancestxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    allowancestxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    allowancestxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+
+        }
+
+        boolean b6 = UserInputValidation.checkTextValidation(position);
+        if(!b6){
+            positiontxt.setStyle(positiontxt.getStyle()+";-fx-border-color: linear-gradient(to right, #C62828, #F44336);-fx-border-width: 1 1 1 1;");
+        }
+        else {
+            positiontxt.setStyle(positiontxt.getStyle()+";-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+
+            positiontxt.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+
+                    positiontxt.setStyle("-fx-border-color: linear-gradient(to right, #007AFF, #E1F5FE); -fx-border-width: 1 1 1 1;");
+                } else {
+
+                    positiontxt.setStyle("-fx-border-color: #57606f; -fx-border-width: 1 1 1 1;");
+                }
+            });
+
+        }
+
+        boolean b7 = UserInputValidation.checkDateValidation(date);
+
+        if(b1 && b2 && b3 && b4 && b5 && b6 && b7){
+            return true;
+        }
+        return false;
     }
 }
 

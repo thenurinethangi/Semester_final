@@ -2,9 +2,12 @@ package com.example.test.controller;
 
 import com.example.test.dto.tm.MaintenanceRequestTm;
 import com.example.test.dto.tm.PaymentTm;
+import com.example.test.dto.tm.TenantTm;
 import com.example.test.model.MaintenanceRequestModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +32,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MaintenanceRequestController implements Initializable {
@@ -100,6 +105,7 @@ public class MaintenanceRequestController implements Initializable {
     private TextField searchTxt;
 
 
+    private boolean isOnlyInProgressRequest = false;
     private ObservableList<MaintenanceRequestTm> tableData;
     private final MaintenanceRequestModel maintenanceRequestModel = new MaintenanceRequestModel();
 
@@ -117,17 +123,80 @@ public class MaintenanceRequestController implements Initializable {
         }
         catch (IOException e){
             e.printStackTrace();
+            System.err.println("Error while loading the Add New Maintenance Request Form: " + e.getMessage());
+            notification("An error occurred while loading the Add New Maintenance Request Form. Please try again or contact support.");
         }
     }
 
     @FXML
     void deleteOnAction(ActionEvent event) {
 
+        MaintenanceRequestTm selectedRequest = table.getSelectionModel().getSelectedItem();
+
+        if(selectedRequest==null){
+           return;
+        }
+
+        if(selectedRequest.getStatus().equals("Completed") || selectedRequest.getStatus().equals("Rejected")){
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("Please Confirm First");
+            alert.setContentText("Are you sure you want to delete this (Completed,Rejected) Maintenance Request?");
+
+            ButtonType buttonYes = new ButtonType("Yes");
+            ButtonType buttonCancel = new ButtonType("Cancel");
+
+            alert.getButtonTypes().setAll(buttonYes, buttonCancel);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == buttonYes) {
+
+                try {
+                   String response =  maintenanceRequestModel.deActiveSelectedMaintenanceRequest(selectedRequest);
+                   notification(response);
+                   loadTable();
+
+                } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.err.println("Error while deleting the maintenance request: " + e.getMessage());
+                    notification("An error occurred while deleting the maintenance request id: "+selectedRequest.getMaintenanceRequestNo()+", Please try again or contact support.");
+                }
+
+            } else {
+                table.getSelectionModel().clearSelection();
+            }
+        }
     }
+
 
     @FXML
     void editOnAction(ActionEvent event) {
 
+        MaintenanceRequestTm selectedRequest = table.getSelectionModel().getSelectedItem();
+
+        if(selectedRequest==null){
+            return;
+        }
+
+        if(selectedRequest.getStatus().equals("In Progress") && selectedRequest.getActualCost().equals("-")) {
+
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewMaintenanceRequest.fxml"));
+                Parent root = fxmlLoader.load();
+                AddNewMaintenanceRequestController addNewMaintenanceRequestController = fxmlLoader.getController();
+                addNewMaintenanceRequestController.setSelectedRequestDetailsToUpdate(selectedRequest);
+                Scene scene = new Scene(root);
+                Stage s1 = new Stage();
+                s1.setScene(scene);
+                s1.show();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+                System.err.println("Error while loading the Add New Maintenance Request Form: " + e.getMessage());
+                notification("An error occurred while loading the Add New Maintenance Request Form. Please try again or contact support.");
+            }
+        }
     }
 
     @FXML
@@ -138,18 +207,178 @@ public class MaintenanceRequestController implements Initializable {
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        clean();
+        if(!isOnlyInProgressRequest) {
+            clean();
+        }
+        else{
+            setOnlyProgressRequest();
+        }
     }
 
     @FXML
     void searchOnAction(ActionEvent event) {
 
+        ObservableList<MaintenanceRequestTm> searchedRequests = FXCollections.observableArrayList();
+
+        String selectedRequestNo = requestNoCmb.getValue();
+        String selectedStatus = statusCmb.getValue();
+        String selectedTenantId = tenantIdCmb.getValue();
+        String selectedDate = String.valueOf(datePicker.getValue());
+
+        boolean requestNoSelected = selectedRequestNo != null && !selectedRequestNo.equals("Select");
+        boolean statusSelected = selectedStatus != null && !selectedStatus.equals("Select");
+        boolean tenantIdSelected = selectedTenantId != null && !selectedTenantId.equals("Select");
+        boolean dateSelected = selectedDate != null && !selectedDate.equals("1990-10-10");
+
+
+        if (requestNoSelected) {
+            ObservableList<MaintenanceRequestTm> requestsByRequestNo = getRequestByRequestNo(selectedRequestNo);
+
+            if (requestsByRequestNo.isEmpty()) {
+                table.setItems(requestsByRequestNo);
+            } else {
+                searchedRequests.addAll(requestsByRequestNo);
+
+                if (statusSelected) {
+                    ObservableList<MaintenanceRequestTm> filteredByStatus = filterRequestsByStatus(searchedRequests, selectedStatus);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByStatus);
+                }
+
+                if (tenantIdSelected) {
+                    ObservableList<MaintenanceRequestTm> filteredByTenantId = filterRequestsByTenantId(searchedRequests, selectedTenantId);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByTenantId);
+                }
+
+                if (dateSelected) {
+                    ObservableList<MaintenanceRequestTm> filteredByDate = filterRequestsByDate(searchedRequests, selectedDate);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByDate);
+                }
+
+                table.setItems(searchedRequests);
+            }
+
+        } else if (statusSelected || tenantIdSelected || dateSelected) {
+            ObservableList<MaintenanceRequestTm> allRequests = tableData;
+            searchedRequests.addAll(allRequests);
+
+            if (statusSelected) {
+                searchedRequests = filterRequestsByStatus(searchedRequests, selectedStatus);
+            }
+
+            if (tenantIdSelected) {
+                searchedRequests = filterRequestsByTenantId(searchedRequests, selectedTenantId);
+            }
+
+            if (dateSelected) {
+                searchedRequests = filterRequestsByDate(searchedRequests, selectedDate);
+            }
+
+            table.setItems(searchedRequests);
+
+        } else {
+            ObservableList<MaintenanceRequestTm> allRequests = tableData;
+            table.setItems(allRequests);
+        }
     }
+
+
+
+    private ObservableList<MaintenanceRequestTm> getRequestByRequestNo(String requestNo) {
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(request -> request.getMaintenanceRequestNo().equalsIgnoreCase(requestNo))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<MaintenanceRequestTm> filterRequestsByStatus(ObservableList<MaintenanceRequestTm> requests, String status) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getStatus().equalsIgnoreCase(status))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<MaintenanceRequestTm> filterRequestsByTenantId(ObservableList<MaintenanceRequestTm> requests, String tenantId) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getTenantId().equalsIgnoreCase(tenantId))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<MaintenanceRequestTm> filterRequestsByDate(ObservableList<MaintenanceRequestTm> requests, String date) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getDate().toString().equalsIgnoreCase(date))
+                        .toList()
+        );
+    }
+
 
     @FXML
     void sortCmbOnAction(ActionEvent event) {
 
+
+        String sortType = sortCmb.getSelectionModel().getSelectedItem();
+        ObservableList<MaintenanceRequestTm> maintenanceRequestTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<MaintenanceRequestTm> comparator = null;
+
+        switch (sortType) {
+            case "Maintenance Request ID (Ascending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getMaintenanceRequestNo);
+                break;
+
+            case "Maintenance Request ID (Descending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getMaintenanceRequestNo).reversed();
+                break;
+
+            case "Estimated Cost (Ascending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getEstimatedCost);
+                break;
+
+            case "Estimated Cost (Descending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getEstimatedCost).reversed();
+                break;
+
+            case "Actual Cost (Ascending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getActualCost);
+                break;
+
+            case "Actual Cost (Descending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getActualCost).reversed();
+                break;
+
+            case "Date (Ascending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getDate);
+                break;
+
+            case "Date (Descending)":
+                comparator = Comparator.comparing(MaintenanceRequestTm::getDate).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(maintenanceRequestTms, comparator);
+            table.setItems(maintenanceRequestTms);
+        }
     }
+
+
 
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
@@ -168,6 +397,8 @@ public class MaintenanceRequestController implements Initializable {
         table.setItems(maintenanceRequestTms);
     }
 
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -177,8 +408,54 @@ public class MaintenanceRequestController implements Initializable {
         setRequestNoCmbValues();
         setStatusCmbValues();
         setTenantIdCmbValues();
-        datePicker.setValue(LocalDate.now());
+        setSortCmbValues();
+        datePicker.setValue(LocalDate.parse("1990-10-10"));
+        tableSearch();
     }
+
+
+
+    public void tableSearch() {
+
+        FilteredList<MaintenanceRequestTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(request -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (request.getMaintenanceRequestNo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getDescription().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(request.getEstimatedCost()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(request.getActualCost()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(request.getDate()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getAssignedTechnician().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getTenantId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<MaintenanceRequestTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
+
 
 
     public void setTenantIdCmbValues(){
@@ -187,13 +464,15 @@ public class MaintenanceRequestController implements Initializable {
             ObservableList<String> tenantIds = maintenanceRequestModel.getDistinctTenantIds();
             tenantIdCmb.setItems(tenantIds);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to tenant id combo box: " + e.getMessage());
+            notification("An error occurred while setting values to tenant id combo box. Please try again or contact support.");
         }
 
     }
+
+
 
     public  void setStatusCmbValues(){
 
@@ -202,6 +481,7 @@ public class MaintenanceRequestController implements Initializable {
         statusCmb.getSelectionModel().selectFirst();
 
     }
+
 
     public void setRequestNoCmbValues(){
 
@@ -216,6 +496,8 @@ public class MaintenanceRequestController implements Initializable {
         requestNoCmb.getSelectionModel().selectFirst();
 
     }
+
+
 
     public void setRowCmbValues(){
 
@@ -236,6 +518,9 @@ public class MaintenanceRequestController implements Initializable {
 
     public void setSortCmbValues(){
 
+        ObservableList<String> sortTypes = FXCollections.observableArrayList("Sort By","Maintenance Request ID (Ascending)","Maintenance Request ID (Descending)","Estimated Cost (Ascending)","Estimated Cost (Descending)","Actual Cost (Ascending)","Actual Cost (Descending)","Date (Ascending)","Date (Descending)");
+        sortCmb.setItems(sortTypes);
+        sortCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -253,6 +538,7 @@ public class MaintenanceRequestController implements Initializable {
 
     }
 
+
     public void setTableColumnsValue(){
 
         Callback<TableColumn<MaintenanceRequestTm, String>, TableCell<MaintenanceRequestTm, String>> cellFoctory = (TableColumn<MaintenanceRequestTm, String> param) -> {
@@ -268,14 +554,20 @@ public class MaintenanceRequestController implements Initializable {
 
                     } else {
                         Image image1 = new Image("C:\\Users\\Laptop World\\IdeaProjects\\test\\src\\main\\resources\\image\\ethics.png");
+                        Image image2 = new Image("C:\\Users\\Laptop World\\IdeaProjects\\test\\src\\main\\resources\\image\\file.png");
 
                         ImageView makeComplete = new ImageView();
                         makeComplete.setImage(image1);
                         makeComplete.setFitHeight(19);
                         makeComplete.setFitWidth(19);
 
+                        ImageView makeRejected = new ImageView();
+                        makeRejected.setImage(image2);
+                        makeRejected.setFitHeight(19);
+                        makeRejected.setFitWidth(19);
 
                         makeComplete.setStyle(" -fx-cursor: hand ;");
+                        makeRejected.setStyle(" -fx-cursor: hand ;");
 
                         makeComplete.setOnMouseClicked((MouseEvent event) -> {
 
@@ -283,34 +575,80 @@ public class MaintenanceRequestController implements Initializable {
 
                             if(selectedRequest.getStatus().equals("In Progress") && !selectedRequest.getActualCost().equals("-")){
 
-                                try {
-                                    String response = maintenanceRequestModel.setStatusComplete(selectedRequest);
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                alert.setTitle("Confirmation Dialog");
+                                alert.setHeaderText("Please Confirm First");
+                                alert.setContentText("Are you sure you want to Complete selected Maintenance request ?");
 
-                                    Notifications notifications = Notifications.create();
-                                    notifications.title("Notification");
-                                    notifications.text(response);
-                                    notifications.hideCloseButton();
-                                    notifications.hideAfter(Duration.seconds(5));
-                                    notifications.position(Pos.CENTER);
-                                    notifications.darkStyle();
-                                    notifications.showInformation();
+                                ButtonType buttonYes = new ButtonType("Yes");
+                                ButtonType buttonCancel = new ButtonType("Cancel");
 
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                alert.getButtonTypes().setAll(buttonYes, buttonCancel);
+
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if (result.isPresent() && result.get() == buttonYes) {
+                                    try {
+                                        String response = maintenanceRequestModel.setStatusComplete(selectedRequest);
+                                        notification(response);
+                                        loadTable();
+
+                                    } catch (SQLException | ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                        System.err.println("Error while completing the maintenance request: " + e.getMessage());
+                                        notification("An error occurred while completing the maintenance request. Please try again or contact support.");
+                                    }
+                                }
+                                else{
+                                    table.getSelectionModel().clearSelection();
                                 }
                             }
 
                         });
 
-                        HBox manageBtn = new HBox(makeComplete);
+                        makeRejected.setOnMouseClicked((MouseEvent event) -> {
+
+                            MaintenanceRequestTm selectedRequest = table.getSelectionModel().getSelectedItem();
+
+                            if(selectedRequest.getStatus().equals("In Progress") && selectedRequest.getActualCost().equals("-")) {
+
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                alert.setTitle("Confirmation Dialog");
+                                alert.setHeaderText("Please Confirm First");
+                                alert.setContentText("Are you sure you want to reject selected Maintenance request ?");
+
+                                ButtonType buttonYes = new ButtonType("Yes");
+                                ButtonType buttonCancel = new ButtonType("Cancel");
+
+                                alert.getButtonTypes().setAll(buttonYes, buttonCancel);
+
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if (result.isPresent() && result.get() == buttonYes) {
+
+                                    try {
+                                        String response = maintenanceRequestModel.makeRequestRejected(selectedRequest);
+                                        notification(response);
+                                        loadTable();
+
+                                    } catch (SQLException | ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                        System.err.println("Error while rejecting the maintenance request: " + e.getMessage());
+                                        notification("An error occurred while rejecting the maintenance request. Please try again or contact support.");
+                                    }
+                                } else {
+                                    table.getSelectionModel().clearSelection();
+                                }
+                            }
+
+                        });
+
+                        HBox manageBtn = new HBox(makeComplete,makeRejected);
 
                         manageBtn.setAlignment(Pos.CENTER);
                         manageBtn.setSpacing(3);
                         manageBtn.setPadding(new Insets(2));
 
                         HBox.setMargin(makeComplete, new Insets(2, 2, 0, 3));
+                        HBox.setMargin(makeRejected, new Insets(2, 2, 0, 3));
                         setGraphic(manageBtn);
 
                         setText(null);
@@ -335,10 +673,10 @@ public class MaintenanceRequestController implements Initializable {
             tableData = maintenanceRequestModel.getAllRequests();
             table.setItems(tableData);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
         }
     }
 
@@ -349,9 +687,47 @@ public class MaintenanceRequestController implements Initializable {
         setRowCmbValues();
         setRequestNoCmbValues();
         setTenantIdCmbValues();
+        setSortCmbValues();
+        datePicker.setValue(LocalDate.parse("1990-10-10"));
+        statusCmb.getSelectionModel().selectFirst();
+        searchTxt.setText("");
+    }
+
+
+    public void setOnlyProgressRequest() {
+
+        isOnlyInProgressRequest = true;
+
+        try {
+            tableData = maintenanceRequestModel.getAllInProgressRequests();
+            table.setItems(tableData);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
+        }
+
+        setRowCmbValues();
+        setRequestNoCmbValues();
+        setTenantIdCmbValues();
+        setSortCmbValues();
         datePicker.setValue(LocalDate.now());
         statusCmb.getSelectionModel().selectFirst();
         searchTxt.setText("");
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }
 

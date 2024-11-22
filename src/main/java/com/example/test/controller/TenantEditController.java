@@ -114,30 +114,15 @@ public class TenantEditController {
 
             try {
                 String response = tenantModel.updateTenant(tenantDto);
+                notification(response);
 
-                Notifications notifications = Notifications.create();
-                notifications.title("Notification");
-                notifications.text(response);
-                notifications.hideCloseButton();
-                notifications.hideAfter(Duration.seconds(5));
-                notifications.position(Pos.CENTER);
-                notifications.darkStyle();
-                notifications.showInformation();
-
-            } catch (SQLException e) {
+            } catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-                return;
-
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-                alert.showAndWait();
-                return;
+                System.err.println("Error while updating tenant id: "+selectedTenant.getTenantId()+" details"+ e.getMessage());
+                notification("An error occurred while updating tenant id: "+selectedTenant.getTenantId()+" details, Please try again or contact support.");
             }
 
             clean();
-
         }
 
     }
@@ -189,15 +174,7 @@ public class TenantEditController {
 
         if(name.isEmpty() || phoneNo.isEmpty() || membersCount.isEmpty() || email.isEmpty()){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("No field can be empty");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
+            notification("No field can be empty");
             return false;
         }
 
@@ -216,10 +193,10 @@ public class TenantEditController {
         try {
             TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedTenant.getTenantId());
             emailTxt.setText(tenantDto.getEmail());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting tenant id: "+selectedTenant.getTenantId()+" details"+ e.getMessage());
+            notification("An error occurred while setting tenant id: "+selectedTenant.getTenantId()+" details, Please try again or contact support.");
         }
     }
 
@@ -234,6 +211,19 @@ public class TenantEditController {
         phoneNoAlert.setText("");
         membersCountAlert.setText("");
         emailAlert.setText("");
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

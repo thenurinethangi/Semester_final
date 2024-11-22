@@ -8,6 +8,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class UnitDto {
 
     private String houseId;

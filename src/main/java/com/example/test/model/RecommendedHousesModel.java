@@ -94,6 +94,16 @@ public class RecommendedHousesModel {
 
         return result;
     }
+
+    public ObservableList<String> getRecommendedSellHouses(RequestTm requestTm) throws SQLException, ClassNotFoundException {
+
+        return unitModel.getRecommendedSellHouses(requestTm);
+    }
+
+    public ObservableList<UnitDto> getRecommendedSellHousesAsUnitDto(RequestTm requestTm) throws SQLException, ClassNotFoundException {
+
+        return unitModel.getRecommendedSellHousesAsUnitDto(requestTm);
+    }
 }
 
 

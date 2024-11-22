@@ -1,95 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="570.0" prefWidth="536.0" style="-fx-background-color: #FAFAFA;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.AddNewEmployeeController">
+<AnchorPane prefHeight="484.0" prefWidth="643.0" style="-fx-background-color: #ffffff; -fx-border-color: #D1D1D1;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.AddNewEmployeeController">
    <children>
-      <Pane layoutX="13.0" layoutY="21.0" prefHeight="487.0" prefWidth="510.0" style="-fx-background-color: #ffffff; -fx-border-radius: 5; -fx-border-color: #747d8c; -fx-border-width: 0 1 1 1;">
-         <children>
-            <Label layoutX="3.0" layoutY="-10.0" text="New Employee">
-               <font>
-                  <Font name="Candara Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="41.0" prefHeight="20.0" prefWidth="90.0" text="Employee ID:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label fx:id="employeeIdLabel" layoutX="118.0" layoutY="42.0" text="EM002">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="88.0" prefHeight="20.0" prefWidth="125.0" text="Name:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="139.0" prefHeight="20.0" prefWidth="125.0" text="Address:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="192.0" prefHeight="20.0" prefWidth="65.0" text="Phone No:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="244.0" prefHeight="20.0" prefWidth="90.0" text="Basic Salary:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="297.0" prefHeight="20.0" prefWidth="110.0" text="Allowances:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="349.0" prefHeight="20.0" prefWidth="110.0" text="DOB:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="399.0" prefHeight="20.0" prefWidth="110.0" text="Position:" textFill="#747d8c">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-            <TextField fx:id="nametxt" layoutX="154.0" layoutY="86.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <TextField fx:id="addresstxt" layoutX="154.0" layoutY="137.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <TextField fx:id="basicSalarytxt" layoutX="154.0" layoutY="242.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <TextField fx:id="phoneNotxt" layoutX="154.0" layoutY="190.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <TextField fx:id="positiontxt" layoutX="154.0" layoutY="397.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <TextField fx:id="allowancestxt" layoutX="154.0" layoutY="295.0" prefHeight="25.0" prefWidth="310.0" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <DatePicker fx:id="dobPicker" layoutX="154.0" layoutY="347.0" onAction="#dobPickerOnAction" prefHeight="29.0" prefWidth="207.0" stylesheets="@../style/Employee.css" />
-         </children>
-      </Pane>
-      <Button fx:id="addbtn" layoutX="465.0" layoutY="524.0" mnemonicParsing="false" onAction="#addOnAction" prefHeight="29.0" prefWidth="57.0" stylesheets="@../style/AddNewUnit.css" text="Add">
+      <Label layoutX="18.0" layoutY="10.0" prefHeight="29.0" prefWidth="592.0" style="-fx-padding: 2 0 2 0;" text="New Employee" textFill="#57606f">
+         <font>
+            <Font name="Candara Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="58.0" text="Employee ID*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="205.0" text="Phone Number*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="326.0" layoutY="205.0" text="Basic Salary*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="279.0" text="Allowances*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button fx:id="addbtn" alignment="CENTER" layoutX="548.0" layoutY="441.0" mnemonicParsing="false" onAction="#addOnAction" prefHeight="30.0" prefWidth="77.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
-      <Button fx:id="clearbtn" layoutX="404.0" layoutY="524.0" mnemonicParsing="false" onAction="#clearOnAction" prefHeight="30.0" prefWidth="57.0" stylesheets="@../style/AddNewUnit.css" text="Clear">
+      <Button fx:id="canclebtn" alignment="CENTER" layoutX="386.0" layoutY="441.0" mnemonicParsing="false" onAction="#cancleOnAction" prefHeight="30.0" prefWidth="77.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="Cancel" textAlignment="JUSTIFY" textFill="#57606f">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
-      <Button fx:id="canclebtn" layoutX="342.0" layoutY="524.0" mnemonicParsing="false" onAction="#cancleOnAction" prefHeight="30.0" prefWidth="58.0" stylesheets="@../style/AddNewUnit.css" text="Cancle">
+      <Label layoutX="19.0" layoutY="105.0" prefHeight="13.0" prefWidth="270.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <TextField fx:id="allowancestxt" layoutX="19.0" layoutY="297.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="employeeIdLabel" layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="EM002" textFill="#2f3440e1">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Line endX="517.0" layoutX="108.0" layoutY="122.0" startX="-90.33334350585938" stroke="#a6b1bd4d" />
+      <Label layoutX="18.0" layoutY="133.0" text="Name*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="nametxt" layoutX="19.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label layoutX="18.0" layoutY="349.0" text="Position*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="bathRoomNoErrorMsg" layoutX="327.0" layoutY="181.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label layoutX="325.0" layoutY="133.0" text="Address*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="addresstxt" layoutX="326.0" layoutY="151.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label layoutX="326.0" layoutY="279.0" text="DOB*" textFill="#747d8c">
+         <font>
+            <Font name="Candara Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button fx:id="clearbtn" alignment="CENTER" layoutX="467.0" layoutY="441.0" mnemonicParsing="false" onAction="#clearOnAction" prefHeight="30.0" prefWidth="77.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="Clear" textAlignment="JUSTIFY" textFill="#57606f">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
-      <Button fx:id="editbtn" layoutX="13.0" layoutY="524.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="29.0" prefWidth="57.0" style="-fx-background-color: #007AFF;" stylesheets="@../style/AddNewUnit.css" text="Edit" textFill="WHITE">
+      <Button fx:id="editbtn" alignment="CENTER" layoutX="22.0" layoutY="441.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="30.0" prefWidth="77.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Edit" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
+      <TextField fx:id="basicSalarytxt" layoutX="326.0" layoutY="223.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="bedRoomNoErrorMsg" layoutX="20.0" layoutY="181.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label fx:id="totalValueErrorMsg" layoutX="327.0" layoutY="254.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label fx:id="securityChargeErrorMsg" layoutX="19.0" layoutY="327.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label fx:id="monthlyRentErrorMsg" layoutX="327.0" layoutY="327.0" prefHeight="17.0" prefWidth="269.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <TextField fx:id="phoneNotxt" layoutX="19.0" layoutY="223.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <TextField fx:id="positiontxt" layoutX="19.0" layoutY="367.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <DatePicker fx:id="dobPicker" layoutX="326.0" layoutY="297.0" onAction="#dobPickerOnAction" prefHeight="17.0" prefWidth="269.0" stylesheets="@../style/User.css" />
    </children>
 </AnchorPane>

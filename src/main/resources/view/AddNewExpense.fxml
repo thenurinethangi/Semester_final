@@ -25,12 +25,12 @@
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <Button alignment="CENTER" layoutX="324.0" layoutY="305.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="addBtn" alignment="CENTER" layoutX="324.0" layoutY="305.0" mnemonicParsing="false" onAction="#addBtnOnAction" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #57606f; -fx-background-radius: 3;" text="Add" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Button alignment="CENTER" layoutX="19.0" layoutY="305.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="cancel" textAlignment="JUSTIFY" textFill="#57606f">
+      <Button fx:id="cancelBtn" alignment="CENTER" layoutX="19.0" layoutY="305.0" mnemonicParsing="false" onAction="#cancelBtnOnAction" prefHeight="28.0" prefWidth="299.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #57606f;" text="cancel" textAlignment="JUSTIFY" textFill="#57606f">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -40,25 +40,35 @@
             <Font size="9.0" />
          </font>
       </Label>
-      <TextField layoutX="19.0" layoutY="150.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="EXP-00001" textFill="#57606f">
+      <TextField fx:id="descriptionTxt" layoutX="19.0" layoutY="150.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label fx:id="expenseNoLabel" layoutX="18.0" layoutY="76.0" prefHeight="30.0" prefWidth="269.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" text="EXP-00001" textFill="#57606f">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <Line endX="517.0" layoutX="108.0" layoutY="122.0" startX="-90.33334350585938" stroke="#a6b1bd4d" />
-      <Label layoutX="18.0" layoutY="188.0" text="Amount*" textFill="#747d8c">
+      <Label layoutX="18.0" layoutY="190.0" text="Amount*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField layoutX="19.0" layoutY="206.0" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label layoutX="325.0" layoutY="188.0" text="Maintenance Request ID*" textFill="#747d8c">
+      <TextField fx:id="amountTxt" layoutX="19.0" layoutY="208.0" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <Label layoutX="325.0" layoutY="190.0" text="Maintenance Request ID*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />
          </font>
       </Label>
-      <TextField layoutX="325.0" layoutY="206.0" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <ListView layoutX="326.0" layoutY="238.0" prefHeight="57.0" prefWidth="286.0" stylesheets="@../style/Customer.css" />
+      <TextField fx:id="requestIdTxt" layoutX="325.0" layoutY="208.0" onKeyPressed="#requestIdOnKeyPressed" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #ffffff; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
+      <ListView fx:id="requestIdList" layoutX="326.0" layoutY="240.0" onMouseClicked="#requestIdListOnMouseClicked" prefHeight="57.0" prefWidth="286.0" stylesheets="@../style/Customer.css" />
+      <Label fx:id="descriptionErrorLabel" layoutX="19.0" layoutY="179.0" prefHeight="13.0" prefWidth="592.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
+      <Label fx:id="amountErrorLabel" layoutX="19.0" layoutY="237.0" prefHeight="13.0" prefWidth="286.0" textFill="RED">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

@@ -1,5 +1,6 @@
 package com.example.test.model;
 
+import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
 import com.example.test.dto.FloorDto;
 import com.example.test.dto.tm.FloorTm;
@@ -56,10 +57,10 @@ public class FloorModel {
         int result = pst.executeUpdate();
 
         if(result>0){
-            return "successfully delete the floor";
+            return "Successfully deleted the floor";
         }
         else{
-            return "failed to delete the floor,try again later";
+            return "Failed to delete the floor, Try again later";
         }
     }
 
@@ -94,24 +95,33 @@ public class FloorModel {
 
     }
 
-    public ObservableList<Integer> getFloorNumbers() throws SQLException {
+    public ObservableList<String> getFloorNumbers() throws SQLException {
 
-        String sql = "select floorNo from floor";
+        String sql = "select floorNo from floor order by floorNo asc";
 
         PreparedStatement pst = connection.prepareStatement(sql);
 
         ResultSet result = pst.executeQuery();
 
-        ObservableList<Integer> observableList = FXCollections.observableArrayList();
+        ObservableList<String> observableList = FXCollections.observableArrayList();
+        observableList.add("Select");
 
         while (result.next()){
 
            int floor =  result.getInt("floorNo");
-           observableList.add(floor);
+           observableList.add(String.valueOf(floor));
 
         }
 
         return observableList;
+    }
+
+    public boolean checkThisFloorIsUsed(FloorTm floorData) throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from house where floorNo = ?";
+        ResultSet result = CrudUtility.execute(sql,floorData.getFloorNo());
+
+        return result.next();
     }
 }
 

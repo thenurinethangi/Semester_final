@@ -11,3 +11,75 @@
     -fx-border-width: 0 0 2 0;
 
 }
+
+
+/* Style for the DatePicker */
+.date-picker {
+    -fx-background-color: #ffffff; /* Background color of the DatePicker */
+    -fx-border-color: #a4b0be; /* Border color matching the theme */
+    -fx-border-radius: 5px; /* Rounded corners for the border */
+    -fx-padding: 2px; /* Padding inside the DatePicker */
+    -fx-font-size: 14px; /* Font size for the text */
+    -fx-text-fill: #333333; /* Text color */
+}
+
+/* Style for the DatePicker popup button (calendar button) */
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 5px;
+}
+
+.date-picker .arrow {
+    -fx-background-color: #a4b0be; /* Color of the calendar icon arrow */
+    -fx-padding: 5px;
+}
+
+/* Hover effect for the DatePicker */
+.date-picker:hover {
+    -fx-background-color: #dfe4ea; /* Light grey background on hover */
+    -fx-border-color: linear-gradient(to right, #a4b0be, #dfe4ea); /* Border color when hovered */
+}
+
+/* Focused state for the DatePicker */
+.date-picker:focused {
+    -fx-background-color: #ffffff; /* White background when focused */
+    -fx-border-color: linear-gradient(to right, #a4b0be, #57606f); /* Themed border when focused */
+    -fx-border-width: 1.5px; /* Thicker border when focused */
+}
+
+/* Style for the Calendar popup */
+.date-picker-popup {
+    -fx-background-color: #ffffff; /* Background color of the popup */
+    -fx-border-color: #a4b0be; /* Border color for the popup */
+    -fx-border-radius: 5px; /* Rounded corners for the popup */
+    -fx-padding: 10px; /* Padding inside the popup */
+}
+
+/* Style for the calendar cells (days) */
+.date-picker-popup .day-cell {
+    -fx-background-color: #f5f5f5; /* Background for day cells */
+    -fx-text-fill: #333333; /* Text color for days */
+}
+
+/* Hover effect for the days in the calendar */
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #dfe4ea; /* Light grey background on hover */
+}
+
+/* Style for the selected day */
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #a4b0be; /* Themed background for the selected day */
+    -fx-text-fill: #ffffff; /* White text color for the selected day */
+}
+
+/* Style for the month/year label in the DatePicker popup */
+.date-picker-popup .label {
+    -fx-font-size: 16px; /* Font size for the month/year label */
+    -fx-text-fill: #a4b0be; /* Color for the month/year label */
+}
+
+/* Style for the navigation buttons in the popup (next/previous month) */
+.date-picker-popup .button {
+    -fx-background-color: transparent; /* Transparent background for buttons */
+    -fx-text-fill: #a4b0be; /* Text color for the buttons */
+}

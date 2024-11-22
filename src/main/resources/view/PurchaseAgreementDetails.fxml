@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="319.0" prefWidth="669.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.PurchaseAgreementDetailsController">
+   <children>
+      <AnchorPane layoutX="-1.0" prefHeight="322.0" prefWidth="670.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <Label layoutX="14.0" layoutY="17.0" text="Agreement ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="96.0" lineSpacing="10.0" text="Owner Name:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="138.0" lineSpacing="10.0" text="Purchase Date:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="56.0" text="Owner ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="181.0" lineSpacing="10.0" text="Purchase Price:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="225.0" lineSpacing="10.0" text="House ID:" textFill="#2f3640" />
+            <Label layoutX="14.0" layoutY="269.0" lineSpacing="10.0" text="House Type:" textFill="#2f3640" />
+            <Label fx:id="houseType" layoutX="271.0" layoutY="269.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="houseId" layoutX="271.0" layoutY="225.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="purchasePrice" layoutX="271.0" layoutY="181.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="purchaseDate" layoutX="271.0" layoutY="138.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="name" layoutX="271.0" layoutY="96.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="ownerId" layoutX="271.0" layoutY="56.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+            <Label fx:id="agreementId" layoutX="271.0" layoutY="17.0" prefHeight="17.0" prefWidth="381.0" text="R0001" textFill="#747d8c" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="625.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.NotificationController">
+   <children>
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="569.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/notification.png" />
+         </image>
+      </ImageView>
+      <ListView fx:id="notificationList" layoutX="5.0" layoutY="32.0" prefHeight="580.0" prefWidth="595.0" stylesheets="@../style/Test.css" />
+   </children>
+</AnchorPane>

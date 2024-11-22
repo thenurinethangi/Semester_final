@@ -1,10 +1,15 @@
 package com.example.test.controller;
 
 import com.example.test.dto.tm.CustomerTm;
+import com.example.test.dto.tm.HouseTypeTm;
 import com.example.test.dto.tm.RequestTm;
+import com.example.test.dto.tm.TenantTm;
+import com.example.test.model.HouseTypeModel;
 import com.example.test.model.RequestModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +39,7 @@ import org.controlsfx.control.Notifications;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -79,7 +85,22 @@ public class RequestController implements Initializable {
     private TextField addressTxt;
 
     @FXML
+    private TextField searchTxt;
+
+    @FXML
     private Button addNewBuyRequestBtn;
+
+    @FXML
+    private ComboBox<String> rentOrBuyCmb;
+
+    @FXML
+    private ComboBox<String> customerIdCmb;
+
+    @FXML
+    private ComboBox<String> requestIdCmb;
+
+    @FXML
+    private ComboBox<String> houseTypeCmb;
 
     @FXML
     private TableView<RequestTm> table;
@@ -111,10 +132,21 @@ public class RequestController implements Initializable {
     TableColumn<RequestTm, String> actionColumn;
 
 
-    private final RequestModel requestModel = new RequestModel();
+    private RequestModel requestModel;
+    private HouseTypeModel houseTypeModel;
     private ObservableList<RequestTm> tableData;
 
-    public RequestController() throws SQLException, ClassNotFoundException {
+    public RequestController() {
+
+        try{
+            requestModel = new RequestModel();
+            houseTypeModel = new HouseTypeModel();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while request page: " + e.getMessage());
+            notification("An error occurred while request page. Please try again or contact support.");
+        }
     }
 
 
@@ -131,6 +163,8 @@ public class RequestController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading Add New Purchase Request Form: " + e.getMessage());
+            notification("An error occurred while loading Add New Purchase Request Form. Please try again or contact support.");
         }
 
     }
@@ -148,144 +182,80 @@ public class RequestController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading Add New Rent Request Form: " + e.getMessage());
+            notification("An error occurred while loading Add New Rent Request Form. Please try again or contact support.");
         }
 
     }
 
 
     @FXML
-    void addressTxtKeyReleased(KeyEvent event) {
-
-    }
-
-
-    @FXML
-    void addressTxtOnMouseClicked(MouseEvent event) {
-
-    }
-
-
-    @FXML
-    void deleteOnAction(ActionEvent event) { //delete eka fully hadanna
+    void deleteOnAction(ActionEvent event) {
 
         RequestTm selectedRequest = table.getSelectionModel().getSelectedItem();
 
-        if(selectedRequest==null){
+        if (selectedRequest == null) {
+            notification("No request selected to delete.");
             return;
         }
 
-        if(selectedRequest.getQualifiedCustomerOrNot().equals("Yes")){
 
-            if(selectedRequest.getRequestStatus().equals("Completed") || selectedRequest.getCustomerRequestStatus().equals("confirmed") || selectedRequest.getIsPaymentsCompleted().equals("Yes")){
-                if(selectedRequest.getRequestStatus().equals("Completed")){
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("This Is Completed Request, Can't Delete");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
-                    return;
-                }
-                else if(selectedRequest.getIsPaymentsCompleted().equals("Yes")){
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("This Request Has Completed Payment, Can't Delete");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
-                    return;
-
-                }
-                else{
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("This Is Confirmed Request, Can't Delete");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
-                    return;
-                }
-
-
-            }
-
+        if (selectedRequest.getRequestStatus().equalsIgnoreCase("Completed") ||
+                selectedRequest.getRequestStatus().equalsIgnoreCase("Closed")) {
+            notification("Cannot delete Completed or Closed requests.");
+            return;
         }
-        else{
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to delete this request?");
+
+        if (selectedRequest.getRequestStatus().equalsIgnoreCase("In Process") &&
+                selectedRequest.getCustomerRequestStatus().equalsIgnoreCase("Confirmed")) {
+            notification("Cannot delete Confirmed In-Process requests.");
+            return;
+        }
+
+
+        if (selectedRequest.getRequestStatus().equalsIgnoreCase("Rejected")) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Are you sure you want to delete this Rejected request?");
             Optional<ButtonType> response = alert.showAndWait();
-
-            deleteTheSelectedRequest(response,selectedRequest);
-            //delete request
+            deleteTheSelectedRequest(response, selectedRequest);
+            return;
         }
 
-        if(selectedRequest.getQualifiedCustomerOrNot().equals("Yes") && selectedRequest.getAllDocumentsProvided().equals("Yes") && selectedRequest.getAgreesToAllTermsAndConditions().equals("Yes")){
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"This customer is qualified, has agreed to all terms and conditions," +
-                                                                    " and has provided all necessary documents. This request can be important" +
-                                                                    " Are you sure you want to delete this request?");
-            Optional<ButtonType> response = alert.showAndWait();
+        if (selectedRequest.getRequestStatus().equalsIgnoreCase("In Process")) {
+            boolean notQualified = selectedRequest.getQualifiedCustomerOrNot().equalsIgnoreCase("No");
+            boolean noAgreement = selectedRequest.getAgreesToAllTermsAndConditions().equalsIgnoreCase("No");
+            boolean documentsMissing = selectedRequest.getAllDocumentsProvided().equalsIgnoreCase("No");
 
-            deleteTheSelectedRequest(response,selectedRequest);
-
-        }
-        else if(selectedRequest.getAllDocumentsProvided().equals("Yes") && selectedRequest.getQualifiedCustomerOrNot().equals("Yes")){
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"This customer is qualified, has agreed to all terms and conditions," +
-                                                                        " This request can be important to business, Are you sure you want to delete this request?");
+            if (notQualified || noAgreement || documentsMissing) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                        "This request is In-Process but does not meet requirements. Are you sure you want to delete it?");
                 Optional<ButtonType> response = alert.showAndWait();
-
-                deleteTheSelectedRequest(response,selectedRequest);
+                deleteTheSelectedRequest(response, selectedRequest);
+            } else {
+                notification("This In-Process request meets requirements and cannot be deleted.");
             }
-
-        else if(selectedRequest.getAgreesToAllTermsAndConditions().equals("Yes") && selectedRequest.getQualifiedCustomerOrNot().equals("Yes")){
-
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"This customer is qualified, has agreed to all terms and conditions, " +
-                                                                        "This request can be important to business, Are you sure you want to delete this request?");
-                Optional<ButtonType> response = alert.showAndWait();
-
-                deleteTheSelectedRequest(response,selectedRequest);
-
-
         }
-
 
     }
 
 
-    public void deleteTheSelectedRequest(Optional<ButtonType> response,RequestTm selectedRequest){
+    public void deleteTheSelectedRequest(Optional<ButtonType> response, RequestTm selectedRequest) {
 
-        if(response.isPresent() && response.get()==ButtonType.OK){
-
+        if (response.isPresent() && response.get() == ButtonType.OK) {
             try {
                 String result = requestModel.deleteSelectedRequest(selectedRequest);
-                Notifications notifications = Notifications.create();
-                notifications.title("Notification");
-                notifications.text(result);
-                notifications.hideCloseButton();
-                notifications.hideAfter(Duration.seconds(5));
-                notifications.position(Pos.CENTER);
-                notifications.darkStyle();
-                notifications.showInformation();
-
+                notification(result);
                 loadTable();
-
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Error while deleting the request: " + e.getMessage());
+                notification("An error occurred while deleting the request. Please try again or contact support.");
             }
         }
-
     }
+
 
 
     @FXML
@@ -297,15 +267,8 @@ public class RequestController implements Initializable {
             return;
         }
 
-        if(selectedRequest.getRequestStatus().equals("Completed")){
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("This Is Completed Request, Can't Edit");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+        if(selectedRequest.getRequestStatus().equals("Completed") || selectedRequest.getRequestStatus().equals("Closed")){
+            notification("This Is Completed Or Closed Request, Can't Edit");
             return;
         }
 
@@ -321,41 +284,121 @@ public class RequestController implements Initializable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading Edit Rent Request Form: " + e.getMessage());
+            notification("An error occurred while loading Edit Rent Request Form. Please try again or contact support.");
         }
 
     }
 
 
-    @FXML
-    void employeeIdCmbOnAction(ActionEvent event) {
-
-    }
-
-    @FXML
-    void nameTxtKeyReleased(KeyEvent event) {
-
-    }
-
-    @FXML
-    void nameTxtOnMouseClicked(MouseEvent event) {
-
-    }
-
-    @FXML
-    void positionCmbOnAction(ActionEvent event) {
-
-    }
-
 
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        loadTable();
+        clean();
     }
 
 
     @FXML
     void searchOnAction(ActionEvent event) {
+
+        ObservableList<RequestTm> searchedRequests = FXCollections.observableArrayList();
+
+        String selectedRequestId = requestIdCmb.getValue();
+        String selectedCustomerId = customerIdCmb.getValue();
+        String selectedRentOrBuy = rentOrBuyCmb.getValue();
+        String selectedHouseType = houseTypeCmb.getValue();
+
+        boolean requestIdSelected = selectedRequestId != null && !selectedRequestId.equals("Select");
+        boolean customerIdSelected = selectedCustomerId != null && !selectedCustomerId.equals("Select");
+        boolean rentOrBuySelected = selectedRentOrBuy != null && !selectedRentOrBuy.equals("Select");
+        boolean houseTypeSelected = selectedHouseType != null && !selectedHouseType.equals("Select");
+
+        if (requestIdSelected) {
+            ObservableList<RequestTm> requestsById = getRequestsByRequestId(selectedRequestId);
+
+            if (requestsById.isEmpty()) {
+                table.setItems(requestsById);
+            } else {
+                searchedRequests.addAll(requestsById);
+
+                if (customerIdSelected) {
+                    ObservableList<RequestTm> filteredByCustomerId = filterRequestsByCustomerId(searchedRequests, selectedCustomerId);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByCustomerId);
+                }
+
+                if (rentOrBuySelected) {
+                    ObservableList<RequestTm> filteredByRentOrBuy = filterRequestsByRentOrBuy(searchedRequests, selectedRentOrBuy);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByRentOrBuy);
+                }
+
+                if (houseTypeSelected) {
+                    ObservableList<RequestTm> filteredByHouseType = filterRequestsByHouseType(searchedRequests, selectedHouseType);
+                    searchedRequests.clear();
+                    searchedRequests.addAll(filteredByHouseType);
+                }
+
+                table.setItems(searchedRequests);
+            }
+
+        }
+        else if (customerIdSelected || rentOrBuySelected || houseTypeSelected) {
+            ObservableList<RequestTm> allRequests = tableData;
+            searchedRequests.addAll(allRequests);
+
+            if (customerIdSelected) {
+                searchedRequests = filterRequestsByCustomerId(searchedRequests, selectedCustomerId);
+            }
+
+            if (rentOrBuySelected) {
+                searchedRequests = filterRequestsByRentOrBuy(searchedRequests, selectedRentOrBuy);
+            }
+
+            if (houseTypeSelected) {
+                searchedRequests = filterRequestsByHouseType(searchedRequests, selectedHouseType);
+            }
+
+            table.setItems(searchedRequests);
+
+        } else {
+            ObservableList<RequestTm> allRequests = tableData;
+            table.setItems(allRequests);
+        }
+    }
+
+
+    private ObservableList<RequestTm> getRequestsByRequestId(String requestId) {
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(request -> request.getRequestId().equalsIgnoreCase(requestId))
+                        .toList()
+        );
+    }
+
+    private ObservableList<RequestTm> filterRequestsByCustomerId(ObservableList<RequestTm> requests, String customerId) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getCustomerId().equalsIgnoreCase(customerId))
+                        .toList()
+        );
+    }
+
+    private ObservableList<RequestTm> filterRequestsByRentOrBuy(ObservableList<RequestTm> requests, String rentOrBuy) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getRentOrBuy().equalsIgnoreCase(rentOrBuy))
+                        .toList()
+        );
+    }
+
+    private ObservableList<RequestTm> filterRequestsByHouseType(ObservableList<RequestTm> requests, String houseType) {
+        return FXCollections.observableArrayList(
+                requests.stream()
+                        .filter(request -> request.getHouseType().equalsIgnoreCase(houseType))
+                        .toList()
+        );
 
     }
 
@@ -363,6 +406,48 @@ public class RequestController implements Initializable {
     @FXML
     void sortByCmbOnAction(ActionEvent event) {
 
+        String sortType = sortByCmb.getSelectionModel().getSelectedItem();
+        ObservableList<RequestTm> requestTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<RequestTm> comparator = null;
+
+        switch (sortType) {
+            case "Request ID (Ascending)":
+                comparator = Comparator.comparing(RequestTm::getRequestId);
+                break;
+
+            case "Request ID (Descending)":
+                comparator = Comparator.comparing(RequestTm::getRequestId).reversed();
+                break;
+
+            case "Customer ID (Ascending)":
+                comparator = Comparator.comparing(RequestTm::getCustomerId);
+                break;
+
+            case "Customer ID (Descending)":
+                comparator = Comparator.comparing(RequestTm::getCustomerId).reversed();
+                break;
+
+            case "Lease Turn (Ascending)":
+                comparator = Comparator.comparing(RequestTm::getLeaseTurnDesire);
+                break;
+
+            case "Lease Turn (Descending)":
+                comparator = Comparator.comparing(RequestTm::getLeaseTurnDesire).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(requestTms, comparator);
+            table.setItems(requestTms);
+        }
     }
 
 
@@ -391,6 +476,126 @@ public class RequestController implements Initializable {
 
         setColumnToTable();
         setValuesToTableRowCmb();
+        setSortByCmbValues();
+        setCustomerIdCmbValues();
+        setRequestIdCmbValue();
+        setRentOrBuyCmbValues();
+        setRentOrBuyCmbValues();
+        setHouseTypeCmbValues();
+        requestTableSearch();
+    }
+
+
+    public void requestTableSearch() {
+
+        FilteredList<RequestTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(request -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (request.getRequestId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getCustomerId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getRentOrBuy().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getHouseType().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getAllDocumentsProvided().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getQualifiedCustomerOrNot().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getAgreesToAllTermsAndConditions().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getIsPaymentsCompleted().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getRequestStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getCustomerRequestStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (request.getHouseId() != null && request.getHouseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<RequestTm> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(sortedData);
+    }
+
+
+
+    public void setHouseTypeCmbValues(){
+
+        ObservableList<String> houseTypes = FXCollections.observableArrayList();
+        houseTypes.add("Select");
+        try {
+            ObservableList<HouseTypeTm> types = houseTypeModel.loadTableData();
+
+            for(HouseTypeTm x : types){
+               houseTypes.add(x.getHouseType());
+            }
+
+            houseTypeCmb.setItems(houseTypes);
+            houseTypeCmb.getSelectionModel().selectFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public void setRentOrBuyCmbValues(){
+
+        ObservableList<String> values = FXCollections.observableArrayList("Select","Rent","Buy");
+        rentOrBuyCmb.setItems(values);
+        rentOrBuyCmb.getSelectionModel().selectFirst();
+
+    }
+
+
+    public void setRequestIdCmbValue(){
+
+        ObservableList<String> ids = FXCollections.observableArrayList();
+        ids.add("Select");
+
+        for(RequestTm x : tableData){
+           ids.add(x.getRequestId());
+        }
+
+        requestIdCmb.setItems(ids);
+        requestIdCmb.getSelectionModel().selectFirst();
+
+    }
+
+
+    public void setCustomerIdCmbValues(){
+
+        try {
+            ObservableList<String> ids = requestModel.getDistinctCustomers();
+            customerIdCmb.setItems(ids);
+            customerIdCmb.getSelectionModel().selectFirst();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public void setSortByCmbValues(){
+
+        ObservableList<String> sortTypes = FXCollections.observableArrayList("Sort By","Request ID (Ascending)","Request ID (Descending)","Customer ID (Ascending)","Customer ID (Descending)","Lease Turn (Ascending)","Lease Turn (Descending)");
+        sortByCmb.setItems(sortTypes);
+        sortByCmb.getSelectionModel().selectFirst();
     }
 
 
@@ -471,6 +676,8 @@ public class RequestController implements Initializable {
 
                                } catch (IOException e) {
                                    e.printStackTrace();
+                                   System.err.println("Error while loading Rent Request Details Page: " + e.getMessage());
+                                   notification("An error occurred while loading Rent Request Details Page. Please try again or contact support.");
                                }
                            }
 
@@ -488,6 +695,8 @@ public class RequestController implements Initializable {
 
                                } catch (IOException e) {
                                    e.printStackTrace();
+                                   System.err.println("Error while loading Purchase Request Details Page: " + e.getMessage());
+                                   notification("An error occurred while loading Purchase Request Details Page. Please try again or contact support.");
                                }
 
                            }
@@ -498,7 +707,7 @@ public class RequestController implements Initializable {
 
                             RequestTm request = table.getSelectionModel().getSelectedItem();
 
-                            if(request.getRequestStatus().equals("Rejected") || request.getQualifiedCustomerOrNot().equals("No") || request.getAgreesToAllTermsAndConditions().equals("No") || request.getCustomerRequestStatus().equals("Canceled")){
+                            if(request.getRequestStatus().equals("Rejected") || request.getQualifiedCustomerOrNot().equals("No") || request.getAgreesToAllTermsAndConditions().equals("No") || request.getCustomerRequestStatus().equals("Canceled") || request.getRequestStatus().equals("Closed") || request.getRequestStatus().equals("Completed")){
                                 return;
                             }
 
@@ -514,6 +723,8 @@ public class RequestController implements Initializable {
 
                             } catch (IOException e) {
                                 e.printStackTrace();
+                                System.err.println("Error while loading Recommended Houses Page: " + e.getMessage());
+                                notification("An error occurred while loading Recommended Houses Page. Please try again or contact support.");
                             }
 
                         });
@@ -529,52 +740,38 @@ public class RequestController implements Initializable {
                                     try {
                                         String response = requestModel.addNewTenant(request);
                                         loadTable();
+                                        notification(response);
 
-                                        Notifications notifications = Notifications.create();
-                                        notifications.title("Notification");
-                                        notifications.text(response);
-                                        notifications.hideCloseButton();
-                                        notifications.hideAfter(Duration.seconds(5));
-                                        notifications.position(Pos.CENTER);
-                                        notifications.darkStyle();
-                                        notifications.showInformation();
-
-
-                                    } catch (SQLException e) {
-                                        throw new RuntimeException(e);
-                                    } catch (ClassNotFoundException e) {
-                                        throw new RuntimeException(e);
+                                    } catch (SQLException | ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                        System.err.println("Error while adding a new tenant: " + e.getMessage());
+                                        notification("An error occurred while adding a new tenant. Please try again or contact support.");
                                     }
                                 }
 
                                 else{
-                                    System.out.println("Owner add will add lately,stay tune!");
-                                }
 
+                                    try {
+                                        String response = requestModel.addNewOwner(request);
+                                        loadTable();
+                                        notification(response);
+
+                                    } catch (SQLException | ClassNotFoundException e) {
+                                        e.printStackTrace();
+                                        System.err.println("Error while adding a new owner: " + e.getMessage());
+                                        notification("An error occurred while adding a new owner. Please try again or contact support.");
+                                    }
+
+                                }
 
                             }
 
-                            else if(request.getRequestStatus().equals("Fixed")){
-
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Fixed Request");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+                            else if(request.getRequestStatus().equals("Closed")){
+                                return;
                             }
 
                             else{
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Not A Completed Request");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+                                notification("Not A Completed Request");
                             }
 
                         });
@@ -592,69 +789,32 @@ public class RequestController implements Initializable {
 
                                 try {
                                     String response = requestModel.makeRequestStatusCompleted(request);
-                                    Notifications notifications = Notifications.create();
-                                    notifications.title("Notification");
-                                    notifications.text(response);
-                                    notifications.hideCloseButton();
-                                    notifications.hideAfter(Duration.seconds(5));
-                                    notifications.position(Pos.CENTER);
-                                    notifications.darkStyle();
-                                    notifications.showInformation();
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                    notification(response);
+                                    loadTable();
+                                }
+                                catch (SQLException | ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                    System.err.println("Error while making request status \"Completed\": " + e.getMessage());
+                                    notification("An error occurred while making request status \"Completed\". Please try again or contact support.");
                                 }
                             }
                             else if(request.getRequestStatus().equals("Rejected")){
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Rejected Request");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+                                notification("Rejected Request");
                             }
                             else if(request.getCustomerRequestStatus().equals("Canceled")){
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("The customer has canceled this request,Please mark this request as rejected");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+
+                                notification("The customer has canceled this request,Please mark this request as rejected");
                             }
                             else if(request.getQualifiedCustomerOrNot().equals("No")){
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Not A Qualified Customer,Please mark this request as rejected");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+
+                                notification("Not A Qualified Customer,Please mark this request as rejected");
                             }
                             else if(request.getAgreesToAllTermsAndConditions().equals("No")){
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Customer Not Agreed With All Terms & Conditions,Please mark this request as rejected");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+
+                                notification("Customer Not Agreed With All Terms & Conditions,Please mark this request as rejected");
                             }
                             else{
-                                Notifications notifications = Notifications.create();
-                                notifications.title("Notification");
-                                notifications.text("Can't Make This Request Complete, Because This Request Not Complete All Requires");
-                                notifications.hideCloseButton();
-                                notifications.hideAfter(Duration.seconds(5));
-                                notifications.position(Pos.CENTER);
-                                notifications.darkStyle();
-                                notifications.showInformation();
+                                notification("Can't Make This Request Complete, Because This Request Not Complete All Requires");
                             }
 
 
@@ -664,8 +824,8 @@ public class RequestController implements Initializable {
 
 
                         manageBtn.setAlignment(Pos.CENTER);
-                        manageBtn.setSpacing(3); // Adjust spacing between buttons
-                        manageBtn.setPadding(new Insets(2)); // Add padding around the HBox
+                        manageBtn.setSpacing(3);
+                        manageBtn.setPadding(new Insets(2));
 
                         HBox.setMargin(viewDetails, new Insets(2, 2, 0, 3));
                         HBox.setMargin(searchHouse, new Insets(2, 3, 0, 3));
@@ -695,12 +855,11 @@ public class RequestController implements Initializable {
             tableData = requestModel.getAllRequests();
             System.out.println("Number of requests: " + tableData.size());
             table.setItems(tableData);
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"problem in sql");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-            alert.showAndWait();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
         }
 
     }
@@ -721,4 +880,47 @@ public class RequestController implements Initializable {
         tableRowsCmb.getSelectionModel().selectLast();
     }
 
+
+    public void getOnlyClosedRequest() {
+
+        try {
+            tableData = requestModel.getOnlyClosedRequests();
+            table.setItems(tableData);
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
+        }
+
+        setValuesToTableRowCmb();
+    }
+
+
+    public void clean(){
+
+        loadTable();
+        setValuesToTableRowCmb();
+        setSortByCmbValues();
+        setCustomerIdCmbValues();
+        setRequestIdCmbValue();
+        setRentOrBuyCmbValues();
+        setRentOrBuyCmbValues();
+        setHouseTypeCmbValues();
+        table.getSelectionModel().clearSelection();
+        searchTxt.clear();
+
+    }
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
+    }
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -18,12 +17,7 @@
 
 <AnchorPane prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 8; -fx-border-color: #9E9E9E; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.PaymentController">
    <children>
-      <Button fx:id="editbtn" layoutX="788.0" layoutY="587.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
-      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" onMouseClicked="#getSelectedRow" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
+      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
         <columns>
           <TableColumn fx:id="invoiceNoColumn" prefWidth="141.0" resizable="false" text="Invoice No" />
           <TableColumn fx:id="amountColumn" prefWidth="128.6666259765625" text="Amount" />
@@ -39,22 +33,7 @@
          </font>
       </Button>
       <ComboBox fx:id="tableRowsCmb" layoutX="18.0" layoutY="187.0" onAction="#tableRowsCmbOnAction" prefHeight="30.0" prefWidth="11.0" stylesheets="@../style/Unit.css" />
-      <Button fx:id="deletebtn" layoutX="837.0" layoutY="587.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
       <ComboBox fx:id="sortCmb" layoutX="73.0" layoutY="187.0" onAction="#sortCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="849.0" layoutY="594.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../image/delete.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="802.0" layoutY="593.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../image/edit%20(1).png" />
-         </image>
-      </ImageView>
       <Pane layoutX="13.0" layoutY="19.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">
          <children>
             <Button fx:id="searchbtn" layoutX="762.0" layoutY="22.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css" textFill="WHITE">
@@ -101,7 +80,7 @@
                   <Font size="11.0" />
                </font>
             </Label>
-            <DatePicker fx:id="datePicker" layoutX="521.0" layoutY="22.0" prefHeight="30.0" prefWidth="180.0" stylesheets="@../style/Test.css" />
+            <DatePicker fx:id="datePicker" layoutX="521.0" layoutY="21.0" prefHeight="30.0" prefWidth="180.0" stylesheets="@../style/Test.css" />
          </children>
       </Pane>
       <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="668.0" layoutY="193.0" pickOnBounds="true" preserveRatio="true">

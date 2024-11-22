@@ -1,6 +1,7 @@
 package com.example.test.controller;
 
 import com.example.test.dto.tm.LeaseAgreementTm;
+import com.example.test.dto.tm.PaymentTm;
 import com.example.test.model.LeaseAgreementModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,6 +50,9 @@ public class MailSendFormInLeaseAgreementController {
     private Button send;
 
     private final LeaseAgreementModel leaseAgreementModel = new LeaseAgreementModel();
+    private String email;
+    private PaymentTm payment;
+
 
     @FXML
     void clear(MouseEvent event) {
@@ -66,7 +70,7 @@ public class MailSendFormInLeaseAgreementController {
     @FXML
     void sendBtnOnAction(ActionEvent event) {
 
-        String recipientEmail = receiverEmailAddress.getText();
+        String recipientEmail = email;
         String subject = subjectTxt.getText();
         String msg = messageArea.getText();
 
@@ -107,25 +111,12 @@ public class MailSendFormInLeaseAgreementController {
 
             Transport.send(message);
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Successfully Send Email To Tenant");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Successfully Send Email To Tenant");
 
         }
         catch (MessagingException e) {
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Something Went Wrong With Sending A Email, Try Again Later");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
+            notification("Something Went Wrong With Sending A Email, Try Again Later");
         }
 
     }
@@ -134,6 +125,13 @@ public class MailSendFormInLeaseAgreementController {
     @FXML
     void sendWithAttachmentOnAction(ActionEvent event) {
 
+        if(payment!=null){
+            //send invoice        and make send invoice column true
+        }
+        else{
+            //send agreement
+        }
+
     }
 
     public void setSelectedTenantDetailsToSendMail(LeaseAgreementTm selectedLeaseAgreement,String sub,String message) {
@@ -141,13 +139,46 @@ public class MailSendFormInLeaseAgreementController {
         messageArea.setText(message);
 
         try {
-            String email = leaseAgreementModel.getTenantEmail(selectedLeaseAgreement);
+            email = leaseAgreementModel.getTenantEmail(selectedLeaseAgreement.getTenantId());
             receiverEmailAddress.setText(email);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting the tenant details to send mail: " + e.getMessage());
+            notification("An error occurred while setting the tenant details to send mail. Please try again or contact support.");
         }
 
     }
+
+    public void setPaymentDetailsToSendMail(PaymentTm selectedPayment) {
+
+        payment = selectedPayment;
+
+        subjectTxt.setText("Invoice for Recent Payment Attached");
+        messageArea.setText("I am writing to confirm that your recent "+ selectedPayment.getPaymentType()+" has been received. \nFor your records, the corresponding invoice is attached.\n\n\nThe Grand View Residences,\nColombo 08");
+
+        try {
+            email = leaseAgreementModel.getTenantEmail(selectedPayment.getTenantId());
+            receiverEmailAddress.setText(email);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting payment details to send mail: " + e.getMessage());
+            notification("An error occurred while setting payment details to send mail. Please try again or contact support.");
+        }
+        send.setDisable(true);
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
+    }
 }
+
+

@@ -22,7 +22,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <TableView fx:id="table" layoutX="18.0" layoutY="253.0" onSort="#tableOnSort" prefHeight="327.0" prefWidth="863.0" stylesheets="@../style/Unit.css">
+      <TableView fx:id="table" layoutX="18.0" layoutY="258.0" onSort="#tableOnSort" prefHeight="327.0" prefWidth="863.0" stylesheets="@../style/Unit.css">
          <columns>
             <TableColumn fx:id="clientIdColumn" prefWidth="95.33334350585938" text="Client ID" />
             <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
@@ -33,18 +33,21 @@
             <TableColumn fx:id="livingArrangementColumn" prefWidth="180.0" text="Living Arrangement" />
          </columns>
       </TableView>
-      <Button fx:id="addNewClientbtn" layoutX="534.0" layoutY="207.0" mnemonicParsing="false" onAction="#addNewClientOnAction" prefHeight="28.0" prefWidth="348.0" style="-fx-background-color: #007AFF;" stylesheets="@../style/Unit.css" text="   Client" textFill="WHITE">
+      <Button fx:id="addNewClientbtn" layoutX="534.0" layoutY="212.0" mnemonicParsing="false" onAction="#addNewClientOnAction" prefHeight="28.0" prefWidth="348.0" style="-fx-background-color: #007AFF;" stylesheets="@../style/Unit.css" text="   Client" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
-      <ComboBox fx:id="tableRowCmb" layoutX="18.0" layoutY="207.0" onAction="#tableRowCmbOnAction" prefHeight="30.0" prefWidth="18.0" stylesheets="@../style/Unit.css" />
+      <ComboBox fx:id="tableRowCmb" layoutX="18.0" layoutY="212.0" onAction="#tableRowCmbOnAction" prefHeight="30.0" prefWidth="18.0" stylesheets="@../style/Unit.css" />
       <Button fx:id="deletebtn" layoutX="841.0" layoutY="586.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <ComboBox fx:id="sortByCmb" layoutX="74.0" layoutY="207.0" onAction="#sortByCmbOnAction" prefHeight="30.0" prefWidth="131.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
+      <ComboBox fx:id="sortByCmb" layoutX="74.0" layoutY="212.0" onAction="#sortByCmbOnAction" prefHeight="30.0" prefWidth="131.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
       <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="854.0" layoutY="592.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/delete.png" />
@@ -55,22 +58,28 @@
             <Image url="@../image/edit%20(1).png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="671.0" layoutY="212.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="671.0" layoutY="217.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/plus%20(1).png" />
          </image>
       </ImageView>
-      <Pane layoutX="226.0" layoutY="10.0" prefHeight="138.0" prefWidth="657.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-background-radius: 6;">
+      <Pane layoutX="226.0" layoutY="21.0" prefHeight="138.0" prefWidth="657.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-background-radius: 6;">
          <children>
-            <Button fx:id="searchbtn" layoutX="558.0" layoutY="101.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC;" stylesheets="@../style/Unit.css" textFill="#007aff">
+            <Button fx:id="searchbtn" layoutX="560.0" layoutY="80.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC;" stylesheets="@../style/Unit.css" textFill="#007aff">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Button fx:id="refreshbtn" layoutX="607.0" layoutY="101.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC;" stylesheets="@../style/Unit.css" textFill="#007aff">
+            <Button fx:id="refreshbtn" layoutX="609.0" layoutY="80.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC;" stylesheets="@../style/Unit.css" textFill="#007aff">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Label layoutX="4.0" layoutY="10.0" text="Customer ID">
                <font>
@@ -89,12 +98,12 @@
             </Label>
             <TextField fx:id="nictxt" layoutX="340.0" layoutY="26.0" onKeyReleased="#nicTxtOnKeyReleased" prefHeight="30.0" prefWidth="150.0" promptText="Single" styleClass="textField" stylesheets="@../style/BlueTextField.css" />
             <TextField fx:id="nameTxt" layoutX="176.0" layoutY="26.0" onKeyReleased="#nameTxtOnKeyReleased" prefHeight="30.0" prefWidth="150.0" promptText="Availble" styleClass="textField" stylesheets="@../style/BlueTextField.css" />
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="618.0" layoutY="108.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="620.0" layoutY="87.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/reload.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="570.0" layoutY="109.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="572.0" layoutY="88.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
@@ -117,13 +126,16 @@
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <ListView fx:id="phoneNoList" layoutX="7.0" layoutY="48.0" onMouseClicked="#phoneNoListOnMouseClicked" prefHeight="39.0" prefWidth="188.0" stylesheets="@../style/Customer.css" />
          </children>
       </Pane>
-      <TextField layoutX="210.0" layoutY="207.0" prefHeight="30.0" prefWidth="318.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
-      <Line endX="759.3333129882812" layoutX="120.0" layoutY="201.0" startX="-100.0" stroke="#f1f2f6" />
-      <ImageView fitHeight="16.0" fitWidth="18.0" layoutX="218.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
+      <TextField fx:id="searchTxt" layoutX="210.0" layoutY="212.0" prefHeight="30.0" prefWidth="318.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
+      <Line endX="759.3333129882812" layoutX="120.0" layoutY="206.0" startX="-100.0" stroke="#f1f2f6" />
+      <ImageView fitHeight="16.0" fitWidth="18.0" layoutX="218.0" layoutY="219.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/search-interface-symbol%20(1).png" />
          </image>

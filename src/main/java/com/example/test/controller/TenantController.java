@@ -6,6 +6,8 @@ import com.example.test.dto.tm.TenantTm;
 import com.example.test.model.TenantModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +31,7 @@ import org.controlsfx.control.Notifications;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class TenantController implements Initializable {
@@ -109,22 +112,6 @@ public class TenantController implements Initializable {
 
 
     @FXML
-    void deleteOnAction(ActionEvent event) {//no need
-
-    }
-
-    @FXML
-    void editOnAction(ActionEvent event) {//no need
-
-    }
-
-    @FXML
-    void getSelectedRow(MouseEvent event) {//no need
-
-    }
-
-
-    @FXML
     void nameTxtKeyReleased(KeyEvent event) {
 
         String input = nameTxt.getText();
@@ -134,13 +121,10 @@ public class TenantController implements Initializable {
             names = tenantModel.getNameSuggestions(input);
             nameList.setItems(names);
         }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while getting tenants names suggestions: " + e.getMessage());
+            notification("An error occurred while getting tenants names suggestions. Please try again or contact support.");
         }
 
         if(input.isEmpty()){
@@ -156,21 +140,205 @@ public class TenantController implements Initializable {
         nameList.getItems().clear();
     }
 
+
     @FXML
     void refreshOnAction(ActionEvent event) {
 
        clean();
     }
 
+
     @FXML
     void searchOnAction(ActionEvent event) {
 
+        ObservableList<TenantTm> searchedTenants = FXCollections.observableArrayList();
+
+        String selectedTenantId = tenantIdCmb.getValue();
+        String selectedName = nameTxt.getText();
+        String selectedMembersCount = membersCountTxt.getText();
+        String selectedLastPaymentMonth = monthsCmb.getValue();
+        String selectedHouseId = houseIdCmb.getValue();
+
+        boolean tenantIdSelected = selectedTenantId != null && !selectedTenantId.equals("Select");
+        boolean nameSelected = selectedName != null && !selectedName.isEmpty();
+        boolean membersCountSelected = selectedMembersCount != null && !selectedMembersCount.isEmpty();
+        boolean lastPaymentMonthSelected = selectedLastPaymentMonth != null && !selectedLastPaymentMonth.equals("Select");
+        boolean houseIdSelected = selectedHouseId != null && !selectedHouseId.equals("Select");
+
+
+        if (tenantIdSelected) {
+            ObservableList<TenantTm> tenantsById = getTenantById(selectedTenantId);
+
+            if (tenantsById.isEmpty()) {
+                table.setItems(tenantsById);
+            } else {
+                searchedTenants.addAll(tenantsById);
+
+                if (nameSelected) {
+                    ObservableList<TenantTm> filteredByName = filterTenantsByName(searchedTenants, selectedName);
+                    searchedTenants.clear();
+                    searchedTenants.addAll(filteredByName);
+                }
+
+                if (membersCountSelected) {
+                    ObservableList<TenantTm> filteredByMembersCount = filterTenantsByMembersCount(searchedTenants, selectedMembersCount);
+                    searchedTenants.clear();
+                    searchedTenants.addAll(filteredByMembersCount);
+                }
+
+                if (lastPaymentMonthSelected) {
+                    ObservableList<TenantTm> filteredByLastPaymentMonth = filterTenantsByLastPaymentMonth(searchedTenants, selectedLastPaymentMonth);
+                    searchedTenants.clear();
+                    searchedTenants.addAll(filteredByLastPaymentMonth);
+                }
+
+                if (houseIdSelected) {
+                    ObservableList<TenantTm> filteredByHouseId = filterTenantsByHouseId(searchedTenants, selectedHouseId);
+                    searchedTenants.clear();
+                    searchedTenants.addAll(filteredByHouseId);
+                }
+
+                table.setItems(searchedTenants);
+            }
+
+
+        } else if (nameSelected || membersCountSelected || lastPaymentMonthSelected || houseIdSelected) {
+            ObservableList<TenantTm> allTenants = tableData;
+            searchedTenants.addAll(allTenants);
+
+            if (nameSelected) {
+                searchedTenants = filterTenantsByName(searchedTenants, selectedName);
+            }
+
+            if (membersCountSelected) {
+                searchedTenants = filterTenantsByMembersCount(searchedTenants, selectedMembersCount);
+            }
+
+            if (lastPaymentMonthSelected) {
+                searchedTenants = filterTenantsByLastPaymentMonth(searchedTenants, selectedLastPaymentMonth);
+            }
+
+            if (houseIdSelected) {
+                searchedTenants = filterTenantsByHouseId(searchedTenants, selectedHouseId);
+            }
+
+            table.setItems(searchedTenants);
+
+        } else {
+            ObservableList<TenantTm> allTenants = tableData;
+            table.setItems(allTenants);
+        }
     }
+
+
+    private ObservableList<TenantTm> getTenantById(String tenantId) {
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(tenant -> tenant.getTenantId().equalsIgnoreCase(tenantId))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<TenantTm> filterTenantsByName(ObservableList<TenantTm> tenants, String name) {
+        return FXCollections.observableArrayList(
+                tenants.stream()
+                        .filter(tenant -> tenant.getName().toLowerCase().contains(name.toLowerCase()))
+                        .toList()
+        );
+    }
+
+    private ObservableList<TenantTm> filterTenantsByMembersCount(ObservableList<TenantTm> tenants, String membersCount) {
+        int count = Integer.parseInt(membersCount);
+        return FXCollections.observableArrayList(
+                tenants.stream()
+                        .filter(tenant -> tenant.getMembersCount() == count)
+                        .toList()
+        );
+    }
+
+    private ObservableList<TenantTm> filterTenantsByLastPaymentMonth(ObservableList<TenantTm> tenants, String lastPaymentMonth) {
+        return FXCollections.observableArrayList(
+                tenants.stream()
+                        .filter(tenant -> tenant.getLastPaidMonth().equalsIgnoreCase(lastPaymentMonth))
+                        .toList()
+        );
+    }
+
+    private ObservableList<TenantTm> filterTenantsByHouseId(ObservableList<TenantTm> tenants, String houseId) {
+        return FXCollections.observableArrayList(
+                tenants.stream()
+                        .filter(tenant -> tenant.getHouseId().equalsIgnoreCase(houseId))
+                        .toList()
+        );
+    }
+
+
 
     @FXML
     void sortCmbOnAction(ActionEvent event) {
 
+        String sortType = sortCmb.getSelectionModel().getSelectedItem();
+        ObservableList<TenantTm> tenantTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<TenantTm> comparator = null;
+
+        switch (sortType) {
+            case "Tenant ID (Ascending)":
+                comparator = Comparator.comparing(TenantTm::getTenantId);
+                break;
+
+            case "Tenant ID (Descending)":
+                comparator = Comparator.comparing(TenantTm::getTenantId).reversed();
+                break;
+
+            case "Tenant Name (Ascending)":
+                comparator = Comparator.comparing(TenantTm::getName);
+                break;
+
+            case "Tenant Name (Descending)":
+                comparator = Comparator.comparing(TenantTm::getName).reversed();
+                break;
+
+            case "Resident Count (Ascending)":
+                comparator = Comparator.comparing(TenantTm::getMembersCount);
+                break;
+
+            case "Resident Count (Descending)":
+                comparator = Comparator.comparing(TenantTm::getMembersCount).reversed();
+                break;
+
+            case "Rent Start Date (Ascending)":
+                comparator = Comparator.comparing(TenantTm::getRentStartDate);
+                break;
+
+            case "Rent Start Date (Descending)":
+                comparator = Comparator.comparing(TenantTm::getRentStartDate).reversed();
+                break;
+
+            case "Rent For Month (Ascending)":
+                comparator = Comparator.comparing(TenantTm::getMonthlyRent);
+                break;
+
+            case "Rent For Month (Descending)":
+                comparator = Comparator.comparing(TenantTm::getMonthlyRent).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(tenantTms, comparator);
+            table.setItems(tenantTms);
+        }
+
     }
+
 
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
@@ -200,8 +368,63 @@ public class TenantController implements Initializable {
         setTenantIdCmbValues();
         setMonthsCmbValues();
         setHouseIdCmbValues();
+        setSortCmbValues();
+
+        tableSearch();
 
     }
+
+
+    public void tableSearch() {
+
+        FilteredList<TenantTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(tenant -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+
+                if (tenant.getTenantId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (tenant.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (tenant.getPhoneNo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(tenant.getMembersCount()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(tenant.getRentStartDate()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(tenant.getMonthlyRent()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (tenant.getLastPaidMonth().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (tenant.getHouseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<TenantTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
+
+    public void setSortCmbValues(){
+
+        ObservableList<String> sortTypes = FXCollections.observableArrayList("Sort By","Tenant ID (Ascending)","Tenant ID (Descending)","Tenant Name (Ascending)","Tenant Name (Descending)","Resident Count (Ascending)","Resident Count (Descending)","Rent Start Date (Ascending)","Rent Start Date (Descending)","Rent For Month (Ascending)","Rent For Month (Descending)");
+        sortCmb.setItems(sortTypes);
+        sortCmb.getSelectionModel().selectFirst();
+
+    }
+
 
     public void setHouseIdCmbValues(){
 
@@ -210,10 +433,10 @@ public class TenantController implements Initializable {
             houseIdCmb.setItems(houseIds);
             houseIdCmb.getSelectionModel().selectFirst();
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting the house id combo box values: " + e.getMessage());
+            notification("An error occurred while setting the house id combo box values. Please try again or contact support.");
         }
 
     }
@@ -253,7 +476,6 @@ public class TenantController implements Initializable {
             rows.add(count);
 
         }
-
         tableRowsCmb.setItems(rows);
         tableRowsCmb.getSelectionModel().selectLast();
 
@@ -323,7 +545,9 @@ public class TenantController implements Initializable {
                                 stage.show();
 
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                                System.err.println("Error while loading the details of tenant id: "+SelectedTenant.getTenantId()+ " + e.getMessage()");
+                                notification("An error occurred while loading the details of tenant id: "+SelectedTenant.getTenantId()+", Please try again or contact support.");
                             }
 
                         });
@@ -343,7 +567,9 @@ public class TenantController implements Initializable {
                                 stage.show();
 
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                                System.err.println("Error while loading the Edit Tenant page: " + e.getMessage());
+                                notification("An error occurred while loading the Edit Tenant page. Please try again or contact support.");
                             }
 
 
@@ -390,10 +616,10 @@ public class TenantController implements Initializable {
             tableData = tenantModel.getAllTenants();
             table.setItems(tableData);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
         }
     }
 
@@ -408,8 +634,22 @@ public class TenantController implements Initializable {
         sortCmb.getSelectionModel().selectFirst();
         nameTxt.setText("");
         membersCountTxt.setText("");
+        searchTxt.clear();
         table.getSelectionModel().clearSelection();
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

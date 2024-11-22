@@ -64,7 +64,7 @@ public class EmployeeModel {
 
     public ObservableList<String> getAllEmployeesId() throws SQLException, ClassNotFoundException {
 
-        String sql = "select employeeId from employee";
+        String sql = "select employeeId from employee order by employeeId asc";
         ResultSet result = CrudUtility.execute(sql);
 
         ObservableList<String> employeeIds = FXCollections.observableArrayList();
@@ -98,7 +98,7 @@ public class EmployeeModel {
 
     public ObservableList<String> getEmployeeAddresses(String input) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT address FROM employee WHERE address LIKE ?";
+        String sql = "SELECT distinct address FROM employee WHERE address LIKE ?";
         ResultSet result = CrudUtility.execute(sql, input + "%");
 
         ObservableList<String> addresses = FXCollections.observableArrayList();
@@ -113,7 +113,7 @@ public class EmployeeModel {
 
     public ObservableList<String> getEmployeeNames(String input) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT name FROM employee WHERE name LIKE ?";
+        String sql = "SELECT distinct name FROM employee WHERE name LIKE ?";
         ResultSet result = CrudUtility.execute(sql, input + "%");
 
         ObservableList<String> names = FXCollections.observableArrayList();

@@ -67,7 +67,7 @@
             </Label>
             <ComboBox fx:id="floorNoCmb" layoutX="12.0" layoutY="26.0" onAction="#floorNoCmbOnAction" prefWidth="150.0" promptText="Select" styleClass="text-field" stylesheets="@../style/AddNewUnit.css" />
             <ComboBox fx:id="noOfHousesCmb" layoutX="194.0" layoutY="26.0" onAction="#noOfHousesCmbOnAction" prefWidth="150.0" promptText="Select" styleClass="text-field" stylesheets="@../style/AddNewUnit.css" />
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="755.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="755.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/search-interface-symbol.png" />
                </image>

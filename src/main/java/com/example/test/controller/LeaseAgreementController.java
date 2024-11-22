@@ -1,14 +1,13 @@
 package com.example.test.controller;
 
-import com.example.test.dto.tm.LeaseAgreementTm;
-import com.example.test.dto.tm.PaymentTm;
-import com.example.test.dto.tm.TenantTm;
-import com.example.test.dto.tm.UnitTm;
+import com.example.test.dto.tm.*;
 import com.example.test.model.LeaseAgreementModel;
 import com.example.test.model.PaymentModel;
 import com.example.test.model.UnitModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -35,6 +34,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.Optional;
 
@@ -98,6 +98,7 @@ public class LeaseAgreementController implements Initializable {
     private TextField searchTxt;
 
 
+    private boolean isOnlyActiveAgreements = false;
     private ObservableList<LeaseAgreementTm> tableData;
     private final LeaseAgreementModel leaseAgreementModel = new LeaseAgreementModel();
     private final PaymentModel paymentModel = new PaymentModel();
@@ -110,18 +111,196 @@ public class LeaseAgreementController implements Initializable {
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        clean();
+        if (!isOnlyActiveAgreements) {
+            clean();
+        } else {
+            setOnlyActiveAgreement();
+        }
     }
+
 
     @FXML
     void searchOnAction(ActionEvent event) {
 
+
+        ObservableList<LeaseAgreementTm> searchedLeases = FXCollections.observableArrayList();
+
+        String selectedLeaseId = leaseIdCmb.getValue();
+        String selectedTenantId = tenantIdCmb.getValue();
+        String selectedHouseId = houseIdCmb.getValue();
+        String selectedLeaseTurn = leaseTurnCmb.getValue();
+        String selectedStatus = statusCmb.getValue();
+
+        boolean leaseIdSelected = selectedLeaseId != null && !selectedLeaseId.equals("Select");
+        boolean tenantIdSelected = selectedTenantId != null && !selectedTenantId.equals("Select");
+        boolean houseIdSelected = selectedHouseId != null && !selectedHouseId.equals("Select");
+        boolean leaseTurnSelected = selectedLeaseTurn != null && !selectedLeaseTurn.equals("Select");
+        boolean statusSelected = selectedStatus != null && !selectedStatus.equals("Select");
+
+        if (leaseIdSelected) {
+
+            ObservableList<LeaseAgreementTm> leasesById = getLeaseById(selectedLeaseId);
+
+            if (leasesById.isEmpty()) {
+                table.setItems(leasesById);
+            } else {
+                searchedLeases.addAll(leasesById);
+
+                if (tenantIdSelected) {
+                    searchedLeases = filterLeasesByTenantId(searchedLeases, selectedTenantId);
+                }
+
+                if (houseIdSelected) {
+                    searchedLeases = filterLeasesByHouseId(searchedLeases, selectedHouseId);
+                }
+
+                if (leaseTurnSelected) {
+                    searchedLeases = filterLeasesByLeaseTurn(searchedLeases, selectedLeaseTurn);
+                }
+
+                if (statusSelected) {
+                    searchedLeases = filterLeasesByStatus(searchedLeases, selectedStatus);
+                }
+
+                table.setItems(searchedLeases);
+            }
+
+        } else if (tenantIdSelected || houseIdSelected || leaseTurnSelected || statusSelected) {
+
+            ObservableList<LeaseAgreementTm> allLeases = tableData;
+            searchedLeases.addAll(allLeases);
+
+            if (tenantIdSelected) {
+                searchedLeases = filterLeasesByTenantId(searchedLeases, selectedTenantId);
+            }
+
+            if (houseIdSelected) {
+                searchedLeases = filterLeasesByHouseId(searchedLeases, selectedHouseId);
+            }
+
+            if (leaseTurnSelected) {
+                searchedLeases = filterLeasesByLeaseTurn(searchedLeases, selectedLeaseTurn);
+            }
+
+            if (statusSelected) {
+                searchedLeases = filterLeasesByStatus(searchedLeases, selectedStatus);
+            }
+
+            table.setItems(searchedLeases);
+
+        } else {
+            ObservableList<LeaseAgreementTm> allLeases = tableData;
+            table.setItems(allLeases);
+        }
+
     }
+
+
+    public ObservableList<LeaseAgreementTm> getLeaseById(String leaseId) {
+
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(lease -> lease.getLeaseId().equalsIgnoreCase(leaseId))
+                        .toList()
+        );
+    }
+
+    public ObservableList<LeaseAgreementTm> filterLeasesByTenantId(ObservableList<LeaseAgreementTm> leases, String tenantId) {
+
+        return FXCollections.observableArrayList(
+                leases.stream()
+                        .filter(lease -> lease.getTenantId().equalsIgnoreCase(tenantId))
+                        .toList()
+        );
+    }
+
+
+    public ObservableList<LeaseAgreementTm> filterLeasesByHouseId(ObservableList<LeaseAgreementTm> leases, String houseId) {
+
+        return FXCollections.observableArrayList(
+                leases.stream()
+                        .filter(lease -> lease.getHouseId().equalsIgnoreCase(houseId))
+                        .toList()
+        );
+    }
+
+
+    public ObservableList<LeaseAgreementTm> filterLeasesByLeaseTurn(ObservableList<LeaseAgreementTm> leases, String leaseTurn) {
+
+        return FXCollections.observableArrayList(
+                leases.stream()
+                        .filter(lease -> lease.getLeaseTurn().equalsIgnoreCase(leaseTurn))
+                        .toList()
+        );
+    }
+
+
+    public ObservableList<LeaseAgreementTm> filterLeasesByStatus(ObservableList<LeaseAgreementTm> leases, String status) {
+
+        return FXCollections.observableArrayList(
+                leases.stream()
+                        .filter(lease -> lease.getStatus().equalsIgnoreCase(status))
+                        .toList()
+        );
+    }
+
+
 
     @FXML
     void sortCmbOnAction(ActionEvent event) {
 
+        String sortType = sortCmb.getSelectionModel().getSelectedItem();
+        ObservableList<LeaseAgreementTm> leaseAgreementTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<LeaseAgreementTm> comparator = null;
+
+        switch (sortType) {
+            case "Lease ID (Ascending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getLeaseId);
+                break;
+
+            case "Lease ID (Descending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getLeaseId).reversed();
+                break;
+
+            case "Tenant ID (Ascending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getTenantId);
+                break;
+
+            case "Tenant ID (Descending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getTenantId).reversed();
+                break;
+
+            case "Start Date (Ascending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getStartDate);
+                break;
+
+            case "Start Date (Descending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getStartDate).reversed();
+                break;
+
+            case "End Date (Ascending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getEndDate);
+                break;
+
+            case "End Date (Descending)":
+                comparator = Comparator.comparing(LeaseAgreementTm::getEndDate).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(leaseAgreementTms, comparator);
+            table.setItems(leaseAgreementTms);
+        }
     }
+
 
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
@@ -142,6 +321,7 @@ public class LeaseAgreementController implements Initializable {
     }
 
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -153,6 +333,57 @@ public class LeaseAgreementController implements Initializable {
         setLeaseTurnCmbValues();
         setStatusCmbValues();
         setLeaseIdCmbValues();
+        setSortCmbValues();
+        tableSearch();
+    }
+
+
+    public void tableSearch() {
+
+        FilteredList<LeaseAgreementTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(lease -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (lease.getLeaseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (lease.getTenantId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (lease.getHouseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (lease.getLeaseTurn().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(lease.getStartDate()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(lease.getEndDate()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (lease.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<LeaseAgreementTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
+
+
+    public void setSortCmbValues(){
+
+        ObservableList<String> statuses = FXCollections.observableArrayList("Sort By","Lease ID (Ascending)","Lease ID (Descending)","Tenant ID (Ascending)","Tenant ID (Descending)","Start Date (Ascending)","Start Date (Descending)","End Date (Ascending)","End Date (Descending)");
+        sortCmb.setItems(statuses);
+        sortCmb.getSelectionModel().selectFirst();
+
     }
 
 
@@ -160,34 +391,31 @@ public class LeaseAgreementController implements Initializable {
 
         ObservableList<String> statuses = FXCollections.observableArrayList("Select","Active","Expired","Canceled");
         statusCmb.setItems(statuses);
+        statusCmb.getSelectionModel().selectFirst();
 
     }
+
 
     public void setLeaseTurnCmbValues(){
 
         ObservableList<String> leaseTurns = FXCollections.observableArrayList("Select","6 Months","12 Months","18 Months","2 Year");
         leaseTurnCmb.setItems(leaseTurns);
+        leaseTurnCmb.getSelectionModel().selectFirst();
 
     }
 
     public void setHouseIdCmbValues(){
 
-        ObservableList<String> houseIds = FXCollections.observableArrayList();
-        houseIds.add("Select");
-
         try {
-            ObservableList<UnitTm> allUnits = unitModel.loadTable();
-
-            for (UnitTm x: allUnits){
-                houseIds.add(x.getHouseId());
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ObservableList<String> houseIds = leaseAgreementModel.getDistinctHouseIds();
+            houseIdCmb.setItems(houseIds);
+        }catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to house id combo box: " + e.getMessage());
+            notification("An error occurred while setting values to house id combo box. Please try again or contact support.");
         }
 
-        houseIdCmb.setItems(houseIds);
         houseIdCmb.getSelectionModel().selectFirst();
-
     }
 
 
@@ -201,10 +429,10 @@ public class LeaseAgreementController implements Initializable {
             for (TenantTm x: allTenants){
                 tenantIds.add(x.getTenantId());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to tenant id combo box: " + e.getMessage());
+            notification("An error occurred while setting values to tenant id combo box. Please try again or contact support.");
         }
 
         tenantIdCmb.setItems(tenantIds);
@@ -255,6 +483,7 @@ public class LeaseAgreementController implements Initializable {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
     }
+
 
     public void setTableColumnsValue(){
 
@@ -371,7 +600,9 @@ public class LeaseAgreementController implements Initializable {
 
                             }
                             catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                                System.err.println("Error while loading Send Mail form: " + e.getMessage());
+                                notification("An error occurred while loading Send Mail form. Please try again or contact support.");
                             }
 
                         });
@@ -394,7 +625,9 @@ public class LeaseAgreementController implements Initializable {
 
                                 }
                                 catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
+                                    System.err.println("Error while loading Re-Sign Agreement form: " + e.getMessage());
+                                    notification("An error occurred while loading Re-Sign Agreement form. Please try again or contact support.");
                                 }
 
                             }
@@ -419,7 +652,9 @@ public class LeaseAgreementController implements Initializable {
 
                                 }
                                 catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
+                                    System.err.println("Error while loading House Return form: " + e.getMessage());
+                                    notification("An error occurred while loading House Return form. Please try again or contact support.");
                                 }
 
                             }
@@ -460,10 +695,10 @@ public class LeaseAgreementController implements Initializable {
             tableData = leaseAgreementModel.getAllAgreements();
             table.setItems(tableData);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading table data: " + e.getMessage());
+            notification("An error occurred while loading table data. Please try again or contact support.");
         }
     }
 
@@ -482,14 +717,15 @@ public class LeaseAgreementController implements Initializable {
 
     }
 
+
     public void deleteOnAction(ActionEvent event) {
 
         LeaseAgreementTm selectedLeaseAgreement = table.getSelectionModel().getSelectedItem();
 
         if(selectedLeaseAgreement.getStatus().equals("Canceled")){
 
-            ButtonType yesButton = new ButtonType("Yes");
-            ButtonType cancelButton = new ButtonType("Cancel");
+            ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation");
@@ -503,26 +739,55 @@ public class LeaseAgreementController implements Initializable {
 
                 try {
                     String response = leaseAgreementModel.makeLeaseAgreementDeleted(selectedLeaseAgreement);
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text(response);
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
-
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                    notification(response);
+                }
+                catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    System.err.println("Error while deleting the canceled lease Agreement: " + e.getMessage());
+                    notification("An error occurred while deleting the \"canceled\" lease Agreement. Please try again or contact support.");
                 }
 
             } else {
                 return;
             }
-
         }
+    }
+
+
+    public void setOnlyActiveAgreement() {
+
+        isOnlyActiveAgreements = true;
+
+        try {
+            tableData = leaseAgreementModel.getOnlyActiveAgreements();
+            table.setItems(tableData);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading table data: " + e.getMessage());
+            notification("An error occurred while loading table data. Please try again or contact support.");
+        }
+
+        setRowCmbValues();
+        setTenantIdCmbValues();
+        setHouseIdCmbValues();
+        setLeaseIdCmbValues();
+        sortCmb.getSelectionModel().selectFirst();
+        statusCmb.getSelectionModel().selectFirst();
+        leaseTurnCmb.getSelectionModel().selectFirst();
+        table.getSelectionModel().clearSelection();
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }

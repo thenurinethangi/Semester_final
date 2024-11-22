@@ -1,5 +1,6 @@
 package com.example.test.model;
 
+import com.example.test.CrudUtility;
 import com.example.test.db.DBConnection;
 import com.example.test.dto.HouseTypeDto;
 import com.example.test.dto.tm.HouseTypeTm;
@@ -75,6 +76,14 @@ public class HouseTypeModel {
         else{
             return "failed to delete the house type,try again later";
         }
+    }
+
+    public boolean isThisHouseTypeUsing(String houseType) throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from house where houseType = ?";
+        ResultSet result = CrudUtility.execute(sql,houseType);
+
+        return result.next();
     }
 }
 

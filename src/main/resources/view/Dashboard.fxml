@@ -16,15 +16,15 @@
          <children>
             <ImageView fx:id="image" fitHeight="139.0" fitWidth="200.0" layoutX="58.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../image/png-transparent-business-man-young-men-executive-thumbnail-removebg-preview.png" />
+                  <Image url="@../image/add.png" />
                </image>
             </ImageView>
-            <Label fx:id="nameLabel" layoutX="87.0" layoutY="160.0" text="Mr. Damith Silva">
+            <Label fx:id="nameLabel" alignment="CENTER" layoutX="1.0" layoutY="160.0" prefHeight="16.0" prefWidth="255.0" text="Mr.Damith Silva" textAlignment="CENTER">
                <font>
                   <Font name="Candara" size="12.0" />
                </font>
             </Label>
-            <Label fx:id="positionLabel" layoutX="109.0" layoutY="173.0" text="Owner">
+            <Label fx:id="positionLabel" alignment="CENTER" layoutY="173.0" prefHeight="13.0" prefWidth="255.0" text="Owner" textAlignment="CENTER">
                <font>
                   <Font name="Candara Bold" size="11.0" />
                </font>
@@ -457,17 +457,17 @@
       <Pane fx:id="p15" layoutX="467.0" layoutY="476.0" prefHeight="103.0" prefWidth="188.0" style="-fx-background-color: #ffffff; -fx-background-radius: 6;" stylesheets="@../style/HomePage.css">
          <children>
             <Pane layoutX="103.0" layoutY="9.0" prefHeight="64.0" prefWidth="79.0" style="-fx-background-color: #FAFAFA; -fx-background-radius: 5;" />
-            <Label layoutX="16.0" layoutY="22.0" text="Complains" textFill="#007aff">
+            <Label layoutX="16.0" layoutY="22.0" text="Lease Agreement" textFill="#007aff">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label fx:id="complainstxt" layoutX="23.0" layoutY="49.0" text="6" textFill="#353b48">
+            <Label fx:id="leaseAgreementTxt" layoutX="23.0" layoutY="49.0" text="6" textFill="#353b48">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button fx:id="complainsbtn" layoutX="131.0" layoutY="80.0" mnemonicParsing="false" onAction="#complainsOnAction" opacity="0.54" text="More Info">
+            <Button fx:id="complainsbtn" layoutX="131.0" layoutY="80.0" mnemonicParsing="false" onAction="#leaseAgreementOnAction" opacity="0.54" text="More Info">
                <font>
                   <Font size="10.0" />
                </font>
@@ -490,17 +490,12 @@
       <Pane fx:id="p16" layoutX="692.0" layoutY="476.0" prefHeight="103.0" prefWidth="188.0" style="-fx-background-color: #ffffff; -fx-background-radius: 6;" stylesheets="@../style/HomePage.css">
          <children>
             <Pane layoutX="104.0" layoutY="9.0" prefHeight="64.0" prefWidth="79.0" style="-fx-background-color: #FAFAFA; -fx-background-radius: 5;" />
-            <Label layoutX="16.0" layoutY="22.0" text="Complains" textFill="#007aff">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="23.0" layoutY="49.0" text="6" textFill="#353b48">
+            <Label fx:id="purchaseAgreementTxt" layoutX="23.0" layoutY="49.0" text="6" textFill="#353b48">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Button fx:id="moreInfobtn15" layoutX="131.0" layoutY="80.0" mnemonicParsing="false" opacity="0.54" text="More Info">
+            <Button fx:id="moreInfobtn15" layoutX="131.0" layoutY="80.0" mnemonicParsing="false" onAction="#purchaseAgreemntOnAction" opacity="0.54" text="More Info">
                <font>
                   <Font size="10.0" />
                </font>
@@ -513,6 +508,11 @@
                   <Image url="@../image/contract.png" />
                </image>
             </ImageView>
+            <Label layoutX="16.0" layoutY="22.0" text="Purchase Agrmt" textFill="#007aff">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
    </children>

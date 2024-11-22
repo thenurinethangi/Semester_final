@@ -1,11 +1,12 @@
 package com.example.test.controller;
 
 import com.example.test.dto.tm.CustomerTm;
-import com.example.test.dto.tm.EmployeeTm;
 import com.example.test.model.CustomerModel;
 import com.example.test.validation.UserInputValidation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,9 +82,6 @@ public class CustomerController implements Initializable {
     private TextField nameTxt;
 
     @FXML
-    private TextField jobTitleTxt;
-
-    @FXML
     private ListView<String> nicList;
 
     @FXML
@@ -97,6 +95,9 @@ public class CustomerController implements Initializable {
 
     @FXML
     private TextField phoneNoTxt;
+
+    @FXML
+    private TextField searchTxt;
 
     @FXML
     private Button searchPhoneNoBtn;
@@ -129,6 +130,8 @@ public class CustomerController implements Initializable {
         }
         catch (IOException e){
             e.printStackTrace();
+            System.err.println("Error while loading Add New Customer page: " + e.getMessage());
+            notification("An error occurred while loading Add New Customer page. Please try again or contact support.");
         }
 
     }
@@ -142,41 +145,38 @@ public class CustomerController implements Initializable {
 
 
     @FXML
-    void deleteOnAction(ActionEvent event) {//should change this method after request implement
+    void deleteOnAction(ActionEvent event) {
 
         CustomerTm selectedItem = table.getSelectionModel().getSelectedItem();
 
         if(selectedItem==null){
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("You should first select customer to delete");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
+            return;
         }
+
         else{
+            ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
             Alert a1 = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the customer?");
+            a1.getButtonTypes().setAll(yesButton, cancelButton);
             Optional<ButtonType> options = a1.showAndWait();
 
-            if (options.isPresent() && options.get() == ButtonType.OK) {
+            if (options.isPresent() && options.get() == yesButton) {
 
                 try {
                     String response = customerModel.deleteCustomer(selectedItem);
                     loadTable();
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                    alert.showAndWait();
-                } catch (Exception e) {
-
-                    e.printStackTrace();
+                    notification(response);
                 }
-
+                catch (SQLException e) {
+                    notification("Can't delete the customer id: "+selectedItem.getCustomerId()+", Because this customer currently Active with company");
+                }
+                catch (ClassNotFoundException e){
+                    e.printStackTrace();
+                    System.err.println("Error while deleting the customer: " + e.getMessage());
+                    notification("An error occurred while deleting the customer id: "+selectedItem.getCustomerId()+", Please try again or contact support.");
+                }
             }
-
             table.getSelectionModel().clearSelection();
         }
 
@@ -189,17 +189,9 @@ public class CustomerController implements Initializable {
         CustomerTm selectedItem = table.getSelectionModel().getSelectedItem();
 
         if(selectedItem==null){
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("You should first select customer to update");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
+            return;
         }
+
         else{
 
             try {
@@ -214,45 +206,12 @@ public class CustomerController implements Initializable {
             }
             catch (IOException e){
                 e.printStackTrace();
+                System.err.println("Error while loading Add New Customer page: " + e.getMessage());
+                notification("An error occurred while loading Add New Customer page. Please try again or contact support.");
             }
         }
 
         table.getSelectionModel().clearSelection();
-
-    }
-
-
-    @FXML
-    void jobTitleListOnMouseClicked(MouseEvent event) {
-
-        jobTitleTxt.setText(jobTitleList.getSelectionModel().getSelectedItem());
-        jobTitleList.getItems().clear();
-
-    }
-
-
-    @FXML
-    void jobTitleTxtOnKeyReleased(KeyEvent event) {
-
-        String input = jobTitleTxt.getText();
-
-
-        try {
-            jobTitles = customerModel.getJobTitlesSuggestions(input);
-            jobTitleList.setItems(jobTitles);
-        }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
-        }
-
-        if(input.isEmpty()){
-            jobTitles.clear();
-        }
 
     }
 
@@ -282,13 +241,10 @@ public class CustomerController implements Initializable {
             customerNames = customerModel.getNameSuggestions(input);
             nameList.setItems(customerNames);
         }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while getting customer names suggestions: " + e.getMessage());
+            notification("An error occurred while getting customer names suggestions. Please try again or contact support.");
         }
 
         if(input.isEmpty()){
@@ -302,7 +258,6 @@ public class CustomerController implements Initializable {
     void nicListOnMouseClicked(MouseEvent event) {
 
         nictxt.setText(nicList.getSelectionModel().getSelectedItem());
-       // nicNumbers.clear();
         nicList.getItems().clear();
 
     }
@@ -319,13 +274,10 @@ public class CustomerController implements Initializable {
             nicNumbers = customerModel.getNicSuggestions(input);
             nicList.setItems(nicNumbers);
         }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while getting phone nic numbers suggestions: " + e.getMessage());
+            notification("An error occurred while getting nic numbers suggestions. Please try again or contact support.");
         }
 
         if(input.isEmpty()){
@@ -355,13 +307,10 @@ public class CustomerController implements Initializable {
             phoneNumbers = customerModel.getPhoneNoSuggestions(input);
             phoneNoList.setItems(phoneNumbers);
         }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while getting phone numbers suggestions: " + e.getMessage());
+            notification("An error occurred while getting phone numbers suggestions. Please try again or contact support.");
         }
 
         if(input.isEmpty()){
@@ -383,32 +332,98 @@ public class CustomerController implements Initializable {
     @FXML
     void searchOnAction(ActionEvent event) {
 
-        ObservableList<CustomerTm> searchedEmployees;
+        ObservableList<CustomerTm> searchedCustomers = FXCollections.observableArrayList();
 
-        String customerId = customerIdCmb.getSelectionModel().getSelectedItem();
+        String selectedCustomerId = customerIdCmb.getValue();
+        String selectedName = nameTxt.getText();
+        String selectedNic = nictxt.getText();
+        String selectedLivingArrangement = livingArrangementCmb.getValue();
 
-        if(customerId!=null && !customerId.equals("Select")) {
+        boolean customerIdSelected = selectedCustomerId != null && !selectedCustomerId.equals("Select");
+        boolean nameSelected = selectedName != null && !selectedName.isEmpty();
+        boolean nicSelected = selectedNic != null && !selectedNic.isEmpty();
+        boolean livingArrangementSelected = selectedLivingArrangement != null && !selectedLivingArrangement.equals("Select");
 
-            try {
-                searchedEmployees = customerModel.getCustomerById(customerId);
-                if (searchedEmployees.isEmpty()) {
-                    return;
-                } else {
-                    table.setItems(searchedEmployees);
+        if (customerIdSelected) {
+            ObservableList<CustomerTm> customersById = getCustomerById(selectedCustomerId);
+
+            if (customersById.isEmpty()) {
+                table.setItems(customersById);
+            } else {
+                searchedCustomers.addAll(customersById);
+
+                if (nameSelected) {
+                    ObservableList<CustomerTm> filteredByName = filterCustomersByName(searchedCustomers, selectedName);
+                    searchedCustomers.clear();
+                    searchedCustomers.addAll(filteredByName);
                 }
 
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Problem at sql query");
-                alert.showAndWait();
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Problem at found class");
-                alert.showAndWait();
+                if (nicSelected) {
+                    ObservableList<CustomerTm> filteredByNic = filterCustomersByNic(searchedCustomers, selectedNic);
+                    searchedCustomers.clear();
+                    searchedCustomers.addAll(filteredByNic);
+                }
+
+                if (livingArrangementSelected) {
+                    ObservableList<CustomerTm> filteredByLivingArrangement = filterCustomersByLivingArrangement(searchedCustomers, selectedLivingArrangement);
+                    searchedCustomers.clear();
+                    searchedCustomers.addAll(filteredByLivingArrangement);
+                }
+
+                table.setItems(searchedCustomers);
             }
 
-        }
+        } else if (nameSelected || nicSelected || livingArrangementSelected) {
+            ObservableList<CustomerTm> allCustomers = tableData;
+            searchedCustomers.addAll(allCustomers);
 
+            if (nameSelected) {
+                searchedCustomers = filterCustomersByName(searchedCustomers, selectedName);
+            }
+
+            if (nicSelected) {
+                searchedCustomers = filterCustomersByNic(searchedCustomers, selectedNic);
+            }
+
+            if (livingArrangementSelected) {
+                searchedCustomers = filterCustomersByLivingArrangement(searchedCustomers, selectedLivingArrangement);
+            }
+
+            table.setItems(searchedCustomers);
+
+        } else {
+            ObservableList<CustomerTm> allCustomers = tableData;
+            table.setItems(allCustomers);
+        }
     }
 
+
+    private ObservableList<CustomerTm> getCustomerById(String customerId) {
+
+        return FXCollections.observableArrayList(
+                tableData.stream().filter(customer -> customer.getCustomerId().equalsIgnoreCase(customerId)).toList());
+    }
+
+
+    private ObservableList<CustomerTm> filterCustomersByName(ObservableList<CustomerTm> customers, String name) {
+
+        return FXCollections.observableArrayList(
+                customers.stream().filter(customer -> customer.getName().toLowerCase().contains(name.toLowerCase())).toList());
+    }
+
+
+    private ObservableList<CustomerTm> filterCustomersByNic(ObservableList<CustomerTm> customers, String nic) {
+
+        return FXCollections.observableArrayList(
+                customers.stream().filter(customer -> customer.getNic().equalsIgnoreCase(nic)).toList());
+    }
+
+
+    private ObservableList<CustomerTm> filterCustomersByLivingArrangement(ObservableList<CustomerTm> customers, String livingArrangement) {
+
+        return FXCollections.observableArrayList(
+                customers.stream().filter(customer -> customer.getLivingArrangement().equalsIgnoreCase(livingArrangement)).toList());
+    }
 
 
     @FXML
@@ -417,28 +432,14 @@ public class CustomerController implements Initializable {
         String phoneNo = phoneNoTxt.getText();
 
         if(phoneNo.isEmpty()){
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Enter Phone Number to search");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Enter Phone Number to search");
             return;
         }
 
         boolean b1 = UserInputValidation.checkPhoneNoValidation(phoneNo);
 
         if(!b1){
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Not a valid phone no");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Not a valid phone no");
 
             phoneNoTxt.setText("");
         }
@@ -449,14 +450,7 @@ public class CustomerController implements Initializable {
 
                 if(customersSearchByPhoneNo.isEmpty()){
 
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("No registered customer in this phone number, Please Add to the system as a new customer");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification("No registered customer in this phone number, Please Add to the system as a new customer");
 
                     try {
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewCustomer.fxml"));
@@ -468,29 +462,22 @@ public class CustomerController implements Initializable {
                     }
                     catch (IOException e){
                         e.printStackTrace();
+                        System.err.println("Error while loading Add New Customer page: " + e.getMessage());
+                        notification("An error occurred while loading Add New Customer page. Please try again or contact support.");
                     }
-
                 }
 
                 else{
-
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text("Registered phone no");
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification("Registered phone no");
 
                     table.setItems(customersSearchByPhoneNo);
-
                 }
 
-            } catch (SQLException e) {
+            }
+            catch (SQLException | ClassNotFoundException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("Error while setting values to position combo box: " + e.getMessage());
+                notification("An error occurred while setting values to position combo box. Please try again or contact support.");
             }
 
             phoneNoTxt.setText("");
@@ -509,7 +496,7 @@ public class CustomerController implements Initializable {
             return;
         }
 
-        if(sortType.equals("Customer Id asc")){
+        if(sortType.equals("Customer ID (Ascending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -524,7 +511,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("Customer Id desc")){
+        else if(sortType.equals("Customer ID (Descending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -539,7 +526,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("Name asc")){
+        else if(sortType.equals("Customer Name (Ascending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -554,7 +541,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("Name desc")){
+        else if(sortType.equals("Customer Name (Descending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -569,7 +556,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("NIC asc")){
+        else if(sortType.equals("NIC (Ascending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -584,7 +571,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("NIC desc")){
+        else if(sortType.equals("NIC (Descending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -599,7 +586,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("Living Arrangement asc")){
+        else if(sortType.equals("Living Arrangement (Ascending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -614,7 +601,7 @@ public class CustomerController implements Initializable {
             table.setItems(customerTms);
         }
 
-        else if(sortType.equals("Living Arrangement desc")){
+        else if(sortType.equals("Living Arrangement (Descending)")){
 
             for(int j = 0; j < customerTms.size(); j++) {
                 for (int i = 0; i < customerTms.size()-1; i++) {
@@ -667,8 +654,49 @@ public class CustomerController implements Initializable {
         setLivingArrangementCmbValues();
         setRowCmbValues();
         setSortByCmbValues();
+        tableSearch();
 
     }
+
+
+    public void tableSearch() {
+
+        FilteredList<CustomerTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(customer -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (customer.getCustomerId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getNic().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getAddress().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getPhoneNo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getJobTitle().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (customer.getLivingArrangement().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<CustomerTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
 
 
     public void setTableColumnsValues(){
@@ -689,12 +717,10 @@ public class CustomerController implements Initializable {
         try {
             tableData = customerModel.getAllCustomers();
             table.setItems(tableData);
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"problem in sql");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"class not found");
-            alert.showAndWait();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading data to the table: " + e.getMessage());
+            notification("An error occurred while loading data to the table. Please try again or contact support.");
         }
 
     }
@@ -705,13 +731,12 @@ public class CustomerController implements Initializable {
         try {
             ObservableList<String> customerIds = customerModel.getAllCustomersId();
             customerIdCmb.setItems(customerIds);
+            customerIdCmb.getSelectionModel().selectFirst();
 
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to customer id combo box: " + e.getMessage());
+            notification("An error occurred while setting values to customer id combo box. Please try again or contact support.");
         }
 
     }
@@ -721,6 +746,7 @@ public class CustomerController implements Initializable {
 
         ObservableList<String> livingArrangement = FXCollections.observableArrayList("Select","Single Living Arrangement","Couple Living Arrangement","Family Living Arrangement");
         livingArrangementCmb.setItems(livingArrangement);
+        livingArrangementCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -745,8 +771,9 @@ public class CustomerController implements Initializable {
     public void setSortByCmbValues(){
 
         ObservableList<String> sortTypes = FXCollections.observableArrayList();
-        sortTypes.addAll("Sort By","Customer Id asc","Customer Id desc","Name asc","Name desc","NIC asc","NIC desc","Living Arrangement asc","Living Arrangement desc");
+        sortTypes.addAll("Sort By","Customer ID (Ascending)","Customer ID (Descending)","Customer Name (Ascending)","Customer Name (Descending)","NIC (Ascending)","NIC (Descending)","Living Arrangement (Ascending)","Living Arrangement (Descending)");
         sortByCmb.setItems(sortTypes);
+        sortByCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -756,14 +783,28 @@ public class CustomerController implements Initializable {
         loadTable();
         setCustomerIdCmbValues();
         setRowCmbValues();
+        setCustomerIdCmbValues();
         sortByCmb.getSelectionModel().selectFirst();
-        customerIdCmb.getSelectionModel().selectFirst();
         livingArrangementCmb.getSelectionModel().selectFirst();
+        table.getSelectionModel().clearSelection();
         nameTxt.setText("");
         nictxt.setText("");
-        jobTitleTxt.setText("");
         phoneNoTxt.setText("");
+        searchTxt.clear();
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

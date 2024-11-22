@@ -13,5 +13,6 @@ public class ExpenseDto {
     private String description;
     private double amount;
     private String maintenanceRequestNo;
+    private String date;
 
 }

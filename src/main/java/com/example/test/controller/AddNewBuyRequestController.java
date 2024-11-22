@@ -132,14 +132,7 @@ public class AddNewBuyRequestController implements Initializable {
         if(customerId.isEmpty() || houseType==null || houseType.equals("Select") || familyMembersCount.isEmpty() || monthlyIncome.isEmpty() ||
                 annualIncome.isEmpty() || bankDetails.isEmpty() || reasonToMove.isEmpty() || smoking==null || smoking.equals("Select") || criminalBackground==null || criminalBackground.equals("Select") || pets==null || pets.equals("Select")){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Please Enter Require Field To Add New House Rent Request");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Please Enter Require Field To Add New House Rent Request");
             return;
         }
 
@@ -153,10 +146,11 @@ public class AddNewBuyRequestController implements Initializable {
             else{
                 customerIdLabel.setText("");
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while adding a new purchase request: " + e.getMessage());
+            notification("An error occurred while adding a new purchase request. Please try again or contact support.");
         }
 
 
@@ -221,20 +215,12 @@ public class AddNewBuyRequestController implements Initializable {
                     }
                     clean();
 
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text(response);
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification(response);
 
-                } catch (SQLException e) {
+                } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
+                    System.err.println("Error while adding a new purchase request: " + e.getMessage());
+                    notification("An error occurred while adding a new purchase request. Please try again or contact support.");
                 }
 
             }
@@ -258,20 +244,12 @@ public class AddNewBuyRequestController implements Initializable {
                     }
                     clean();
 
-                    Notifications notifications = Notifications.create();
-                    notifications.title("Notification");
-                    notifications.text(response);
-                    notifications.hideCloseButton();
-                    notifications.hideAfter(Duration.seconds(5));
-                    notifications.position(Pos.CENTER);
-                    notifications.darkStyle();
-                    notifications.showInformation();
+                    notification(response);
 
-                } catch (SQLException e) {
+                } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
+                    System.err.println("Error while adding a new purchase request: " + e.getMessage());
+                    notification("An error occurred while adding a new purchase request. Please try again or contact support.");
                 }
             }
 
@@ -304,14 +282,7 @@ public class AddNewBuyRequestController implements Initializable {
 
         if(cusId.isEmpty()){
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("Please Enter Customer Phone Number or NIC Number");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification("Please Enter Customer Phone Number or NIC Number");
 
         }
         else{
@@ -326,14 +297,7 @@ public class AddNewBuyRequestController implements Initializable {
 
                     if(customer.isEmpty()){
 
-                        Notifications notifications = Notifications.create();
-                        notifications.title("Notification");
-                        notifications.text("Not Registered Customer, Please Add As New Customer");
-                        notifications.hideCloseButton();
-                        notifications.hideAfter(Duration.seconds(5));
-                        notifications.position(Pos.CENTER);
-                        notifications.darkStyle();
-                        notifications.showInformation();
+                        notification("Not Registered Customer, Please Add As New Customer");
 
                         try{
                             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewCustomer.fxml"));
@@ -345,6 +309,8 @@ public class AddNewBuyRequestController implements Initializable {
 
                         } catch (IOException e) {
                             e.printStackTrace();
+                            System.err.println("Error while loading Add New Customer Form: " + e.getMessage());
+                            notification("An error occurred while loading Add New Customer Form. Please try again or contact support.");
                         }
 
                     }
@@ -353,12 +319,10 @@ public class AddNewBuyRequestController implements Initializable {
                         customerIdTxt.setText(customer.get(0).getCustomerId());
                     }
 
-                } catch (SQLException e) {
+                } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
+                    System.err.println("Error while searching a customer id: " + e.getMessage());
+                    notification("An error occurred while searching a customer id. Please try again or contact support.");
                 }
 
             }
@@ -369,14 +333,7 @@ public class AddNewBuyRequestController implements Initializable {
                     String customerDetails = customerModel.searchCustomerAlreadyExistOrNotByNic(cusId);
                     if(customerDetails.isEmpty()){
 
-                        Notifications notifications = Notifications.create();
-                        notifications.title("Notification");
-                        notifications.text("Not Registered Customer, Please Add As New Customer");
-                        notifications.hideCloseButton();
-                        notifications.hideAfter(Duration.seconds(5));
-                        notifications.position(Pos.CENTER);
-                        notifications.darkStyle();
-                        notifications.showInformation();
+                        notification("Not Registered Customer, Please Add As New Customer");
 
                         try{
                             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewCustomer.fxml"));
@@ -388,18 +345,18 @@ public class AddNewBuyRequestController implements Initializable {
 
                         } catch (IOException e) {
                             e.printStackTrace();
+                            System.err.println("Error while loading Add New Customer Form: " + e.getMessage());
+                            notification("An error occurred while loading Add New Customer Form. Please try again or contact support.");
                         }
                     }
                     else{
                         customerIdTxt.setText(customerDetails);
                     }
 
-                } catch (SQLException e) {
+                } catch (SQLException | ClassNotFoundException e) {
                     e.printStackTrace();
-                    throw new RuntimeException(e);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
+                    System.err.println("Error while searching a customer id: " + e.getMessage());
+                    notification("An error occurred while searching a customer id. Please try again or contact support.");
                 }
 
             }
@@ -439,12 +396,10 @@ public class AddNewBuyRequestController implements Initializable {
             requestId = addNewRentRequestModel.generateNewRequestId();
             requestIdLabel.setText(requestId);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            System.err.println("Error while generating the new request id: " + e.getMessage());
+            notification("An error occurred while generating the new request id. Please try again or contact support.");
         }
 
     }
@@ -456,12 +411,10 @@ public class AddNewBuyRequestController implements Initializable {
             ObservableList<String> houseTypes = addNewRentRequestModel.getAllHouseTypes();
             houseTypeCmb.setItems(houseTypes);
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            System.err.println("Error while setting values to House Type combo box: " + e.getMessage());
+            notification("An error occurred while setting values to House Type combo box. Please try again or contact support.");
         }
 
     }
@@ -488,5 +441,18 @@ public class AddNewBuyRequestController implements Initializable {
         reasonForMoveLabel.setText("");
         landlordNoLabel.setText("");
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }

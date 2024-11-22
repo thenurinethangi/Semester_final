@@ -9,6 +9,8 @@ import com.example.test.model.UnitModel;
 import com.example.test.validation.UserInputValidation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +34,8 @@ import org.controlsfx.control.Notifications;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class HouseStatusCheckController implements Initializable {
@@ -115,11 +119,20 @@ public class HouseStatusCheckController implements Initializable {
     private ObservableList<HouseStatusCheckTm> tableData;
     private final HouseStatusCheckModel houseStatusCheckModel = new HouseStatusCheckModel();
     private final PaymentModel paymentModel = new PaymentModel();
-    private final UnitModel unitModel = new UnitModel();
+    private UnitModel unitModel;
     private final TenantModel tenantModel = new TenantModel();
 
 
-    public HouseStatusCheckController() throws SQLException, ClassNotFoundException {
+    public HouseStatusCheckController() {
+
+        try{
+            unitModel = new UnitModel();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting tenant id combo box values: " + e.getMessage());
+            notification("An error occurred while setting tenant id combo box values. Please try again or contact support.");
+        }
     }
 
 
@@ -134,27 +147,48 @@ public class HouseStatusCheckController implements Initializable {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.show();
-        }
-        catch (Exception e){
+        } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading Add New House Inspection page: " + e.getMessage());
+            notification("An error occurred while loading Add New House Inspection page. Please try again or contact support.");
         }
+
 
     }
 
     @FXML
     void deleteOnAction(ActionEvent event) {
 
+        HouseStatusCheckTm selectedHouseCheck = table.getSelectionModel().getSelectedItem();
+
+        if(selectedHouseCheck==null){
+           return;
+        }
+
+        if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet")){
+            return;
+        }
+
+        try {
+            boolean isLastCheck = houseStatusCheckModel.checkIfThisCheckLastCheck(selectedHouseCheck);
+
+            if(isLastCheck){
+               notification("Can't Delete Selected House Inspection, Because It's The Latest House Inspection Of That House");
+            }
+            else{
+                String response = houseStatusCheckModel.deleteSelectedHouseInspection(selectedHouseCheck);
+                notification(response);
+                loadTable();
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while checking is selected check last check of the tenant: " + e.getMessage());
+            notification("An error occurred while checking is selected check last check of the tenant. Please try again or contact support.");
+        }
     }
 
-    @FXML
-    void editOnAction(ActionEvent event) {
 
-    }
-
-    @FXML
-    void getSelectedRow(MouseEvent event) {//no need
-
-    }
 
     @FXML
     void refreshOnAction(ActionEvent event) {
@@ -162,15 +196,177 @@ public class HouseStatusCheckController implements Initializable {
         clean();
     }
 
+
+
     @FXML
     void searchOnAction(ActionEvent event) {
 
+        ObservableList<HouseStatusCheckTm> searchedChecks = FXCollections.observableArrayList();
+
+        String selectedCheckNumber = checkNoCmb.getValue();
+        String selectedTenantId = tenantIdCmb.getValue();
+        String selectedHouseId = houseIdCmb.getValue();
+        String selectedTotalHouseStatus = houseStatusCmb.getValue();
+        String selectedIsPaymentDone = paymentDoneCmb.getValue();
+
+        boolean checkNumberSelected = selectedCheckNumber != null && !selectedCheckNumber.equals("Select");
+        boolean tenantIdSelected = selectedTenantId != null && !selectedTenantId.equals("Select");
+        boolean houseIdSelected = selectedHouseId != null && !selectedHouseId.equals("Select");
+        boolean totalHouseStatusSelected = selectedTotalHouseStatus != null && !selectedTotalHouseStatus.equals("Select");
+        boolean isPaymentDoneSelected = selectedIsPaymentDone != null && !selectedIsPaymentDone.equals("Select");
+
+
+        if (checkNumberSelected) {
+            ObservableList<HouseStatusCheckTm> checksByCheckNumber = getChecksByCheckNumber(selectedCheckNumber);
+
+            if (checksByCheckNumber.isEmpty()) {
+                table.setItems(checksByCheckNumber);
+            } else {
+                searchedChecks.addAll(checksByCheckNumber);
+
+                if (tenantIdSelected) {
+                    searchedChecks = filterChecksByTenantId(searchedChecks, selectedTenantId);
+                }
+
+                if (houseIdSelected) {
+                    searchedChecks = filterChecksByHouseId(searchedChecks, selectedHouseId);
+                }
+
+                if (totalHouseStatusSelected) {
+                    searchedChecks = filterChecksByTotalHouseStatus(searchedChecks, selectedTotalHouseStatus);
+                }
+
+                if (isPaymentDoneSelected) {
+                    searchedChecks = filterChecksByIsPaymentDone(searchedChecks, selectedIsPaymentDone);
+                }
+
+                table.setItems(searchedChecks);
+            }
+
+        } else if (tenantIdSelected || houseIdSelected || totalHouseStatusSelected || isPaymentDoneSelected) {
+            ObservableList<HouseStatusCheckTm> allChecks = tableData;
+            searchedChecks.addAll(allChecks);
+
+            if (tenantIdSelected) {
+                searchedChecks = filterChecksByTenantId(searchedChecks, selectedTenantId);
+            }
+
+            if (houseIdSelected) {
+                searchedChecks = filterChecksByHouseId(searchedChecks, selectedHouseId);
+            }
+
+            if (totalHouseStatusSelected) {
+                searchedChecks = filterChecksByTotalHouseStatus(searchedChecks, selectedTotalHouseStatus);
+            }
+
+            if (isPaymentDoneSelected) {
+                searchedChecks = filterChecksByIsPaymentDone(searchedChecks, selectedIsPaymentDone);
+            }
+
+            table.setItems(searchedChecks);
+
+        }
+        else {
+            ObservableList<HouseStatusCheckTm> allChecks = tableData;
+            table.setItems(allChecks);
+        }
     }
+
+
+
+    private ObservableList<HouseStatusCheckTm> getChecksByCheckNumber(String checkNumber) {
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(check -> check.getCheckNumber().equalsIgnoreCase(checkNumber))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<HouseStatusCheckTm> filterChecksByTenantId(ObservableList<HouseStatusCheckTm> checks, String tenantId) {
+        return FXCollections.observableArrayList(
+                checks.stream()
+                        .filter(check -> check.getTenantId().equalsIgnoreCase(tenantId))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<HouseStatusCheckTm> filterChecksByHouseId(ObservableList<HouseStatusCheckTm> checks, String houseId) {
+        return FXCollections.observableArrayList(
+                checks.stream()
+                        .filter(check -> check.getHouseId().equalsIgnoreCase(houseId))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<HouseStatusCheckTm> filterChecksByTotalHouseStatus(ObservableList<HouseStatusCheckTm> checks, String totalHouseStatus) {
+        return FXCollections.observableArrayList(
+                checks.stream()
+                        .filter(check -> check.getTotalHouseStatus().equalsIgnoreCase(totalHouseStatus))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<HouseStatusCheckTm> filterChecksByIsPaymentDone(ObservableList<HouseStatusCheckTm> checks, String isPaymentDone) {
+        return FXCollections.observableArrayList(
+                checks.stream()
+                        .filter(check -> check.getIsPaymentDone().equalsIgnoreCase(isPaymentDone))
+                        .toList()
+        );
+    }
+
 
     @FXML
     void sortCmbOnAction(ActionEvent event) {
 
+        String sortType = sortCmb.getSelectionModel().getSelectedItem();
+        ObservableList<HouseStatusCheckTm> houseStatusCheckTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<HouseStatusCheckTm> comparator = null;
+
+        switch (sortType) {
+            case "Check No (Ascending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getCheckNumber);
+                break;
+
+            case "Check No (Descending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getCheckNumber).reversed();
+                break;
+
+            case "Tenant ID (Ascending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getTenantId);
+                break;
+
+            case "Tenant ID (Descending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getTenantId).reversed();
+                break;
+
+            case "House ID (Ascending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getHouseId);
+                break;
+
+            case "House ID (Descending)":
+                comparator = Comparator.comparing(HouseStatusCheckTm::getHouseId).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(houseStatusCheckTms, comparator);
+            table.setItems(houseStatusCheckTms);
+        }
     }
+
+
 
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
@@ -203,6 +399,62 @@ public class HouseStatusCheckController implements Initializable {
         setCheckNoCmbValues();
         setHouseStatusCmbValues();
         setPaymentDoneCmbValues();
+        setSortCmbValues();
+        tableSearch();
+    }
+
+
+    public void tableSearch() {
+
+        FilteredList<HouseStatusCheckTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(check -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (check.getCheckNumber().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getLivingRoomStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getKitchenStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getBedRoomsStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getBathRoomsStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getTotalHouseStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getTenantId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getHouseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getEstimatedCostForRepair().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (check.getIsPaymentDone().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<HouseStatusCheckTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
+
+
+    public void setSortCmbValues(){
+
+        ObservableList<String> sortTypes = FXCollections.observableArrayList("Sort By","Check No (Ascending)","Check No (Descending)","Tenant ID (Ascending)","Tenant ID (Descending)","House ID (Ascending)","House ID (Descending)");
+        sortCmb.setItems(sortTypes);
+        sortCmb.getSelectionModel().selectFirst();
     }
 
 
@@ -210,6 +462,7 @@ public class HouseStatusCheckController implements Initializable {
 
         ObservableList<String> isPaymentDone = FXCollections.observableArrayList("Select","N/A","Paid","Reduced from Security Deposit","Not Yet");
         paymentDoneCmb.setItems(isPaymentDone);
+        paymentDoneCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -217,6 +470,7 @@ public class HouseStatusCheckController implements Initializable {
 
         ObservableList<String> finalHouseStatus = FXCollections.observableArrayList("Select","Excellent","Good","Moderate","Damaged");
         houseStatusCmb.setItems(finalHouseStatus);
+        houseStatusCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -266,10 +520,10 @@ public class HouseStatusCheckController implements Initializable {
             for (TenantTm x: allTenants){
                 tenantIds.add(x.getTenantId());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting tenant id combo box values: " + e.getMessage());
+            notification("An error occurred while setting tenant id combo box values. Please try again or contact support.");
         }
 
         tenantIdCmb.setItems(tenantIds);
@@ -353,10 +607,11 @@ public class HouseStatusCheckController implements Initializable {
                             if(costOfRepairValidation){
                                 try {
                                     isEnough = tenantModel.checkRemainingSecurityFundEnoughOrNot(selectedHouseCheck.getTenantId(),costOfRepair);
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                }
+                                catch (SQLException | ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                    System.err.println("Error while checking remaining security charge balance: " + e.getMessage());
+                                    notification("An error occurred while checking remaining security charge balance. Please try again or contact support.");
                                 }
 
                                 if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet") && !isEnough){
@@ -376,12 +631,13 @@ public class HouseStatusCheckController implements Initializable {
 
                                     }
                                     catch (IOException e) {
-                                        throw new RuntimeException(e);
+                                        e.printStackTrace();
+                                        System.err.println("Error while loading Add Send Mail page " + e.getMessage());
+                                        notification("An error occurred while loading Add Send Mail page. Please try again or contact support.");
                                     }
                                 }
 
                             }
-
 
                         });
 
@@ -396,49 +652,57 @@ public class HouseStatusCheckController implements Initializable {
                             if(costOfRepairValidation) {
                                 try {
                                     isEnough = tenantModel.checkRemainingSecurityFundEnoughOrNot(selectedHouseCheck.getTenantId(), costOfRepair);
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e);
-                                } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
+                                } catch (SQLException | ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                    System.err.println("Error while checking remaining security charge balance is enough or not: " + e.getMessage());
+                                    notification("An error occurred while checking remaining security charge balance is enough or not. Please try again or contact support.");
                                 }
 
                                 if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet") && isEnough) {
 
-                                    try {
-                                        String response = tenantModel.reduceRepairCostFromSecurityCharge(selectedHouseCheck.getTenantId(), costOfRepair);
+                                    ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+                                    ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-                                        Notifications notifications = Notifications.create();
-                                        notifications.title("Notification");
-                                        notifications.text(response);
-                                        notifications.hideCloseButton();
-                                        notifications.hideAfter(Duration.seconds(5));
-                                        notifications.position(Pos.CENTER);
-                                        notifications.darkStyle();
-                                        notifications.showInformation();
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Confirmation");
+                                    alert.setHeaderText("Please confirm first");
+                                    alert.setContentText("Do you want to reduce damage cost from the tenant security charge?");
 
-                                        if(response.equals("Repair costs were successfully deducted from the security deposit.")){
-                                            boolean isChangeTheStatus = houseStatusCheckModel.changeStatus(selectedHouseCheck.getCheckNumber(),"Reduced from Security Deposit");
-                                            loadTable();
+                                    alert.getButtonTypes().setAll(yesButton, cancelButton);
+                                    Optional<ButtonType> options = alert.showAndWait();
 
-                                            TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedHouseCheck.getTenantId());
+                                    if(options.isPresent() && options.get()==yesButton){
 
-                                            Notifications notification = Notifications.create();
-                                            notification.title("Notification");
-                                            notification.text("Tenant :"+tenantDto.getTenantId()+", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
-                                            notification.hideCloseButton();
-                                            notification.hideAfter(Duration.seconds(5));
-                                            notification.position(Pos.CENTER);
-                                            notification.darkStyle();
-                                            notification.showInformation();
+                                        try {
+                                            String response = tenantModel.reduceRepairCostFromSecurityCharge(selectedHouseCheck.getTenantId(), costOfRepair);
+                                            notification(response);
 
-                                            //send mail here to tenant
+                                            if(response.equals("Repair costs were successfully deducted from the security deposit.")){
+                                                boolean isChangeTheStatus = houseStatusCheckModel.changeStatus(selectedHouseCheck.getCheckNumber(),"Reduced from Security Deposit");
+                                                loadTable();
+
+                                                TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedHouseCheck.getTenantId());
+
+                                                notification("Tenant : "+tenantDto.getTenantId()+ ", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
+
+                                                //send mail here to tenant
+                                            }
+
+                                        } catch (SQLException | ClassNotFoundException e) {
+                                            e.printStackTrace();
+                                            System.err.println("Error while deducting repair cost from security charge: " + e.getMessage());
+                                            notification("An error occurred while deducting repair cost from security charge. Please try again or contact support.");
                                         }
-
-                                    } catch (SQLException e) {
-                                        throw new RuntimeException(e);
-                                    } catch (ClassNotFoundException e) {
-                                        throw new RuntimeException(e);
                                     }
+                                    else{
+
+                                        table.getSelectionModel().clearSelection();
+                                    }
+
+                                }
+                                else if(selectedHouseCheck.getIsPaymentDone().equals("Not Yet") && !isEnough){
+
+                                    notification("The security deposit doesn't cover repairs. Please email the relevant parties for prompt payment");
                                 }
                             }
 
@@ -476,10 +740,10 @@ public class HouseStatusCheckController implements Initializable {
             tableData = houseStatusCheckModel.getAllHouseInspectChecks();
             table.setItems(tableData);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
         }
     }
 
@@ -492,11 +756,25 @@ public class HouseStatusCheckController implements Initializable {
         setTenantIdCmbValues();
         setHouseStatusCmbValues();
         setCheckNoCmbValues();
+        setSortCmbValues();
         sortCmb.getSelectionModel().selectFirst();
         houseStatusCmb.getSelectionModel().selectFirst();
         paymentDoneCmb.getSelectionModel().selectFirst();
         table.getSelectionModel().clearSelection();
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(5));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }
 

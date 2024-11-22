@@ -19,4 +19,5 @@ public class HouseStatusCheckDto {
     private String houseId;
     private String estimatedCostForRepair;
     private String isPaymentDone;
+    private String date;
 }

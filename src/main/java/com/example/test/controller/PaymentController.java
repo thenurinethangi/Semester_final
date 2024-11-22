@@ -5,6 +5,8 @@ import com.example.test.dto.tm.TenantTm;
 import com.example.test.model.PaymentModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +31,9 @@ import org.controlsfx.control.Notifications;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class PaymentController implements Initializable {
@@ -110,25 +115,13 @@ public class PaymentController implements Initializable {
             stage.show();
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.err.println("Error while loading Add New Payment form: " + e.getMessage());
+            notification("An error occurred while loading Add New Payment form. Please try again or contact support.");
         }
 
     }
 
-    @FXML
-    void deleteOnAction(ActionEvent event) {//no need
-
-    }
-
-    @FXML
-    void editOnAction(ActionEvent event) {//no need
-
-    }
-
-    @FXML
-    void getSelectedRow(MouseEvent event) {//no need
-
-    }
 
     @FXML
     void invoiceNoListOnMouseClicked(MouseEvent event) {
@@ -148,13 +141,10 @@ public class PaymentController implements Initializable {
             invoices = paymentModel.getInvoiceNoSuggestions(input);
             invoiceNoList.setItems(invoices);
         }
-
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while getting invoice number suggestions: " + e.getMessage());
+            notification("An error occurred while getting invoice number suggestions. Please try again or contact support.");
         }
 
         if(input.isEmpty()){
@@ -162,20 +152,176 @@ public class PaymentController implements Initializable {
         }
     }
 
+
     @FXML
     void refreshOnAction(ActionEvent event) {
 
         clean();
     }
 
+
     @FXML
     void searchOnAction(ActionEvent event) {
 
+        ObservableList<PaymentTm> searchedPayments = FXCollections.observableArrayList();
+
+        String selectedTenantId = tenantIdCmb.getValue();
+        String selectedInvoiceNo = invoiceNoTxt.getText();
+        String selectedPaymentType = paymentTypeCmb.getValue();
+        String selectedDate = String.valueOf(datePicker.getValue());
+
+        boolean tenantIdSelected = selectedTenantId != null && !selectedTenantId.equals("Select");
+        boolean invoiceNoSelected = selectedInvoiceNo != null && !selectedInvoiceNo.isEmpty();
+        boolean paymentTypeSelected = selectedPaymentType != null && !selectedPaymentType.equals("Select");
+        boolean dateSelected = selectedDate != null && !selectedDate.equals("1990-10-10");
+
+
+        if (tenantIdSelected) {
+            ObservableList<PaymentTm> paymentsByTenantId = getPaymentsByTenantId(selectedTenantId);
+
+            if (paymentsByTenantId.isEmpty()) {
+                table.setItems(paymentsByTenantId);
+            } else {
+                searchedPayments.addAll(paymentsByTenantId);
+
+                if (invoiceNoSelected) {
+                    ObservableList<PaymentTm> filteredByInvoiceNo = filterPaymentsByInvoiceNo(searchedPayments, selectedInvoiceNo);
+                    searchedPayments.clear();
+                    searchedPayments.addAll(filteredByInvoiceNo);
+                }
+
+                if (paymentTypeSelected) {
+                    ObservableList<PaymentTm> filteredByPaymentType = filterPaymentsByPaymentType(searchedPayments, selectedPaymentType);
+                    searchedPayments.clear();
+                    searchedPayments.addAll(filteredByPaymentType);
+                }
+
+                if (dateSelected) {
+                    ObservableList<PaymentTm> filteredByDate = filterPaymentsByDate(searchedPayments, selectedDate);
+                    searchedPayments.clear();
+                    searchedPayments.addAll(filteredByDate);
+                }
+
+                table.setItems(searchedPayments);
+            }
+
+        }
+        else if (invoiceNoSelected || paymentTypeSelected || dateSelected) {
+            ObservableList<PaymentTm> allPayments = tableData;
+            searchedPayments.addAll(allPayments);
+
+            if (invoiceNoSelected) {
+                searchedPayments = filterPaymentsByInvoiceNo(searchedPayments, selectedInvoiceNo);
+            }
+
+            if (paymentTypeSelected) {
+                searchedPayments = filterPaymentsByPaymentType(searchedPayments, selectedPaymentType);
+            }
+
+            if (dateSelected) {
+                searchedPayments = filterPaymentsByDate(searchedPayments, selectedDate);
+            }
+
+            table.setItems(searchedPayments);
+
+        } else {
+            ObservableList<PaymentTm> allPayments = tableData;
+            table.setItems(allPayments);
+        }
     }
+
+
+
+    private ObservableList<PaymentTm> getPaymentsByTenantId(String tenantId) {
+        return FXCollections.observableArrayList(
+                tableData.stream()
+                        .filter(payment -> payment.getTenantId() != null && payment.getTenantId().equalsIgnoreCase(tenantId))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<PaymentTm> filterPaymentsByInvoiceNo(ObservableList<PaymentTm> payments, String invoiceNo) {
+        return FXCollections.observableArrayList(
+                payments.stream()
+                        .filter(payment -> payment.getInvoiceNo().equalsIgnoreCase(invoiceNo))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<PaymentTm> filterPaymentsByPaymentType(ObservableList<PaymentTm> payments, String paymentType) {
+        return FXCollections.observableArrayList(
+                payments.stream()
+                        .filter(payment -> payment.getPaymentType().equalsIgnoreCase(paymentType))
+                        .toList()
+        );
+    }
+
+
+    private ObservableList<PaymentTm> filterPaymentsByDate(ObservableList<PaymentTm> payments, String date) {
+        return FXCollections.observableArrayList(
+                payments.stream()
+                        .filter(payment -> payment.getDate().toString().equals(date))
+                        .toList()
+        );
+    }
+
 
     @FXML
     void sortCmbOnAction(ActionEvent event) {
 
+
+        String sortType = sortCmb.getSelectionModel().getSelectedItem();
+        ObservableList<PaymentTm> paymentTms = FXCollections.observableArrayList(tableData);
+
+        if (sortType == null) {
+            return;
+        }
+
+        Comparator<PaymentTm> comparator = null;
+
+        switch (sortType) {
+            case "Invoice No (Ascending)":
+                comparator = Comparator.comparing(PaymentTm::getInvoiceNo);
+                break;
+
+            case "Invoice No (Descending)":
+                comparator = Comparator.comparing(PaymentTm::getInvoiceNo).reversed();
+                break;
+
+            case "Amount (Ascending)":
+                comparator = Comparator.comparing(PaymentTm::getAmount);
+                break;
+
+            case "Amount (Descending)":
+                comparator = Comparator.comparing(PaymentTm::getAmount).reversed();
+                break;
+
+            case "Date (Ascending)":
+                comparator = Comparator.comparing(PaymentTm::getDate);
+                break;
+
+            case "Date (Descending)":
+                comparator = Comparator.comparing(PaymentTm::getDate).reversed();
+                break;
+
+            case "Tenant ID (Ascending)":
+                comparator = Comparator.comparing(PaymentTm::getTenantId);
+                break;
+
+            case "Tenant ID (Descending)":
+                comparator = Comparator.comparing(PaymentTm::getTenantId).reversed();
+                break;
+
+            default:
+                break;
+        }
+
+        if (comparator != null) {
+            FXCollections.sort(paymentTms, comparator);
+            table.setItems(paymentTms);
+        }
     }
 
 
@@ -208,7 +354,44 @@ public class PaymentController implements Initializable {
         setSortCmbValues();
         setPaymentTypeCmbValues();
         setTenantIdCmbValues();
+        datePicker.setValue(LocalDate.parse("1990-10-10"));
+        tableSearch();
     }
+
+
+
+    public void tableSearch() {
+
+        FilteredList<PaymentTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(payment -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (payment.getInvoiceNo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(payment.getAmount()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (payment.getDate().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (payment.getPaymentType().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (payment.getTenantId() != null && payment.getTenantId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<PaymentTm> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(sortedData);
+    }
+
 
 
     public void setTenantIdCmbValues(){
@@ -221,10 +404,10 @@ public class PaymentController implements Initializable {
             for (TenantTm x: allTenants){
                 tenantIds.add(x.getTenantId());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting tenant id combo box values: " + e.getMessage());
+            notification("An error occurred while setting tenant id combo box values. Please try again or contact support.");
         }
 
         tenantIdCmb.setItems(tenantIds);
@@ -252,6 +435,9 @@ public class PaymentController implements Initializable {
 
     public void setSortCmbValues(){
 
+        ObservableList<String> sortTypes = FXCollections.observableArrayList("Sort By","Invoice No (Ascending)","Invoice No (Descending)","Amount (Ascending)","Amount (Descending)","Date (Ascending)","Date (Descending)","Tenant ID (Ascending)","Tenant ID (Descending)");
+        sortCmb.setItems(sortTypes);
+        sortCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -259,6 +445,7 @@ public class PaymentController implements Initializable {
 
         ObservableList<String> paymentTypes = FXCollections.observableArrayList("Select","Monthly Rent Payment","Full House Purchase Payment","Security Deposit","Property Damage Charges");
         paymentTypeCmb.setItems(paymentTypes);
+        paymentTypeCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -312,8 +499,10 @@ public class PaymentController implements Initializable {
                             System.out.println("mail");
 
                             try{
-                            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/SendMail.fxml"));
+                            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/MailSendFormInLeaseAgreement.fxml"));
                             Parent root = fxmlLoader.load();
+                            MailSendFormInLeaseAgreementController mailSendFormInLeaseAgreementController = fxmlLoader.getController();
+                            mailSendFormInLeaseAgreementController.setPaymentDetailsToSendMail(selectedPayment);
                             Scene scene = new Scene(root);
                             Stage stage = new Stage();
                             stage.setScene(scene);
@@ -324,11 +513,13 @@ public class PaymentController implements Initializable {
 
                             }
                             catch (IOException e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                                System.err.println("Error while loading Mail Send form: " + e.getMessage());
+                                notification("An error occurred while loading Mail Send Form. Please try again or contact support.");
                             }
 
-
                         });
+
 
                         delete.setOnMouseClicked((MouseEvent event) -> {
 
@@ -336,27 +527,38 @@ public class PaymentController implements Initializable {
 
                             try {
                                 boolean result = paymentModel.checkIfThisPaymentIsFirstPaymentOrNot(selectedPayment);
-                                if(result){
+                                if (result) {
+                                    notification("This is First Made Payment Upon Renting Or Buying, Can't Delete");
                                     System.out.println("First payment");
                                     return;
-                                }
-                                else{
-                                    String response = paymentModel.deletePayment(selectedPayment);
+                                } else {
 
-                                    Notifications notifications = Notifications.create();
-                                    notifications.title("Notification");
-                                    notifications.text(response);
-                                    notifications.hideCloseButton();
-                                    notifications.hideAfter(Duration.seconds(5));
-                                    notifications.position(Pos.CENTER);
-                                    notifications.darkStyle();
-                                    notifications.showInformation();
-                                }
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle("Confirmation Dialog");
+                                    alert.setHeaderText("Please Confirm First");
+                                    alert.setContentText("Are you sure you want to delete this selected payment?");
 
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            } catch (ClassNotFoundException e) {
-                                throw new RuntimeException(e);
+                                    ButtonType buttonYes = new ButtonType("Yes");
+                                    ButtonType buttonCancel = new ButtonType("Cancel");
+
+                                    alert.getButtonTypes().setAll(buttonYes, buttonCancel);
+
+                                    Optional<ButtonType> res = alert.showAndWait();
+
+                                    if (res.isPresent() && res.get() == buttonYes) {
+
+                                            String response = paymentModel.deletePayment(selectedPayment);
+                                            notification(response);
+                                            loadTable();
+
+                                    } else {
+                                        table.getSelectionModel().clearSelection();
+                                    }
+                                }
+                            }catch (SQLException | ClassNotFoundException e) {
+                                e.printStackTrace();
+                                System.err.println("Error while deleting the payment: " + e.getMessage());
+                                notification("An error occurred while deleting the invoice no: "+selectedPayment.getInvoiceNo()+", Please try again or contact support.");
                             }
 
                         });
@@ -393,10 +595,10 @@ public class PaymentController implements Initializable {
             tableData = paymentModel.getAllPayments();
             table.setItems(tableData);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading the table data: " + e.getMessage());
+            notification("An error occurred while loading the table data. Please try again or contact support.");
         }
     }
 
@@ -410,7 +612,21 @@ public class PaymentController implements Initializable {
         sortCmb.getSelectionModel().selectFirst();
         invoiceNoTxt.setText("");
         table.getSelectionModel().clearSelection();
+        datePicker.setValue(LocalDate.parse("1990-10-10"));
+        searchTxt.clear();
 
+    }
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

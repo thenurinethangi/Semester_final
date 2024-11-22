@@ -6,6 +6,7 @@ module com.example.test {
     requires static lombok;
     requires org.controlsfx.controls;
     requires java.mail;
+    requires org.slf4j;
 
     opens com.example.test.db to javafx.base;
     opens com.example.test to javafx.fxml, lombok;

@@ -61,24 +61,16 @@ public class HouseReturnConformationController {
 
         try {
             String response = returnHouseModel.reclaimHouse(houseReturnDto);
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification(response);
 
             if(response.equals("Successfully Reclaiming The House!")){
                 returnBtn.setDisable(true);
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }  catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while reclaiming the house: " + e.getMessage());
+            notification("An error occurred while reclaiming the house. Please try again or contact support.");
         }
 
     }
@@ -89,25 +81,17 @@ public class HouseReturnConformationController {
 
         try {
             String response = returnHouseModel.reclaimHouseWithRefundSecurityDeposit(houseReturnDto,tenant);
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text(response);
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
+            notification(response);
 
             if(response.equals("Successfully Refund The Security Payment And Reclaiming The House!")){
                 returnBtn.setDisable(true);
                 rePayAndReturnBtn.setDisable(true);
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while reclaiming the house: " + e.getMessage());
+            notification("An error occurred while reclaiming the house. Please try again or contact support.");
         }
 
     }
@@ -150,10 +134,24 @@ public class HouseReturnConformationController {
                 }
             }
         }
-        catch (Exception e){
+        catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-
+            System.err.println("Error while setting the agreement details to return: " + e.getMessage());
+            notification("An error occurred while setting the agreement details to return. Please try again or contact support.");
         }
 
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 }

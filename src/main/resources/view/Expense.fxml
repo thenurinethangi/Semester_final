@@ -16,17 +16,13 @@
 
 <AnchorPane prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-radius: 8; -fx-border-color: #9E9E9E; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.ExpenseController">
    <children>
-      <Button fx:id="editbtn" layoutX="788.0" layoutY="587.0" mnemonicParsing="false" onAction="#editOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
-      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" onMouseClicked="#getSelectedRow" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
+      <TableView fx:id="table" layoutX="18.0" layoutY="232.0" prefHeight="352.0" prefWidth="863.0" stylesheets="@../style/Test.css">
         <columns>
-          <TableColumn fx:id="expenseNoColumn" prefWidth="156.0" resizable="false" text="Expense No" />
-          <TableColumn fx:id="descriptionColumn" prefWidth="339.0" text="Description" />
-            <TableColumn fx:id="amountColumn" prefWidth="187.0" resizable="false" text="Amount" />
-            <TableColumn fx:id="requestNoColumn" prefWidth="186.0" text="Maintenance Request No" />
+          <TableColumn fx:id="expenseNoColumn" prefWidth="110.0" resizable="false" text="Expense No" />
+          <TableColumn fx:id="descriptionColumn" prefWidth="293.9999694824219" text="Description" />
+            <TableColumn fx:id="amountColumn" prefWidth="132.00003051757812" resizable="false" text="Amount" />
+            <TableColumn fx:id="dateColumn" prefWidth="136.66668701171875" text="Date" />
+            <TableColumn fx:id="requestNoColumn" prefWidth="192.33331298828125" text="Maintenance Request No" />
         </columns>
       </TableView>
       <Button fx:id="addNewExpenseBtn" layoutX="553.0" layoutY="187.0" mnemonicParsing="false" onAction="#addNewExpenseOnAction" prefHeight="28.0" prefWidth="325.0" style="-fx-background-color: #007AFF;" stylesheets="@../style/Unit.css" text="   Expense" textFill="WHITE">
@@ -35,20 +31,15 @@
          </font>
       </Button>
       <ComboBox fx:id="tableRowsCmb" layoutX="18.0" layoutY="187.0" onAction="#tableRowsCmbOnAction" prefHeight="30.0" prefWidth="11.0" stylesheets="@../style/Unit.css" />
-      <Button fx:id="deletebtn" layoutX="837.0" layoutY="587.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
+      <Button fx:id="deletebtn" layoutX="835.0" layoutY="587.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
       <ComboBox fx:id="sortCmb" layoutX="73.0" layoutY="187.0" onAction="#sortCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="849.0" layoutY="594.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="847.0" layoutY="594.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/delete.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="802.0" layoutY="593.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../image/edit%20(1).png" />
          </image>
       </ImageView>
       <Pane layoutX="13.0" layoutY="19.0" prefHeight="122.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-border-width: 1.5; -fx-border-color: #ffffff; -fx-background-radius: 7;">

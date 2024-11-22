@@ -26,7 +26,7 @@ public class RecommendedHousesController {
 
     private RequestTm requestTm;
     private String estimatedMonthlyBudgetForRent;
-    private ObservableList<String> messageOne = FXCollections.observableArrayList("No Recommended Houses Since There are Available Houses");
+    private ObservableList<String> messageOne = FXCollections.observableArrayList("No Recommended Houses, As There Are Available Options.");
     private ObservableList<String> messageTwo = FXCollections.observableArrayList("No Available Houses For This Request");
     private ObservableList<String> messageThree = FXCollections.observableArrayList("No Recommended Houses For This Request");
     private final RentRequestDetailsModel rentRequestDetailsModel = new RentRequestDetailsModel();
@@ -113,9 +113,9 @@ public class RecommendedHousesController {
 
         String selectedRecommendedHouse = recommendedHousesList.getSelectionModel().getSelectedItem();
 
-        // Check if selectedRecommendedHouse is null or one of the messages
+
         if (selectedRecommendedHouse == null ||
-                selectedRecommendedHouse.equals("No Recommended Houses Since There are Available Houses") ||
+                selectedRecommendedHouse.equals("No Recommended Houses, As There Are Available Options.") ||
                 selectedRecommendedHouse.equals("No Recommended Houses For This Request")) {
             return;
         } else {
@@ -143,7 +143,7 @@ public class RecommendedHousesController {
 
             int index = 0;
 
-            // Find the index of the selected recommended house
+
             for (int i = 0; i < recommendedUnits.size(); i++) {
                 if (recommendedUnits.get(i).equals(selectedRecommendedHouse)) {
                     index = i;
@@ -152,7 +152,7 @@ public class RecommendedHousesController {
             }
 
             try {
-                // Update the house ID with the selected recommended unit
+
                 String response = recommendedHousesModel.updateHouseId(recommendedUnitsDto.get(index), requestTm);
                 Notifications notifications = Notifications.create();
                 notifications.title("Notification");
@@ -273,6 +273,21 @@ public class RecommendedHousesController {
 
     public void getRecommendedSellHouses(){
 
+        try {
+
+            recommendedUnits = recommendedHousesModel.getRecommendedSellHouses(requestTm);
+            recommendedUnitsDto = recommendedHousesModel.getRecommendedSellHousesAsUnitDto(requestTm);
+
+            if (recommendedUnits.isEmpty()) {
+                recommendedHousesList.setItems(messageThree);
+            } else {
+                recommendedHousesList.setItems(recommendedUnits);
+            }
+        }  catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

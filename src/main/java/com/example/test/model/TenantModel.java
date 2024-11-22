@@ -4,7 +4,6 @@ import com.example.test.CrudUtility;
 import com.example.test.dto.CustomerDto;
 import com.example.test.dto.TenantDto;
 import com.example.test.dto.UnitDto;
-import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.dto.tm.PaymentTm;
 import com.example.test.dto.tm.RequestTm;
 import com.example.test.dto.tm.TenantTm;
@@ -127,7 +126,7 @@ public class TenantModel {
 
     public TenantDto getMoreTenantDetails(String tenantId) throws SQLException, ClassNotFoundException {
 
-        String sql = "select tenantId,headOfHouseholdName,lastPayementMonth,email,securityPaymentRemain,houseId from tenant where tenantId = ? and isActiveTenant = ?";
+        String sql = "select tenantId,headOfHouseholdName,rentForMonth,lastPayementMonth,email,securityPaymentRemain,houseId from tenant where tenantId = ? and isActiveTenant = ?";
         ResultSet result = CrudUtility.execute(sql,tenantId,1);
 
         TenantDto tenantDto = new TenantDto();
@@ -135,6 +134,7 @@ public class TenantModel {
         if(result.next()){
             tenantDto.setTenantId(result.getString("tenantId"));
             tenantDto.setName(result.getString("headOfHouseholdName"));
+            tenantDto.setMonthlyRent(result.getDouble("rentForMonth"));
             tenantDto.setLastPaidMonth(result.getString("lastPayementMonth"));
             tenantDto.setSecurityPaymentRemain(result.getDouble("securityPaymentRemain"));
             tenantDto.setEmail(result.getString("email"));
@@ -183,7 +183,7 @@ public class TenantModel {
         Month month = Month.valueOf(lastPaidMonth.toUpperCase());
         Month previousMonth = month.minus(1);
         System.out.println("The previous month is: " + previousMonth);
-        String updatedMonth = String.valueOf(previousMonth);
+        String updatedMonth = String.valueOf(previousMonth).toLowerCase();
 
         String sqlTwo = "UPDATE tenant SET lastPayementMonth = ? WHERE tenantId = ?";
         boolean resultTwo = CrudUtility.execute(sqlTwo,updatedMonth,selectedPayment.getTenantId());
@@ -191,10 +191,10 @@ public class TenantModel {
         return resultTwo;
     }
 
-    public String getTenantEmailById(LeaseAgreementTm selectedLeaseAgreement) throws SQLException, ClassNotFoundException {
+    public String getTenantEmailById(String tenantId) throws SQLException, ClassNotFoundException {
 
         String sql = "select email from tenant where tenantId = ?";
-        ResultSet result = CrudUtility.execute(sql,selectedLeaseAgreement.getTenantId());
+        ResultSet result = CrudUtility.execute(sql,tenantId);
 
         if(result.next()){
 
@@ -234,6 +234,48 @@ public class TenantModel {
         boolean result = CrudUtility.execute(sql,Double.parseDouble(costOfRepair),tenantId);
 
         return result ? "Repair costs were successfully deducted from the security deposit." : "Failed to deduct repair cost from security deposit, try again later";
+    }
+
+    public TenantDto checkTenantPhoneNo(String tenantDetail) throws SQLException, ClassNotFoundException {
+
+        String sql = "select * from tenant where phoneNo = ? and isActiveTenant = ?";
+        ResultSet result = CrudUtility.execute(sql,tenantDetail,1);
+
+        TenantDto tenant = new TenantDto();
+
+        if(result.next()){
+
+            String id = result.getString(1);
+            String name = result.getString(2);
+            String phoneNo = result.getString(3);
+            int membersCount = result.getInt(4);
+            String startDate = result.getString(5);
+            double monthlyRent = result.getDouble(6);
+            String lastPaidMonth = result.getString(7);
+            String houseId = result.getString(8);
+            String email = result.getString(9);
+
+            tenant.setTenantId(id);
+            tenant.setName(name);
+            tenant.setPhoneNo(phoneNo);
+            tenant.setMembersCount(membersCount);
+            tenant.setRentStartDate(startDate);
+            tenant.setMonthlyRent(monthlyRent);
+            tenant.setLastPaidMonth(lastPaidMonth);
+            tenant.setHouseId(houseId);
+            tenant.setEmail(email);
+
+        }
+
+        return tenant;
+    }
+
+    public boolean setNewLastPaidMonth(TenantDto tenant) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE tenant SET lastPayementMonth = ? WHERE tenantId = ?";
+        boolean result = CrudUtility.execute(sql,tenant.getLastPaidMonth(),tenant.getTenantId());
+
+        return result;
     }
 }
 

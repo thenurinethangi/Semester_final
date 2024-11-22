@@ -1,7 +1,6 @@
 package com.example.test.controller;
 
 import com.example.test.dto.tm.EmployeeTm;
-import com.example.test.dto.tm.UnitTm;
 import com.example.test.model.EmployeeModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,18 +9,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
 import java.io.IOException;
 import java.net.URL;
@@ -95,6 +93,9 @@ public class EmployeeController implements Initializable {
     @FXML
     private TextField addressTxt;
 
+    @FXML
+    private TextField searchTxt;
+
     private EmployeeModel employeeModel;
     private ObservableList<EmployeeTm> tableData;
     private ObservableList<String> addresses;
@@ -103,16 +104,17 @@ public class EmployeeController implements Initializable {
     private String position;
 
 
-    public EmployeeController(){
+    public EmployeeController() {
 
         try {
             employeeModel = new EmployeeModel();
-        }
-        catch (Exception e){
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.err.println("Error while initializing employee controller: " + e.getMessage());
+            notification("An error occurred while loading Employee page. Please try again or contact support.");
         }
-    }
 
+    }
 
 
     @FXML
@@ -125,13 +127,14 @@ public class EmployeeController implements Initializable {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.show();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while saving new floor: " + e.getMessage());
+            notification("An error occurred while saving the new floor. Please try again or contact support.");
         }
+
 
     }
-
 
 
     @FXML
@@ -139,32 +142,26 @@ public class EmployeeController implements Initializable {
 
         EmployeeTm selectedItem = table.getSelectionModel().getSelectedItem();
 
-        if(selectedItem==null){
+        if (selectedItem == null) {
+            return;
+        } else {
+            ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("You should first select employee to delete");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
-        }
-        else{
-
-            Alert a1 = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the employee?");
+            Alert a1 = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete selected employee?");
+            a1.getButtonTypes().setAll(yesButton, cancelButton);
             Optional<ButtonType> options = a1.showAndWait();
 
-            if (options.isPresent() && options.get() == ButtonType.OK) {
+            if (options.isPresent() && options.get() == yesButton) {
 
                 try {
                     String response = employeeModel.deleteEmployee(selectedItem);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                    alert.showAndWait();
-                } catch (Exception e) {
+                    notification(response);
 
+                } catch (SQLException e) {
                     e.printStackTrace();
+                    System.err.println("Error while deleting the employee: " + e.getMessage());
+                    notification("An error occurred while deleting the employee id: " + selectedItem.getEmployeeId() + ", Please try again or contact support.");
                 }
 
             }
@@ -181,19 +178,9 @@ public class EmployeeController implements Initializable {
 
         EmployeeTm selectedItem = table.getSelectionModel().getSelectedItem();
 
-        if(selectedItem==null){
-
-            Notifications notifications = Notifications.create();
-            notifications.title("Notification");
-            notifications.text("You should first select employee to update");
-            notifications.hideCloseButton();
-            notifications.hideAfter(Duration.seconds(5));
-            notifications.position(Pos.CENTER);
-            notifications.darkStyle();
-            notifications.showInformation();
-
-        }
-        else{
+        if (selectedItem == null) {
+            return;
+        } else {
 
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewEmployee.fxml"));
@@ -204,9 +191,10 @@ public class EmployeeController implements Initializable {
                 Stage s1 = new Stage();
                 s1.setScene(scene);
                 s1.show();
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
+                System.err.println("Error while loading Add New Employee Page: " + e.getMessage());
+                notification("An error occurred while loading Add New Employee Page. Please try again or contact support.");
             }
         }
     }
@@ -220,7 +208,6 @@ public class EmployeeController implements Initializable {
     }
 
 
-
     @FXML
     void addressTxtKeyReleased(KeyEvent keyEvent) {
 
@@ -229,17 +216,13 @@ public class EmployeeController implements Initializable {
         try {
             addresses = employeeModel.getEmployeeAddresses(input);
             addressList.setItems(addresses);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while suggesting employee addresses: " + e.getMessage());
+            notification("An error occurred while suggesting employee addresses. Please try again or contact support.");
         }
 
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
-        }
-
-        if(input.isEmpty()){
+        if (input.isEmpty()) {
             addresses.clear();
         }
 
@@ -262,24 +245,20 @@ public class EmployeeController implements Initializable {
         try {
             names = employeeModel.getEmployeeNames(input);
             nameList.setItems(names);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while suggesting employee names: " + e.getMessage());
+            notification("An error occurred while suggesting employee names. Please try again or contact support.");
         }
 
-        catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
-        }
-
-        if(input.isEmpty()){
+        if (input.isEmpty()) {
             names.clear();
         }
     }
 
 
     @FXML
-    void nameTxtOnMouseClicked(MouseEvent event){
+    void nameTxtOnMouseClicked(MouseEvent event) {
 
         nameTxt.setText(nameList.getSelectionModel().getSelectedItem());
         names.clear();
@@ -308,7 +287,6 @@ public class EmployeeController implements Initializable {
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        //table.setItems(tableData);
         clean();
     }
 
@@ -318,94 +296,120 @@ public class EmployeeController implements Initializable {
 
         ObservableList<EmployeeTm> searchedEmployees = FXCollections.observableArrayList();
 
-        if(employeeId!=null && !employeeId.equals("Select")){
+        String selectedEmployeeId = employeeIdCmb.getValue();
+        String selectedName = nameTxt.getText();
+        String selectedAddress = addressTxt.getText();
+        String selectedPosition = positionCmb.getValue();
 
-            try {
-                ObservableList<EmployeeTm> employer = employeeModel.getEmployeeById(employeeId);
-                if(employer.isEmpty()){
-                    return;
+        boolean employeeIdSelected = selectedEmployeeId != null && !selectedEmployeeId.equals("Select");
+        boolean nameSelected = selectedName != null && !selectedName.isEmpty();
+        boolean addressSelected = selectedAddress != null && !selectedAddress.isEmpty();
+        boolean positionSelected = selectedPosition != null && !selectedPosition.equals("Select");
+
+        if (employeeIdSelected) {
+
+            ObservableList<EmployeeTm> employeesById = getEmployeeById(selectedEmployeeId);
+
+            if (employeesById.isEmpty()) {
+                table.setItems(employeesById);
+            } else {
+                searchedEmployees.addAll(employeesById);
+
+                if (nameSelected) {
+                    ObservableList<EmployeeTm> filteredByName = filterEmployeesByName(searchedEmployees, selectedName);
+                    searchedEmployees.clear();
+                    searchedEmployees.addAll(filteredByName);
                 }
-                else{
-                    table.setItems(employer);
+
+                if (addressSelected) {
+                    ObservableList<EmployeeTm> filteredByAddress = filterEmployeesByAddress(searchedEmployees, selectedAddress);
+                    searchedEmployees.clear();
+                    searchedEmployees.addAll(filteredByAddress);
                 }
 
-            }
-            catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-                alert.showAndWait();
+                if (positionSelected) {
+                    ObservableList<EmployeeTm> filteredByPosition = filterEmployeesByPosition(searchedEmployees, selectedPosition);
+                    searchedEmployees.clear();
+                    searchedEmployees.addAll(filteredByPosition);
+                }
+
+                table.setItems(searchedEmployees);
             }
 
+        } else if (nameSelected || addressSelected || positionSelected) {
+
+            ObservableList<EmployeeTm> allEmployees = tableData;
+            searchedEmployees.addAll(allEmployees);
+
+            if (nameSelected) {
+                searchedEmployees = filterEmployeesByName(searchedEmployees, selectedName);
+            }
+
+            if (addressSelected) {
+                searchedEmployees = filterEmployeesByAddress(searchedEmployees, selectedAddress);
+            }
+
+            if (positionSelected) {
+                searchedEmployees = filterEmployeesByPosition(searchedEmployees, selectedPosition);
+            }
+
+            table.setItems(searchedEmployees);
+
+        } else {
+            ObservableList<EmployeeTm> allEmployees = tableData;
+            table.setItems(allEmployees);
         }
-        else if(!nameTxt.getText().isEmpty()){
-
-            try {
-                ObservableList<EmployeeTm> employer = employeeModel.getEmployeeByName(nameTxt.getText());
-                if(employer.isEmpty()){
-                    return;
-                }
-                else{
-                    table.setItems(employer);
-                }
-
-            }
-            catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-                alert.showAndWait();
-            }
-
-        }
-
-        else if(!addressTxt.getText().isEmpty()){
-
-            try {
-                ObservableList<EmployeeTm> employer = employeeModel.getEmployeeByAddress(addressTxt.getText());
-                if(employer.isEmpty()){
-                    return;
-                }
-                else{
-                    table.setItems(employer);
-                }
-
-            }
-            catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-                alert.showAndWait();
-            }
-
-        }
-
-        else if(position!=null && !position.equals("Select")){
-
-            try {
-                ObservableList<EmployeeTm> employer = employeeModel.getEmployeeByPosition(position);
-                if(employer.isEmpty()){
-                    return;
-                }
-                else{
-                    table.setItems(employer);
-                }
-
-            }
-            catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-                alert.showAndWait();
-            } catch (ClassNotFoundException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-                alert.showAndWait();
-            }
-
-        }
-
     }
+
+
+
+    public ObservableList<EmployeeTm> getEmployeeById(String employeeId) {
+
+        ObservableList<EmployeeTm> filteredEmployees = FXCollections.observableArrayList();
+        for (EmployeeTm employee : tableData) {
+            if (employee.getEmployeeId().equals(employeeId)) {
+                filteredEmployees.add(employee);
+            }
+        }
+        return filteredEmployees;
+    }
+
+
+    public ObservableList<EmployeeTm> filterEmployeesByName(ObservableList<EmployeeTm> employees, String name) {
+
+        ObservableList<EmployeeTm> filteredEmployees = FXCollections.observableArrayList();
+        for (EmployeeTm employee : employees) {
+            if (employee.getName().equalsIgnoreCase(name)) {
+                filteredEmployees.add(employee);
+            }
+        }
+        return filteredEmployees;
+    }
+
+
+    public ObservableList<EmployeeTm> filterEmployeesByAddress(ObservableList<EmployeeTm> employees, String address) {
+
+        ObservableList<EmployeeTm> filteredEmployees = FXCollections.observableArrayList();
+        for (EmployeeTm employee : employees) {
+            if (employee.getAddress().equalsIgnoreCase(address)) {
+                filteredEmployees.add(employee);
+            }
+        }
+        return filteredEmployees;
+    }
+
+
+    public ObservableList<EmployeeTm> filterEmployeesByPosition(ObservableList<EmployeeTm> employees, String position) {
+
+        ObservableList<EmployeeTm> filteredEmployees = FXCollections.observableArrayList();
+        for (EmployeeTm employee : employees) {
+            if (employee.getPosition().equalsIgnoreCase(position)) {
+                filteredEmployees.add(employee);
+            }
+        }
+        return filteredEmployees;
+    }
+
 
 
     @FXML
@@ -418,7 +422,7 @@ public class EmployeeController implements Initializable {
             return;
         }
 
-        if(sortType.equals("employee Id asc")){
+        if(sortType.equals("Employee ID (Ascending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -432,7 +436,7 @@ public class EmployeeController implements Initializable {
             }
             table.setItems(employeeTms);
         }
-        else if(sortType.equals("employee Id desc")){
+        else if(sortType.equals("Employee ID (Descending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -446,7 +450,7 @@ public class EmployeeController implements Initializable {
             }
             table.setItems(employeeTms);
         }
-        else if(sortType.equals("name asc")){
+        else if(sortType.equals("Name (Ascending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -460,7 +464,7 @@ public class EmployeeController implements Initializable {
             }
             table.setItems(employeeTms);
         }
-        else if(sortType.equals("name desc")){
+        else if(sortType.equals("Name (Descending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -476,7 +480,7 @@ public class EmployeeController implements Initializable {
 
         }
 
-        else if(sortType.equals("dob desc")){
+        else if(sortType.equals("Date of Birth (Descending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -491,7 +495,7 @@ public class EmployeeController implements Initializable {
             table.setItems(employeeTms);
         }
 
-        else if(sortType.equals("dob asc")){
+        else if(sortType.equals("Date of Birth (Ascending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -506,7 +510,7 @@ public class EmployeeController implements Initializable {
             table.setItems(employeeTms);
 
         }
-        else if(sortType.equals("basic salary asc")){
+        else if(sortType.equals("Basic Salary (Ascending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -521,7 +525,7 @@ public class EmployeeController implements Initializable {
             table.setItems(employeeTms);
         }
 
-        else if(sortType.equals("basic salary desc")){
+        else if(sortType.equals("Basic Salary (Descending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -536,7 +540,7 @@ public class EmployeeController implements Initializable {
             table.setItems(employeeTms);
         }
 
-        else if(sortType.equals("allowance asc")){
+        else if(sortType.equals("Allowance (Ascending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -551,7 +555,7 @@ public class EmployeeController implements Initializable {
             table.setItems(employeeTms);
         }
 
-        else if(sortType.equals("allowance desc")){
+        else if(sortType.equals("Allowance (Descending)")){
 
             for(int j = 0; j < employeeTms.size(); j++) {
                 for (int i = 0; i < employeeTms.size()-1; i++) {
@@ -572,7 +576,6 @@ public class EmployeeController implements Initializable {
     void tableRowsCmbOnAction(ActionEvent event) {
 
         Integer value = tableRowsCmb.getSelectionModel().getSelectedItem();
-        System.out.println(value);
 
         if(value==null){
             return;
@@ -598,8 +601,51 @@ public class EmployeeController implements Initializable {
         setPositionCmbValues();
         setRowCmbValues();
         setSortCmbValues();
+        tableSearch();
 
     }
+
+
+    public void tableSearch() {
+
+        FilteredList<EmployeeTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(employee -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (employee.getEmployeeId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (employee.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (employee.getAddress().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (employee.getPhoneNo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(employee.getBasicSalary()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(employee.getAllowances()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (employee.getDob().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (employee.getPosition().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<EmployeeTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+    }
+
 
 
     public void setTableColumnsValues(){
@@ -621,7 +667,9 @@ public class EmployeeController implements Initializable {
             tableData = employeeModel.getAllEmployees();
             table.setItems(tableData);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.err.println("Error while loading table data: " + e.getMessage());
+            notification("An error occurred while loading table data. Please try again or contact support.");
         }
 
     }
@@ -632,13 +680,12 @@ public class EmployeeController implements Initializable {
         try {
             ObservableList<String> employeeIds = employeeModel.getAllEmployeesId();
             employeeIdCmb.setItems(employeeIds);
-
-        } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+            employeeIdCmb.getSelectionModel().selectFirst();
+        }
+        catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to employee combo box: " + e.getMessage());
+            notification("An error occurred while setting values to employee combo box. Please try again or contact support.");
         }
 
     }
@@ -649,13 +696,12 @@ public class EmployeeController implements Initializable {
         try {
             ObservableList<String> allDistinctPositions = employeeModel.getAllDistinctPositions();
             positionCmb.setItems(allDistinctPositions);
+            positionCmb.getSelectionModel().selectFirst();
 
-        }catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at sql query");
-            alert.showAndWait();
-        } catch (ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"Problem at found class");
-            alert.showAndWait();
+        }catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting values to position combo box: " + e.getMessage());
+            notification("An error occurred while setting values to position combo box. Please try again or contact support.");
         }
 
     }
@@ -681,8 +727,9 @@ public class EmployeeController implements Initializable {
     public void setSortCmbValues(){
 
         ObservableList<String> sortTypes = FXCollections.observableArrayList();
-        sortTypes.addAll("Sort By","employee Id asc","employee Id desc","name asc","name desc","basic salary asc","basic salary desc","allowance asc","allowance desc","dob asc","dob desc");
+        sortTypes.addAll("Sort By", "Employee ID (Ascending)", "Employee ID (Descending)", "Name (Ascending)", "Name (Descending)", "Basic Salary (Ascending)", "Basic Salary (Descending)", "Allowance (Ascending)", "Allowance (Descending)", "Date of Birth (Ascending)", "Date of Birth (Descending)");
         sortCmb.setItems(sortTypes);
+        sortCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -698,7 +745,23 @@ public class EmployeeController implements Initializable {
         employeeIdCmb.getSelectionModel().selectFirst();
         nameTxt.setText("");
         addressTxt.setText("");
+        table.getSelectionModel().getSelectedItem();
+        searchTxt.clear();
 
+
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(5));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
     }
 
 }

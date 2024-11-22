@@ -39,11 +39,17 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
       <Button fx:id="addNewHouseTypebtn" layoutX="463.0" layoutY="189.0" mnemonicParsing="false" onAction="#addNewHouseTypeOnAction" prefHeight="27.0" prefWidth="138.0" stylesheets="@../style/Unit.css" text="   House Type" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
       <ComboBox fx:id="tableRowsCmb" layoutX="13.0" layoutY="188.0" onAction="#tableRowsCmbOnAction" prefHeight="30.0" prefWidth="30.0" stylesheets="@../style/Unit.css" />
       <Button fx:id="deletebtn" layoutX="837.0" layoutY="588.0" mnemonicParsing="false" onAction="#deleteOnAction" prefHeight="32.0" prefWidth="45.0" stylesheets="@../style/Unit.css">
@@ -55,6 +61,9 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Button>
       <ComboBox fx:id="sortCmb" layoutX="68.0" layoutY="188.0" onAction="#sortCmbOnAction" prefHeight="30.0" prefWidth="150.0" promptText="Sort By" stylesheets="@../style/Unit.css" />
       <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="849.0" layoutY="595.0" pickOnBounds="true" preserveRatio="true">
@@ -74,15 +83,21 @@
       </ImageView>
       <Pane layoutX="13.0" layoutY="25.0" prefHeight="84.0" prefWidth="873.0" style="-fx-background-color: #ffffff; -fx-border-radius: 7; -fx-background-radius: 8;">
          <children>
-            <Button fx:id="searchbtn" layoutX="768.0" layoutY="22.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC; -fx-border-radius: 3; -fx-border-width: 1.5;" stylesheets="@../style/Unit.css" textFill="#007aff">
+            <Button fx:id="searchbtn" layoutX="767.0" layoutY="22.0" mnemonicParsing="false" onAction="#searchOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC; -fx-border-radius: 3; -fx-border-width: 1.5;" stylesheets="@../style/Unit.css" textFill="#007aff">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Button fx:id="refreshbtn" layoutX="818.0" layoutY="22.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC; -fx-border-radius: 3;" stylesheets="@../style/Unit.css" textFill="#007aff">
+            <Button fx:id="refreshbtn" layoutX="817.0" layoutY="22.0" mnemonicParsing="false" onAction="#refreshOnAction" prefHeight="32.0" prefWidth="45.0" style="-fx-background-color: #CFD8DC; -fx-border-radius: 3;" stylesheets="@../style/Unit.css" textFill="#007aff">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <Label layoutX="10.0" layoutY="3.0" text="House ID">
                <font>
@@ -108,12 +123,12 @@
             <ComboBox fx:id="houseTypeCmb" layoutX="180.0" layoutY="22.0" onAction="#houseTypeCmbOnAction" prefWidth="150.0" promptText="Select" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
             <ComboBox fx:id="statusCmb" layoutX="347.0" layoutY="22.0" onAction="#statusCmbOnAction" prefWidth="150.0" promptText="Select" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
             <ComboBox fx:id="rentOrBuyCmb" layoutX="513.0" layoutY="22.0" onAction="#rentOrBuyCmbOnAction" prefWidth="150.0" promptText="Select" styleClass="textField" stylesheets="@../style/AddNewUnit.css" />
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="780.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="779.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="829.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="828.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/reload.png" />
                </image>
@@ -130,7 +145,7 @@
             <Image url="@../image/plus%20(1).png" />
          </image>
       </ImageView>
-      <TextField layoutX="223.0" layoutY="189.0" prefHeight="30.0" prefWidth="235.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
+      <TextField fx:id="searchTxt" layoutX="223.0" layoutY="189.0" prefHeight="30.0" prefWidth="235.0" promptText="Search here" style="-fx-background-color: #f1f2f6; -fx-padding: 1 1 1 28; -fx-border-color: #f1f2f6;" styleClass="text-field" stylesheets="@../style/BlueTextField.css" />
       <Line endX="759.3333129882812" layoutX="115.0" layoutY="182.0" startX="-100.0" stroke="#f1f2f6" />
       <ImageView fitHeight="16.0" fitWidth="18.0" layoutX="232.0" layoutY="196.0" pickOnBounds="true" preserveRatio="true">
          <image>

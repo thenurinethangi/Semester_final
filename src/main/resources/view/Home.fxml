@@ -9,19 +9,37 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="pane1" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.HomeController">
    <children>
+      <AnchorPane fx:id="mainPnae" layoutX="189.0" layoutY="63.0" prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #f1f2f6; -fx-background-radius: 8;">
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </AnchorPane>
       <Pane fx:id="pane2" layoutY="-2.0" prefHeight="55.0" prefWidth="1100.0" stylesheets="@../style/HomePage.css">
          <children>
+            <Line endX="-80.00801849365234" endY="0.3307437300682068" layoutX="1037.0" layoutY="31.0" opacity="0.15" rotate="90.0" startX="-99.66668701171875" />
+            <Button fx:id="userbtn" layoutX="985.0" layoutY="12.0" mnemonicParsing="false" onAction="#userOnAction" prefHeight="36.0" prefWidth="62.0" style="-fx-background-color: #ffffff; -fx-background-radius: 50;">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Button>
             <Button fx:id="notificationbtn" layoutX="911.0" layoutY="16.0" mnemonicParsing="false" onAction="#notificationOnAction" prefHeight="25.0" prefWidth="30.0" stylesheets="@../style/HomePage.css" />
             <Label fx:id="pageLabel" layoutX="191.0" layoutY="16.0" text="Dashboard">
                <font>
                   <Font name="Candara Bold" size="21.0" />
                </font>
             </Label>
-            <TextField fx:id="searchtxt" layoutX="390.0" layoutY="14.0" onAction="#searchOnAction" onKeyReleased="#getSearchTxtRecommenderOnAction" prefHeight="30.0" prefWidth="255.0" promptText="S E A R C H" stylesheets="@../style/HomePage.css" />
+            <TextField fx:id="searchtxt" layoutX="390.0" layoutY="14.0" onAction="#searchOnAction" onKeyReleased="#getSearchTxtRecommenderOnAction" onMouseEntered="#searchTxtOnMouseEntered" prefHeight="30.0" prefWidth="255.0" promptText="S E A R C H" style="-fx-text-fill: #747d8c;" stylesheets="@../style/HomePage.css">
+               <font>
+                  <Font size="13.0" />
+               </font></TextField>
             <ImageView fitHeight="55.0" fitWidth="84.0" layoutX="27.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/undraw_House_searching_re_stk8.png" />
@@ -37,7 +55,7 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
-            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="953.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="958.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/user-profile.png" />
                </image>
@@ -47,7 +65,7 @@
                   <Image url="@../image/search-interface-symbol.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="21.0" fitWidth="23.0" layoutX="914.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="notificationIcon" fitHeight="21.0" fitWidth="23.0" layoutX="917.0" layoutY="21.0" onMouseClicked="#notificationOnMouseClicked" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/notification.png" />
                </image>
@@ -70,12 +88,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="userbtn" layoutX="1027.0" layoutY="16.0" mnemonicParsing="false" onAction="#userOnAction" prefHeight="36.0" prefWidth="28.0" rotate="90.0" style="-fx-background-color: #FAFAFA; -fx-background-radius: 50;" text="&gt;">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Button>
-            <Label layoutX="985.0" layoutY="26.0" text="kehn pilip">
+            <Label fx:id="userNameLabel" layoutX="991.0" layoutY="26.0" text="kehnpilip">
                <font>
                   <Font name="Candara Bold" size="11.0" />
                </font>
@@ -119,7 +132,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="tenantbtn" layoutX="1.0" layoutY="173.0" mnemonicParsing="false" onAction="#tenantOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Tenant         ">
+            <Button fx:id="tenantbtn" layoutX="1.0" layoutY="173.0" mnemonicParsing="false" onAction="#tenantOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Tenant          ">
                <font>
                   <Font size="13.0" />
                </font>
@@ -127,7 +140,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="ownerbtn" layoutX="1.0" layoutY="210.0" mnemonicParsing="false" onAction="#ownerOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Owner         ">
+            <Button fx:id="ownerbtn" layoutX="1.0" layoutY="210.0" mnemonicParsing="false" onAction="#ownerOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Owner          ">
                <font>
                   <Font size="13.0" />
                </font>
@@ -135,7 +148,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="contractbtn" layoutX="1.0" layoutY="247.0" mnemonicParsing="false" onAction="#contractOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Contract      ">
+            <Button fx:id="contractbtn" layoutX="1.0" layoutY="247.0" mnemonicParsing="false" onAction="#leaseAgreementOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text=" Lease Agrmt  ">
                <font>
                   <Font size="13.0" />
                </font>
@@ -143,7 +156,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="maintenancebtn" layoutX="1.0" layoutY="284.0" mnemonicParsing="false" onAction="#maintenanceOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text=" Maintenance ">
+            <Button fx:id="maintenancebtn" layoutX="1.0" layoutY="284.0" mnemonicParsing="false" onAction="#purchaseAgreementOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="    Purchase Agrmt">
                <font>
                   <Font size="13.0" />
                </font>
@@ -151,7 +164,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="complainbtn" layoutX="1.0" layoutY="321.0" mnemonicParsing="false" onAction="#complainOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Complain      ">
+            <Button fx:id="complainbtn" layoutX="1.0" layoutY="321.0" mnemonicParsing="false" onAction="#maintenanceOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text=" Maintenance  ">
                <font>
                   <Font size="13.0" />
                </font>
@@ -292,13 +305,5 @@
                </image>
             </ImageView>
          </children></Pane>
-      <AnchorPane fx:id="mainPnae" layoutX="189.0" layoutY="63.0" prefHeight="628.0" prefWidth="899.0" style="-fx-background-color: #f1f2f6; -fx-background-radius: 8;">
-         <cursor>
-            <Cursor fx:constant="DEFAULT" />
-         </cursor>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </AnchorPane>
    </children>
 </AnchorPane>

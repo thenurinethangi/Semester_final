@@ -1,25 +1,30 @@
 package com.example.test.controller;
 
-import com.example.test.dto.tm.FloorTm;
 import com.example.test.dto.tm.HouseTypeTm;
 import com.example.test.dto.tm.UnitTm;
 import com.example.test.model.HouseTypeModel;
 import com.example.test.model.UnitModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
-import java.lang.invoke.VarHandle;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -83,6 +88,9 @@ public class UnitController implements Initializable {
     private Button searchbtn;
 
     @FXML
+    private TextField searchTxt;
+
+    @FXML
     private Button refreshbtn;
 
     @FXML
@@ -104,6 +112,8 @@ public class UnitController implements Initializable {
     private String status;
     private String houseType;
     private String rentOrSell;
+    private boolean isOnlyAvailableUnits = false;
+    private ObservableList<UnitTm> dataList = FXCollections.observableArrayList();
 
 
     public UnitController(){
@@ -111,10 +121,12 @@ public class UnitController implements Initializable {
         try {
             houseTypeModel = new HouseTypeModel();
             unitModel = new UnitModel();
-        }
-        catch (Exception e){
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the unit page: " + e.getMessage());
+            notification("An error occurred while loading the unit page. Please try again or contact support.");
         }
+
     }
 
 
@@ -128,10 +140,12 @@ public class UnitController implements Initializable {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.show();
-        }
-        catch (Exception e){
+        } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the floor page: " + e.getMessage());
+            notification("An error occurred while loading the floor page. Please try again or contact support.");
         }
+
     }
 
     @FXML
@@ -145,9 +159,12 @@ public class UnitController implements Initializable {
             stage.setScene(scene);
             stage.show();
         }
-        catch (Exception e){
+        catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the house type page: " + e.getMessage());
+            notification("An error occurred while loading the house type page. Please try again or contact support.");
         }
+
     }
 
     @FXML
@@ -161,8 +178,10 @@ public class UnitController implements Initializable {
             stage.setScene(scene);
             stage.show();
         }
-        catch (Exception e){
+        catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error while loading the add new unit page: " + e.getMessage());
+            notification("An error occurred while loading the add new unit page. Please try again or contact support.");
         }
     }
 
@@ -176,8 +195,7 @@ public class UnitController implements Initializable {
            return;
         }
 
-        if(selectItem.getStatus().equals("unavailable")) {
-
+        if(selectItem.getStatus().equals("Unavailable")) {
             deletebtn.setDisable(true);
             editbtn.setDisable(true);
         }
@@ -195,37 +213,35 @@ public class UnitController implements Initializable {
         UnitTm selectedRow = table.getSelectionModel().getSelectedItem();
 
         if(selectedRow==null){
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Please select unit to delete!");
-            alert.setContentText("You should first select unit to delete, tap on the table row you want to delete before tap on delete button");
-            alert.showAndWait();
+            return;
         }
-        else {
-            if (selectedRow.getStatus().equals("available")) {
 
-                Alert a1 = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete the floor?");
+        else {
+            if (selectedRow.getStatus().equals("Available")) {
+
+                ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                Alert a1 = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete selected unit?");
+                a1.getButtonTypes().setAll(yesButton, cancelButton);
                 Optional<ButtonType> options = a1.showAndWait();
 
-                if (options.isPresent() && options.get() == ButtonType.OK) {
-
+                if (options.isPresent() && options.get() == yesButton) {
                     try {
                         String response = unitModel.deleteUnit(selectedRow);
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION, response);
-                        alert.showAndWait();
-                    } catch (Exception e) {
+                        notification(response);
 
+                    } catch (SQLException e) {
                         e.printStackTrace();
+                        System.err.println("Error while deleting the unit: " + e.getMessage());
+                        notification("An error occurred while deleting the unit. Please try again or contact support.");
                     }
 
                 }
-
                 table.getSelectionModel().clearSelection();
                 loadTable();
             }
         }
-
     }
 
 
@@ -235,30 +251,26 @@ public class UnitController implements Initializable {
         UnitTm selectedRow = table.getSelectionModel().getSelectedItem();
 
         if(selectedRow==null){
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Please select unit to delete!");
-            alert.setContentText("You should first select unit to edit, tap on the table row you want to update before tap on update button");
-            alert.showAndWait();
+            return;
         }
-        else{
 
+        else{
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/AddNewUnit.fxml"));
                 Parent root = fxmlLoader.load();
-
                 AddNewUnitController addNewUnitController = fxmlLoader.getController();
                 addNewUnitController.setEditRowDetails(selectedRow);
-
                 Scene scene = new Scene(root);
                 Stage stage = new Stage();
                 stage.setScene(scene);
                 stage.show();
             }
-            catch (Exception e){
+            catch (IOException e) {
                 e.printStackTrace();
+                System.err.println("Error while loading the unit edit page: " + e.getMessage());
+                notification("An error occurred while loading the unit edit page. Please try again or contact support.");
             }
+
         }
     }
 
@@ -266,7 +278,12 @@ public class UnitController implements Initializable {
     @FXML
     void refreshOnAction(ActionEvent event) {
 
-        loadTable();
+        if(!isOnlyAvailableUnits){
+            clean();
+        }
+        else {
+            setTableToOnlyAvailableUnits();
+        }
 
     }
 
@@ -278,6 +295,7 @@ public class UnitController implements Initializable {
         System.out.println(houseId);
     }
 
+
     @FXML
     void houseTypeCmbOnAction(ActionEvent event) {
 
@@ -285,12 +303,14 @@ public class UnitController implements Initializable {
         System.out.println(houseType);
     }
 
+
     @FXML
     void rentOrBuyCmbOnAction(ActionEvent event) {
 
         rentOrSell = rentOrBuyCmb.getSelectionModel().getSelectedItem();
         System.out.println(rentOrSell);
     }
+
 
     @FXML
     void statusCmbOnAction(ActionEvent event) {
@@ -303,6 +323,122 @@ public class UnitController implements Initializable {
     @FXML
     void searchOnAction(ActionEvent event) {
 
+        ObservableList<UnitTm> searchedHouses = FXCollections.observableArrayList();
+
+        String selectedHouseId = houseIdCmb.getValue();
+        String selectedHouseType = houseTypeCmb.getValue();
+        String selectedStatus = statusCmb.getValue();
+        String selectedRentSell = rentOrBuyCmb.getValue();
+
+        boolean houseIdSelected = selectedHouseId != null && !selectedHouseId.equals("Select");
+        boolean houseTypeSelected = selectedHouseType != null && !selectedHouseType.equals("Select");
+        boolean statusSelected = selectedStatus != null && !selectedStatus.equals("Select");
+        boolean rentSellSelected = selectedRentSell != null && !selectedRentSell.equals("Select");
+
+        if (houseIdSelected) {
+
+                ObservableList<UnitTm> housesById = getHouseById(selectedHouseId);
+
+                if (housesById.isEmpty()) {
+                    table.setItems(housesById);
+                }
+                else {
+                    searchedHouses.addAll(housesById);
+
+                    if (houseTypeSelected) {
+                        ObservableList<UnitTm> filteredByType = filterHousesByType(searchedHouses, selectedHouseType);
+                        searchedHouses.clear();
+                        searchedHouses.addAll(filteredByType);
+                    }
+
+                    if (statusSelected) {
+                        ObservableList<UnitTm> filteredByStatus = filterHousesByStatus(searchedHouses, selectedStatus);
+                        searchedHouses.clear();
+                        searchedHouses.addAll(filteredByStatus);
+                    }
+
+                    if (rentSellSelected) {
+                        ObservableList<UnitTm> filteredByRentSell = filterHousesByRentSell(searchedHouses, selectedRentSell);
+                        searchedHouses.clear();
+                        searchedHouses.addAll(filteredByRentSell);
+                    }
+
+                    table.setItems(searchedHouses);
+                }
+
+        }
+
+        else if (houseTypeSelected || statusSelected || rentSellSelected) {
+
+                ObservableList<UnitTm> allHouses = tableData;
+                searchedHouses.addAll(allHouses);
+
+                if (houseTypeSelected) {
+                    searchedHouses = filterHousesByType(searchedHouses, selectedHouseType);
+                }
+
+                if (statusSelected) {
+                    searchedHouses = filterHousesByStatus(searchedHouses, selectedStatus);
+                }
+
+                if (rentSellSelected) {
+                    searchedHouses = filterHousesByRentSell(searchedHouses, selectedRentSell);
+                }
+
+                table.setItems(searchedHouses);
+
+        } else {
+                ObservableList<UnitTm> allHouses = tableData;
+                table.setItems(allHouses);
+        }
+    }
+
+
+    public ObservableList<UnitTm> getHouseById(String houseId) {
+
+        ObservableList<UnitTm> filteredHouses = FXCollections.observableArrayList();
+        for (UnitTm house : tableData) {
+            if (house.getHouseId().equals(houseId)) {
+                filteredHouses.add(house);
+            }
+        }
+        return filteredHouses;
+    }
+
+
+    public ObservableList<UnitTm> filterHousesByType(ObservableList<UnitTm> houses, String houseType) {
+
+        ObservableList<UnitTm> filteredHouses = FXCollections.observableArrayList();
+        for (UnitTm house : houses) {
+            if (house.getHouseType().equals(houseType)) {
+                filteredHouses.add(house);
+            }
+        }
+        return filteredHouses;
+    }
+
+
+    public ObservableList<UnitTm> filterHousesByStatus(ObservableList<UnitTm> houses, String status) {
+
+        ObservableList<UnitTm> filteredHouses = FXCollections.observableArrayList();
+        for (UnitTm house : houses) {
+            if (house.getStatus().equals(status)) {
+                filteredHouses.add(house);
+            }
+        }
+        return filteredHouses;
+    }
+
+
+    public ObservableList<UnitTm> filterHousesByRentSell(ObservableList<UnitTm> houses, String rentSell) {
+
+        ObservableList<UnitTm> filteredHouses = FXCollections.observableArrayList();
+        for (UnitTm house : houses) {
+            if (house.getRentOrBuy().equals(rentSell)) {
+                filteredHouses.add(house);
+            }
+        }
+        return filteredHouses;
     }
 
 
@@ -312,7 +448,7 @@ public class UnitController implements Initializable {
         String sortType = sortCmb.getSelectionModel().getSelectedItem();
         ObservableList<UnitTm> unitTmsAr = tableData;
 
-        if(sortType.equals("bedroom asc")){
+        if(sortType.equals("Retrieve by bedroom (ascending)")){
 
             for(int j = 0; j < unitTmsAr.size(); j++) {
                 for (int i = 0; i < unitTmsAr.size()-1; i++) {
@@ -327,7 +463,7 @@ public class UnitController implements Initializable {
             table.setItems(unitTmsAr);
         }
 
-        else if(sortType.equals("bedroom desc")){
+        else if(sortType.equals("Retrieve by bedroom (descending)")){
 
             for(int j = 0; j < unitTmsAr.size(); j++) {
                 for (int i = 0; i < unitTmsAr.size()-1; i++) {
@@ -342,7 +478,7 @@ public class UnitController implements Initializable {
             table.setItems(unitTmsAr);
         }
 
-        else if(sortType.equals("bathroom asc")){
+        else if(sortType.equals("Retrieve by bathroom (ascending)")){
 
             for(int j = 0; j < unitTmsAr.size(); j++) {
                 for (int i = 0; i < unitTmsAr.size()-1; i++) {
@@ -357,7 +493,7 @@ public class UnitController implements Initializable {
             table.setItems(unitTmsAr);
         }
 
-        else if(sortType.equals("bathroom desc")){
+        else if(sortType.equals("Retrieve by bathroom (descending)")){
 
             for(int j = 0; j < unitTmsAr.size(); j++) {
                 for (int i = 0; i < unitTmsAr.size()-1; i++) {
@@ -372,7 +508,7 @@ public class UnitController implements Initializable {
             table.setItems(unitTmsAr);
         }
 
-        else if(sortType.equals("total values asc")){
+        else if(sortType.equals("Retrieve by total unit value (ascending)")){
 
             for(UnitTm x : unitTmsAr){
                 if(x.getTotalValue().equals("N/A")){
@@ -402,7 +538,7 @@ public class UnitController implements Initializable {
         }
 
 
-        else if(sortType.equals("total values desc")){
+        else if(sortType.equals("Retrieve by total unit value (descending)")){
 
             for(UnitTm x : unitTmsAr){
                 if(x.getTotalValue().equals("N/A")){
@@ -431,7 +567,7 @@ public class UnitController implements Initializable {
             table.setItems(unitTmsAr);
         }
 
-        else if(sortType.equals("monthly rent asc")){
+        else if(sortType.equals("Retrieve by monthly rent (ascending)")){
 
             for(UnitTm x : unitTmsAr){
                 if(x.getMonthlyRent().equals("N/A")){
@@ -462,7 +598,7 @@ public class UnitController implements Initializable {
         }
 
 
-        else if(sortType.equals("monthly rent desc")){
+        else if(sortType.equals("Retrieve by monthly rent (descending)")){
 
             for(UnitTm x : unitTmsAr){
                 if(x.getMonthlyRent().equals("N/A")){
@@ -493,10 +629,15 @@ public class UnitController implements Initializable {
 
     }
 
+
     @FXML
     void tableRowsCmbOnAction(ActionEvent event) {
 
-        int rows = tableRowsCmb.getSelectionModel().getSelectedItem();
+        Integer rows = tableRowsCmb.getSelectionModel().getSelectedItem();
+
+        if(rows==null){
+           return;
+        }
 
         ObservableList<UnitTm> requireRows = FXCollections.observableArrayList();
         int count = 1;
@@ -524,7 +665,56 @@ public class UnitController implements Initializable {
         setItemsToTableRowsCmb();
         setItemsToSortCmb();
 
+        tableSearch();
+
     }
+
+
+    public void tableSearch(){
+
+        FilteredList<UnitTm> filteredData = new FilteredList<>(tableData, b -> true);
+
+        searchTxt.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(house -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (house.getHouseId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(house.getBedroom()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(house.getBathroom()).contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getRentOrBuy().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getTotalValue().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getSecurityCharge().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getMonthlyRent().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (house.getHouseType().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(house.getFloorNo()).contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        SortedList<UnitTm> sortedData = new SortedList<>(filteredData);
+
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedData);
+
+    }
+
 
     public void setTableColumn(){
 
@@ -541,32 +731,38 @@ public class UnitController implements Initializable {
 
     }
 
+
     public void loadTable(){
 
         try {
             tableData = unitModel.loadTable();
             table.setItems(tableData);
-
-        }
-        catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error while loading data to the table: " + e.getMessage());
+            notification("An error occurred while loading data to the table. Please try again or contact support.");
         }
+
 
     }
+
 
     public void setItemsToStatusCmb(){
 
         ObservableList<String> status = FXCollections.observableArrayList();
-        status.addAll("Available","Unavailable");
+        status.addAll("Select","Available","Unavailable");
         statusCmb.setItems(status);
+        statusCmb.getSelectionModel().selectFirst();
 
     }
+
 
     public void setItemsToRentOrBuyCmb(){
 
         ObservableList<String> rentOrBuy = FXCollections.observableArrayList();
-        rentOrBuy.addAll("Rent","Sell");
+        rentOrBuy.addAll("Select","Rent","Sell");
         rentOrBuyCmb.setItems(rentOrBuy);
+        rentOrBuyCmb.getSelectionModel().selectFirst();
 
     }
 
@@ -574,10 +770,12 @@ public class UnitController implements Initializable {
     public void setItemsToSortCmb(){
 
         ObservableList<String> sortTableData = FXCollections.observableArrayList();
-        sortTableData.addAll("bedroom asc","bedroom desc","bathroom asc","bathroom desc","total values asc","total values desc","monthly rent asc","monthly rent desc");
+        sortTableData.addAll("Sort By","Retrieve by bedroom (ascending)","Retrieve by bedroom (descending)","Retrieve by bathroom (ascending)","Retrieve by bathroom (descending)","Retrieve by total unit value (ascending)","Retrieve by total unit value (descending)","Retrieve by monthly rent (ascending)","Retrieve by monthly rent (descending)");
         sortCmb.setItems(sortTableData);
+        sortCmb.getSelectionModel().selectFirst();
 
     }
+
 
     public void setItemsToTableRowsCmb(){
 
@@ -590,23 +788,29 @@ public class UnitController implements Initializable {
 
         }
         tableRowsCmb.setItems(rows);
+        tableRowsCmb.getSelectionModel().selectLast();
 
     }
+
 
     public void setItemsToHouseIdCmb(){
 
         ObservableList<String> houseId = FXCollections.observableArrayList();
+        houseId.add("Select");
 
         for(UnitTm x : tableData){
             houseId.add(x.getHouseId());
         }
         houseIdCmb.setItems(houseId);
+        houseIdCmb.getSelectionModel().selectFirst();
 
     }
+
 
     public void setItemsToHouseTypeCmb(){
 
         ObservableList<String> houseType = FXCollections.observableArrayList();
+        houseType.add("Select");
 
         try{
             ObservableList<HouseTypeTm> allHouseTypes = houseTypeModel.loadTableData();
@@ -614,13 +818,67 @@ public class UnitController implements Initializable {
                 houseType.add(x.getHouseType());
             }
 
-        }
-        catch (Exception e){
-           e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error while setting house types: " + e.getMessage());
+            notification("An error occurred while setting house types. Please try again or contact support.");
         }
 
+
         houseTypeCmb.setItems(houseType);
+        houseTypeCmb.getSelectionModel().selectFirst();
 
     }
 
+
+    public void clean(){
+
+        loadTable();
+        statusCmb.getSelectionModel().selectFirst();
+        rentOrBuyCmb.getSelectionModel().selectFirst();
+        sortCmb.getSelectionModel().selectFirst();
+        setItemsToHouseTypeCmb();
+        setItemsToHouseIdCmb();
+        setItemsToTableRowsCmb();
+        searchTxt.clear();
+        table.getSelectionModel().clearSelection();
+
+    }
+
+
+    public void setTableToOnlyAvailableUnits() {
+
+        isOnlyAvailableUnits = true;
+
+        try {
+            tableData = unitModel.getOnlyAvailableUnits();
+            table.setItems(tableData);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Error while loading data to the table: " + e.getMessage());
+            notification("An error occurred while loading data to the table. Please try again or contact support.");
+        }
+
+        setItemsToHouseIdCmb();
+        setItemsToTableRowsCmb();
+        setItemsToStatusCmb();
+        setItemsToRentOrBuyCmb();
+        setItemsToHouseTypeCmb();
+        setItemsToSortCmb();
+    }
+
+
+    public void notification(String message){
+
+        Notifications notifications = Notifications.create();
+        notifications.title("Notification");
+        notifications.text(message);
+        notifications.hideCloseButton();
+        notifications.hideAfter(Duration.seconds(4));
+        notifications.position(Pos.CENTER);
+        notifications.darkStyle();
+        notifications.showInformation();
+    }
 }
+
+
