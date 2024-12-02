@@ -1,9 +1,11 @@
 package com.example.test.controller;
 
+import com.example.test.SendMail;
 import com.example.test.dto.HouseStatusCheckDto;
 import com.example.test.dto.LeaseAgreementDto;
 import com.example.test.dto.tm.LeaseAgreementTm;
 import com.example.test.model.LeaseAgreementModel;
+import com.example.test.model.TenantModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -52,6 +54,7 @@ public class ReSignLeaseAgreementController {
 
     private LeaseAgreementTm selectedLeaseAgreement;
     private final LeaseAgreementModel leaseAgreementModel = new LeaseAgreementModel();
+    private final TenantModel tenantModel = new TenantModel();
 
 
     @FXML
@@ -73,6 +76,13 @@ public class ReSignLeaseAgreementController {
            try {
                String response = leaseAgreementModel.reSignAgreement(selectedLeaseAgreement,leaseTurn);
                notification(response);
+
+               notification("Sent Email To Tenant ID: "+selectedLeaseAgreement.getTenantId()+" , upon re-signing the lease agreement");
+
+               String email = tenantModel.getTenantEmailById(selectedLeaseAgreement.getTenantId());
+               SendMail sendMail = new SendMail();
+               new Thread(() -> sendMail.sendMail(email,"Re-Sign The Lease Agreement","You have ReNewed your lease agreement with our company,\nyour new lease turn is: "+leaseTurn+", Thank You for thrusting us,\nHope you find it helpful,\nThank You!\n\n\nThe Grand View Residences\nColombo 08")).start();
+
 
            } catch (SQLException | ClassNotFoundException e) {
                e.printStackTrace();

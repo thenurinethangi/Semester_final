@@ -81,6 +81,7 @@ public class SendMailController {
     }
 
     public void sendMail(String recipientEmail, String subject, String msg) {
+
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");

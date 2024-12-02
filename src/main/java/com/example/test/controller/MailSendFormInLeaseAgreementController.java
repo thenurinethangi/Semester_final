@@ -71,6 +71,7 @@ public class MailSendFormInLeaseAgreementController {
 
     @FXML
     void sendBtnOnAction(ActionEvent event) {
+
         String recipientEmail = email;
         String subject = subjectTxt.getText();
         String msg = messageArea.getText();
@@ -88,6 +89,7 @@ public class MailSendFormInLeaseAgreementController {
 
 
     public void sendMail(String recipientEmail, String subject, String msg) {
+
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
@@ -125,6 +127,7 @@ public class MailSendFormInLeaseAgreementController {
 
     @FXML
     void sendWithAttachmentOnAction(ActionEvent event) {
+
         if (payment != null) {
             String recipientEmail = email;
             String subject = subjectTxt.getText();
@@ -140,13 +143,15 @@ public class MailSendFormInLeaseAgreementController {
             new Thread(() -> sendMailWithAttachment(recipientEmail, subject, msg, invoiceFile)).start();
             notification("Email Sent To The Tenant.");
 
-        } else {
+        }
+        else {
             notification("No payment details available for sending an email with an attachment.");
         }
     }
 
 
     public void sendMailWithAttachment(String recipientEmail, String subject, String msg, File attachment) {
+
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable", "true");
@@ -209,6 +214,7 @@ public class MailSendFormInLeaseAgreementController {
             System.err.println("Error while setting tenant details to send mail: " + e.getMessage());
             notification("An error occurred while setting the tenant details to send mail. Please try again or contact support.");
         }
+        sendWithAttachmentBtn.setDisable(true);
     }
 
 
@@ -228,7 +234,7 @@ public class MailSendFormInLeaseAgreementController {
             System.err.println("Error while setting payment details to send mail: " + e.getMessage());
             notification("An error occurred while setting payment details to send mail. Please try again or contact support.");
         }
-        send.setDisable(true);
+        sendWithAttachmentBtn.setDisable(true);
     }
 
 

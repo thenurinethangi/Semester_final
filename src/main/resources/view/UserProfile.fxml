@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="507.0" prefWidth="665.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.UserProfileController">
+<AnchorPane prefHeight="507.0" prefWidth="665.0" style="-fx-background-color: #ffffff; -fx-border-width: 0.5; -fx-border-color: #747d8c;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.test.controller.UserProfileController">
    <children>
       <Circle fill="WHITE" layoutX="333.0" layoutY="85.0" radius="40.0" stroke="#00c0ff" strokeType="INSIDE" strokeWidth="2.0" />
       <ImageView fitHeight="71.0" fitWidth="74.0" layoutX="297.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">

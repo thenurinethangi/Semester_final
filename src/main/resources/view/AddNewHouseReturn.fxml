@@ -80,7 +80,7 @@
          </font>
       </Label>
       <Label fx:id="houseInspectDetailsLabel" layoutX="19.0" layoutY="339.0" prefHeight="30.0" prefWidth="592.0" style="-fx-background-color: #ffffff; -fx-padding: 0 0 0 7; -fx-border-radius: 3; -fx-border-color: #a4b0be;" />
-      <Label fx:id="messageLabel" layoutX="19.0" layoutY="369.0" prefHeight="17.0" prefWidth="592.0" />
+      <Label fx:id="messageLabel" layoutX="19.0" layoutY="369.0" prefHeight="17.0" prefWidth="592.0" textFill="RED" />
       <Label layoutX="19.0" layoutY="258.0" text="Last Paid Month*" textFill="#747d8c">
          <font>
             <Font name="Candara Bold" size="12.0" />

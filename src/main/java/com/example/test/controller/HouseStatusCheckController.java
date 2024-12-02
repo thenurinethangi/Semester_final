@@ -177,9 +177,24 @@ public class HouseStatusCheckController implements Initializable {
                notification("Can't Delete Selected House Inspection, Because It's The Latest House Inspection Of That House");
             }
             else{
-                String response = houseStatusCheckModel.deleteSelectedHouseInspection(selectedHouseCheck);
-                notification(response);
-                loadTable();
+                ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText("Please confirm first");
+                alert.setContentText("Are you sure, Do you want to delete the selected HouseInspection? ");
+                alert.getButtonTypes().setAll(yesButton, cancelButton);
+                Optional<ButtonType> options = alert.showAndWait();
+
+                if(options.isPresent() && options.get()==yesButton) {
+                    String response = houseStatusCheckModel.deleteSelectedHouseInspection(selectedHouseCheck);
+                    notification(response);
+                    loadTable();
+                }
+                else{
+                    table.getSelectionModel().clearSelection();
+                }
             }
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -677,6 +692,7 @@ public class HouseStatusCheckController implements Initializable {
 
                                         try {
                                             String response = tenantModel.reduceRepairCostFromSecurityCharge(selectedHouseCheck.getTenantId(), costOfRepair);
+                                            notification(response);
 
                                             if(response.equals("Repair costs were successfully deducted from the security deposit.")){
                                                 boolean isChangeTheStatus = houseStatusCheckModel.changeStatus(selectedHouseCheck.getCheckNumber(),"Reduced from Security Deposit");
@@ -684,12 +700,11 @@ public class HouseStatusCheckController implements Initializable {
 
                                                 TenantDto tenantDto = tenantModel.getMoreTenantDetails(selectedHouseCheck.getTenantId());
 
-                                                SendMail sendMail = new SendMail();
-
-                                                sendMail.sendMail(tenantDto.getEmail(),"Reduced House Damage Repair Cost From Security payment","We would like to inform you we have deduced Rs. "+ costOfRepair+" from your security payment,\nupon the property damage of last house inspection,\nCurrent security payment balance is: "+ tenantDto.getSecurityPaymentRemain()+"\nThank You attending for this matter!\n\n\nThe Grand View Residences\nColombo 08");
-                                                notification(response);
                                                 notification("Tenant : "+tenantDto.getTenantId()+ ", deducted amount is: "+costOfRepair+ " Remaining Security Deposit Is: "+ tenantDto.getSecurityPaymentRemain());
                                                 notification("Sent Email To Tenant ID: "+tenantDto.getTenantId()+" , regarding deduction frm security payment");
+
+                                                SendMail sendMail = new SendMail();
+                                                new Thread(() -> sendMail.sendMail(tenantDto.getEmail(),"Reduced House Damage Repair Cost From Security payment","We would like to inform you we have deduced Rs. "+ costOfRepair+" from your security payment,\nupon the property damage of last house inspection,\nCurrent security payment balance is: "+ tenantDto.getSecurityPaymentRemain()+"\nThank You attending for this matter!\n\n\nThe Grand View Residences\nColombo 08")).start();
                                             }
 
                                         } catch (SQLException | ClassNotFoundException e) {

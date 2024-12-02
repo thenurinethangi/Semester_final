@@ -9,13 +9,13 @@ public class DBConnection {
     private Connection connection;
     private static DBConnection dbConnection;
 
-    private DBConnection() throws SQLException {
+    private DBConnection(){
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/grandview_residences", "root", "Ijse@1234");
         }
-        catch (Exception e){
+        catch (SQLException | ClassNotFoundException e){
             e.printStackTrace();
         }
 

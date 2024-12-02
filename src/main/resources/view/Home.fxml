@@ -216,7 +216,7 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <Button fx:id="analysisbtn" layoutX="1.0" layoutY="543.0" mnemonicParsing="false" onAction="#analysisOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Analysis       ">
+            <Button fx:id="analysisbtn" layoutX="1.0" layoutY="543.0" mnemonicParsing="false" onAction="#analysisOnAction" prefHeight="36.0" prefWidth="174.0" stylesheets="@../style/HomePage.css" text="Report         ">
                <font>
                   <Font size="13.0" />
                </font>

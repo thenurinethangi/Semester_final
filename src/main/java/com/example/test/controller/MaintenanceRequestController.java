@@ -1,9 +1,12 @@
 package com.example.test.controller;
 
+import com.example.test.SendMail;
+import com.example.test.dto.TenantDto;
 import com.example.test.dto.tm.MaintenanceRequestTm;
 import com.example.test.dto.tm.PaymentTm;
 import com.example.test.dto.tm.TenantTm;
 import com.example.test.model.MaintenanceRequestModel;
+import com.example.test.model.TenantModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -108,6 +111,7 @@ public class MaintenanceRequestController implements Initializable {
     private boolean isOnlyInProgressRequest = false;
     private ObservableList<MaintenanceRequestTm> tableData;
     private final MaintenanceRequestModel maintenanceRequestModel = new MaintenanceRequestModel();
+    private final TenantModel tenantModel = new TenantModel();
 
 
     @FXML
@@ -591,6 +595,12 @@ public class MaintenanceRequestController implements Initializable {
                                         String response = maintenanceRequestModel.setStatusComplete(selectedRequest);
                                         notification(response);
                                         loadTable();
+
+                                        notification("Sent Email To Tenant ID: "+selectedRequest.getTenantId()+" , upon completing maintenance request");
+
+                                        String email = tenantModel.getTenantEmailById(selectedRequest.getTenantId());
+                                        SendMail sendMail = new SendMail();
+                                        new Thread(() -> sendMail.sendMail(email,"Completing Maintenance requirement: "+selectedRequest.getDescription(),"Happy to say that Your Maintenance Request successfully completed,\nHope you find it helpful,\nThank You!\n\n\nThe Grand View Residences\nColombo 08")).start();
 
                                     } catch (SQLException | ClassNotFoundException e) {
                                         e.printStackTrace();
